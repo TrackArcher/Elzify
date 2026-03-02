@@ -25,3 +25,5 @@ app/degoogled/
 /release-apks/
 *.apk
 *.aab
+
+/changes.md
