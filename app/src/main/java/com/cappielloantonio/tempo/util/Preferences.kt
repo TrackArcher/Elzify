@@ -808,11 +808,34 @@ object Preferences {
 
     @JvmStatic
     fun getLastFmApiKey(): String? {
-        return App.getInstance().encryptedPreferences.getString(Constants.LAST_FM_API_KEY, null)
+        val app = App.getInstance()
+        val encryptedPrefs = app.encryptedPreferences
+        val plainPrefs = app.preferences
+
+        val encryptedValue = encryptedPrefs.getString(Constants.LAST_FM_API_KEY, null)
+        if (!encryptedValue.isNullOrEmpty()) {
+            return encryptedValue
+        }
+
+        val plainValue = plainPrefs.getString(Constants.LAST_FM_API_KEY, null)
+        if (!plainValue.isNullOrEmpty() && encryptedPrefs !== plainPrefs) {
+            encryptedPrefs.edit().putString(Constants.LAST_FM_API_KEY, plainValue).apply()
+            plainPrefs.edit().remove(Constants.LAST_FM_API_KEY).apply()
+        }
+
+        return plainValue
     }
 
     @JvmStatic
     fun setLastFmApiKey(apiKey: String?) {
-        App.getInstance().encryptedPreferences.edit().putString(Constants.LAST_FM_API_KEY, apiKey).apply()
+        val app = App.getInstance()
+        val encryptedPrefs = app.encryptedPreferences
+        val plainPrefs = app.preferences
+
+        encryptedPrefs.edit().putString(Constants.LAST_FM_API_KEY, apiKey).apply()
+
+        if (encryptedPrefs !== plainPrefs) {
+            plainPrefs.edit().remove(Constants.LAST_FM_API_KEY).apply()
+        }
     }
 }

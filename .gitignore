@@ -18,8 +18,10 @@
 # release / debug files
 tempus-release-key.jks
 *.keystore
+*.jks
 app/tempus/
 app/degoogled/
-
-/screenshots
-/release-apks
+/screenshots/
+/release-apks/
+*.apk
+*.aab
