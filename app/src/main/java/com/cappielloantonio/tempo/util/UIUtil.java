@@ -137,6 +137,11 @@ public class UIUtil {
         return ColorUtils.blendARGB(surface, accent, blendRatio);
     }
 
+    @ColorInt
+    public static int getSystemBarColor(Context context) {
+        return getThemeColor(context, com.google.android.material.R.attr.colorSurface);
+    }
+
     public static int dpToPx(Context context, int dp) {
         return (int) (dp * context.getResources().getDisplayMetrics().density);
     }

@@ -188,6 +188,8 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
 
     private void initButtons() {
         songListPageViewModel.getSongList().observe(getViewLifecycleOwner(), songs -> {
+            if (songs == null) return;
+
             if (bind != null) {
                 setSongListPageSorter();
 
@@ -210,6 +212,8 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         setMediaBrowserListenableFuture();
         reapplyPlayback();
         songListPageViewModel.getSongList().observe(getViewLifecycleOwner(), songs -> {
+            if (songs == null) return;
+
             isLoading = false;
             songHorizontalAdapter.setItems(songs);
             reapplyPlayback();

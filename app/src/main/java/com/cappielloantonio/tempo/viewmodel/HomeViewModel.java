@@ -197,7 +197,16 @@ public class HomeViewModel extends AndroidViewModel {
 
     public LiveData<List<Child>> getStarredTracks(LifecycleOwner owner) {
         if (starredTracks.getValue() == null) {
-            songRepository.getStarredSongs(true, 20).observe(owner, starredTracks::postValue);
+            songRepository.getStarredSongs(false, -1).observe(owner, songs -> {
+                if (songs == null) {
+                    return;
+                }
+
+                List<Child> sampled = sampleRandomItems(songs, 20);
+                if (!sampled.isEmpty() || starredTracks.getValue() == null || starredTracks.getValue().isEmpty()) {
+                    starredTracks.postValue(sampled);
+                }
+            });
         }
 
         return starredTracks;
@@ -341,7 +350,27 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public void refreshStarredTracks(LifecycleOwner owner) {
-        songRepository.getStarredSongs(true, 20).observe(owner, starredTracks::postValue);
+        songRepository.getStarredSongs(false, -1).observe(owner, songs -> {
+            if (songs == null) {
+                return;
+            }
+
+            List<Child> sampled = sampleRandomItems(songs, 20);
+            if (!sampled.isEmpty() || starredTracks.getValue() == null || starredTracks.getValue().isEmpty()) {
+                starredTracks.postValue(sampled);
+            }
+        });
+    }
+
+    private List<Child> sampleRandomItems(List<Child> source, int size) {
+        if (source == null || source.isEmpty() || size <= 0) {
+            return Collections.emptyList();
+        }
+
+        List<Child> shuffled = new ArrayList<>(source);
+        Collections.shuffle(shuffled);
+
+        return new ArrayList<>(shuffled.subList(0, Math.min(size, shuffled.size())));
     }
 
     public void refreshStarredAlbums(LifecycleOwner owner) {

@@ -681,11 +681,13 @@ public class PlayerControllerFragment extends Fragment {
     private void initCoverLyricsSlideView() {
         playerMediaCoverViewPager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
         playerMediaCoverViewPager.setAdapter(new PlayerControllerHorizontalPager(this));
+        updateTrackInfoVisibility(playerMediaCoverViewPager.getCurrentItem());
 
         playerMediaCoverViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
+                updateTrackInfoVisibility(position);
 
                 PlayerBottomSheetFragment playerBottomSheetFragment = (PlayerBottomSheetFragment) requireActivity().getSupportFragmentManager().findFragmentByTag("PlayerBottomSheet");
 
@@ -704,6 +706,11 @@ public class PlayerControllerFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void updateTrackInfoVisibility(int position) {
+        if (playerTrackInfo == null) return;
+        playerTrackInfo.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
     }
 
     private void initMediaListenable() {

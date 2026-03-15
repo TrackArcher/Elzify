@@ -19,9 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.graphics.ColorUtils;
 import androidx.core.splashscreen.SplashScreen;
-import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.MediaItem;
@@ -76,9 +74,6 @@ public class MainActivity extends BaseActivity {
     private AssetLinkUtil.AssetLink pendingAssetLink;
 
     private ViewGroup dockContainer;
-    private int defaultStatusBarColor;
-    private int defaultNavigationBarColor;
-
     ConnectivityStatusBroadcastReceiver connectivityStatusBroadcastReceiver;
     private Intent pendingDownloadPlaybackIntent;
 
@@ -101,8 +96,6 @@ public class MainActivity extends BaseActivity {
         bind = ActivityMainBinding.inflate(getLayoutInflater());
         View view = bind.getRoot();
         setContentView(view);
-        defaultStatusBarColor = getWindow().getStatusBarColor();
-        defaultNavigationBarColor = getWindow().getNavigationBarColor();
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         assetLinkNavigator = new AssetLinkNavigator(this);
@@ -258,19 +251,11 @@ public class MainActivity extends BaseActivity {
     };
 
     private void applyPlayerSystemBarColors(boolean playerExpanded) {
-        int color = playerExpanded
-                ? UIUtil.getPlayerBackgroundColor(this)
-                : defaultStatusBarColor;
-        int navigationColor = playerExpanded
-                ? UIUtil.getPlayerBackgroundColor(this)
-                : defaultNavigationBarColor;
-
-        getWindow().setStatusBarColor(color);
-        getWindow().setNavigationBarColor(navigationColor);
-
-        WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
-        insetsController.setAppearanceLightStatusBars(ColorUtils.calculateLuminance(color) > 0.5);
-        insetsController.setAppearanceLightNavigationBars(ColorUtils.calculateLuminance(navigationColor) > 0.5);
+        if (playerExpanded) {
+            applySystemBarColors(UIUtil.getPlayerBackgroundColor(this));
+        } else {
+            applySystemBarColors();
+        }
     }
 
     private void animateBottomSheet(float slideOffset) {
@@ -402,9 +387,9 @@ public class MainActivity extends BaseActivity {
     }
 
     private void updateDockActiveState(int activeId) {
-        int colorOnPrimaryContainer = com.cappielloantonio.tempo.util.UIUtil.getThemeColor(this, com.google.android.material.R.attr.colorOnPrimaryContainer);
-        int colorOnSurfaceVariant = com.cappielloantonio.tempo.util.UIUtil.getThemeColor(this, com.google.android.material.R.attr.colorOnSurfaceVariant);
-        int colorOnSurface = com.cappielloantonio.tempo.util.UIUtil.getThemeColor(this, com.google.android.material.R.attr.colorOnSurface);
+        int colorOnPrimaryContainer = UIUtil.getThemeColor(this, com.google.android.material.R.attr.colorOnPrimaryContainer);
+        int colorOnSurfaceVariant = UIUtil.getThemeColor(this, com.google.android.material.R.attr.colorOnSurfaceVariant);
+        int colorOnSurface = UIUtil.getThemeColor(this, com.google.android.material.R.attr.colorOnSurface);
 
         for (int i = 0; i < dockContainer.getChildCount(); i++) {
             View child = dockContainer.getChildAt(i);

@@ -39,7 +39,7 @@ public class SongRepository {
     }
 
     public MutableLiveData<List<Child>> getStarredSongs(boolean random, int size) {
-        MutableLiveData<List<Child>> starredSongs = new MutableLiveData<>(Collections.emptyList());
+        MutableLiveData<List<Child>> starredSongs = new MutableLiveData<>(null);
 
         App.getSubsonicClientInstance(false)
                 .getAlbumSongListClient()
