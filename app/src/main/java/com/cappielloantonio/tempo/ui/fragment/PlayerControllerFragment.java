@@ -23,7 +23,6 @@ import android.widget.ToggleButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.MediaMetadata;
@@ -85,10 +84,10 @@ public class PlayerControllerFragment extends Fragment {
     private ToggleButton skipSilenceToggleButton;
     private Chip playerMediaExtension;
     private TextView playerMediaBitrate;
-    private LinearLayout playerQuickActionView;
+    private View playerQuickActionView;
     private ImageButton playerOpenQueueButton;
     private ImageButton playerTrackInfo;
-    private ConstraintLayout ratingContainer;
+    private View ratingContainer;
     private ImageButton equalizerButton;
     private ImageButton addToPlaylistButton;
     private ImageButton overflowMenuButton;
@@ -177,7 +176,9 @@ public class PlayerControllerFragment extends Fragment {
         ratingContainer = bind.getRoot().findViewById(R.id.rating_container);
         equalizerButton = bind.getRoot().findViewById(R.id.player_open_equalizer_button);
         addToPlaylistButton = bind.getRoot().findViewById(R.id.button_add_to_playlist);
-        addToPlaylistButton.setOnClickListener(v -> launchPlaylistChooser());
+        if (addToPlaylistButton != null) {
+            addToPlaylistButton.setOnClickListener(v -> launchPlaylistChooser());
+        }
         overflowMenuButton = bind.getRoot().findViewById(R.id.button_overflow_menu);
         lyricsButton = bind.getRoot().findViewById(R.id.player_open_lyrics_button);
         assetLinkChipGroup = bind.getRoot().findViewById(R.id.asset_link_chip_group);
@@ -195,13 +196,15 @@ public class PlayerControllerFragment extends Fragment {
             }
         });
 
-        lyricsButton.setOnClickListener(view -> {
-            if (playerMediaCoverViewPager.getCurrentItem() == 1) {
-                goToControllerPage();
-            } else {
-                goToLyricsPage();
-            }
-        });
+        if (lyricsButton != null) {
+            lyricsButton.setOnClickListener(view -> {
+                if (playerMediaCoverViewPager.getCurrentItem() == 1) {
+                    goToControllerPage();
+                } else {
+                    goToLyricsPage();
+                }
+            });
+        }
     }
 
     private void initializeBrowser() {
@@ -644,9 +647,9 @@ public class PlayerControllerFragment extends Fragment {
                     bind.getRoot().setShowNextButton(false);
                     bind.getRoot().setShowFastForwardButton(true);
                     bind.getRoot().setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_NONE);
-                    bind.getRoot().findViewById(R.id.button_favorite).setVisibility(View.GONE);
-                    bind.getRoot().findViewById(R.id.button_add_to_playlist).setVisibility(View.GONE);
-                    bind.getRoot().findViewById(R.id.button_overflow_menu).setVisibility(View.GONE);
+                    setViewVisibilityIfPresent(R.id.button_favorite, View.GONE);
+                    setViewVisibilityIfPresent(R.id.button_add_to_playlist, View.GONE);
+                    setViewVisibilityIfPresent(R.id.button_overflow_menu, View.GONE);
                     setPlaybackParameters(mediaBrowser);
                     break;
                 case Constants.MEDIA_TYPE_RADIO:
@@ -656,9 +659,9 @@ public class PlayerControllerFragment extends Fragment {
                     bind.getRoot().setShowNextButton(false);
                     bind.getRoot().setShowFastForwardButton(false);
                     bind.getRoot().setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_NONE);
-                    bind.getRoot().findViewById(R.id.button_favorite).setVisibility(View.GONE);
-                    bind.getRoot().findViewById(R.id.button_add_to_playlist).setVisibility(View.GONE);
-                    bind.getRoot().findViewById(R.id.button_overflow_menu).setVisibility(View.GONE);
+                    setViewVisibilityIfPresent(R.id.button_favorite, View.GONE);
+                    setViewVisibilityIfPresent(R.id.button_add_to_playlist, View.GONE);
+                    setViewVisibilityIfPresent(R.id.button_overflow_menu, View.GONE);
                     setPlaybackParameters(mediaBrowser);
                     break;
                 case Constants.MEDIA_TYPE_MUSIC:
@@ -669,9 +672,9 @@ public class PlayerControllerFragment extends Fragment {
                     bind.getRoot().setShowNextButton(true);
                     bind.getRoot().setShowFastForwardButton(false);
                     bind.getRoot().setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ALL | RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE);
-                    bind.getRoot().findViewById(R.id.button_favorite).setVisibility(View.VISIBLE);
-                    bind.getRoot().findViewById(R.id.button_add_to_playlist).setVisibility(View.VISIBLE);
-                    bind.getRoot().findViewById(R.id.button_overflow_menu).setVisibility(View.VISIBLE);
+                    setViewVisibilityIfPresent(R.id.button_favorite, View.VISIBLE);
+                    setViewVisibilityIfPresent(R.id.button_add_to_playlist, View.VISIBLE);
+                    setViewVisibilityIfPresent(R.id.button_overflow_menu, View.VISIBLE);
                     setPlaybackParameters(mediaBrowser);
                     break;
             }
@@ -802,6 +805,7 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void initEqualizerButton() {
+        if (equalizerButton == null) return;
         equalizerButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(this);
             NavOptions navOptions = new NavOptions.Builder()
@@ -814,6 +818,7 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void initOverflowMenu() {
+        if (overflowMenuButton == null) return;
         overflowMenuButton.setOnClickListener(v -> {
             PopupMenu popup = new PopupMenu(requireContext(), v);
             popup.getMenuInflater().inflate(R.menu.menu_now_playing_overflow, popup.getMenu());
@@ -914,10 +919,21 @@ public class PlayerControllerFragment extends Fragment {
         boolean skipSilence = Preferences.isSkipSilenceMode();
 
         mediaBrowser.setPlaybackParameters(new PlaybackParameters(currentSpeed));
-        playbackSpeedButton.setText(getString(R.string.player_playback_speed, currentSpeed));
+        if (playbackSpeedButton != null) {
+            playbackSpeedButton.setText(getString(R.string.player_playback_speed, currentSpeed));
+        }
 
         // TODO Skippare il silenzio
-        skipSilenceToggleButton.setChecked(skipSilence);
+        if (skipSilenceToggleButton != null) {
+            skipSilenceToggleButton.setChecked(skipSilence);
+        }
+    }
+
+    private void setViewVisibilityIfPresent(int viewId, int visibility) {
+        View view = bind.getRoot().findViewById(viewId);
+        if (view != null) {
+            view.setVisibility(visibility);
+        }
     }
 
     private void resetPlaybackParameters(MediaBrowser mediaBrowser) {

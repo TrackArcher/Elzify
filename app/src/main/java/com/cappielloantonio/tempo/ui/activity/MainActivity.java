@@ -310,7 +310,15 @@ public class MainActivity extends BaseActivity {
             if (width > 0) {
                 PlayerBottomSheetFragment fragment = (PlayerBottomSheetFragment) getSupportFragmentManager().findFragmentByTag("PlayerBottomSheet");
                 if (fragment != null) {
-                    fragment.setMiniPlayerWidth(width + 100);
+                    if (isLandscape) {
+                        int screenWidth = getResources().getDisplayMetrics().widthPixels;
+                        int sideMargin = UIUtil.dpToPx(this, 24);
+                        int minWidth = UIUtil.dpToPx(this, 420);
+                        int availableWidth = screenWidth - width - (sideMargin * 2);
+                        fragment.setMiniPlayerWidth(Math.max(minWidth, availableWidth));
+                    } else {
+                        fragment.setMiniPlayerWidth(width + 100);
+                    }
                 }
             }
         });
