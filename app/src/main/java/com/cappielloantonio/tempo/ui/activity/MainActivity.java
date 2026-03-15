@@ -19,7 +19,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.graphics.ColorUtils;
 import androidx.core.splashscreen.SplashScreen;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.MediaItem;
@@ -47,6 +49,7 @@ import com.cappielloantonio.tempo.util.AssetLinkNavigator;
 import com.cappielloantonio.tempo.util.AssetLinkUtil;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.Preferences;
+import com.cappielloantonio.tempo.util.UIUtil;
 import com.cappielloantonio.tempo.viewmodel.MainViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -73,6 +76,8 @@ public class MainActivity extends BaseActivity {
     private AssetLinkUtil.AssetLink pendingAssetLink;
 
     private ViewGroup dockContainer;
+    private int defaultStatusBarColor;
+    private int defaultNavigationBarColor;
 
     ConnectivityStatusBroadcastReceiver connectivityStatusBroadcastReceiver;
     private Intent pendingDownloadPlaybackIntent;
@@ -96,6 +101,8 @@ public class MainActivity extends BaseActivity {
         bind = ActivityMainBinding.inflate(getLayoutInflater());
         View view = bind.getRoot();
         setContentView(view);
+        defaultStatusBarColor = getWindow().getStatusBarColor();
+        defaultNavigationBarColor = getWindow().getNavigationBarColor();
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         assetLinkNavigator = new AssetLinkNavigator(this);
@@ -219,17 +226,20 @@ public class MainActivity extends BaseActivity {
                     switch (state) {
                         case BottomSheetBehavior.STATE_HIDDEN:
                             resetMusicSession();
+                            applyPlayerSystemBarColors(false);
                             break;
                         case BottomSheetBehavior.STATE_COLLAPSED:
                             if (playerBottomSheetFragment != null) {
                                 playerBottomSheetFragment.goBackToFirstPage();
                                 playerBottomSheetFragment.setBodyVisibility(false);
                             }
+                            applyPlayerSystemBarColors(false);
                             break;
                         case BottomSheetBehavior.STATE_EXPANDED:
                             if (playerBottomSheetFragment != null) {
                                 playerBottomSheetFragment.setBodyVisibility(true);
                             }
+                            applyPlayerSystemBarColors(true);
                             break;
                         case BottomSheetBehavior.STATE_SETTLING:
                         case BottomSheetBehavior.STATE_DRAGGING:
@@ -244,8 +254,24 @@ public class MainActivity extends BaseActivity {
                     if (!isLandscape) {
                          animateBottomNavigation(slideOffset, navigationHeight);
                     }
-                }
-            };
+            }
+    };
+
+    private void applyPlayerSystemBarColors(boolean playerExpanded) {
+        int color = playerExpanded
+                ? UIUtil.getPlayerBackgroundColor(this)
+                : defaultStatusBarColor;
+        int navigationColor = playerExpanded
+                ? UIUtil.getPlayerBackgroundColor(this)
+                : defaultNavigationBarColor;
+
+        getWindow().setStatusBarColor(color);
+        getWindow().setNavigationBarColor(navigationColor);
+
+        WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
+        insetsController.setAppearanceLightStatusBars(ColorUtils.calculateLuminance(color) > 0.5);
+        insetsController.setAppearanceLightNavigationBars(ColorUtils.calculateLuminance(navigationColor) > 0.5);
+    }
 
     private void animateBottomSheet(float slideOffset) {
         PlayerBottomSheetFragment playerBottomSheetFragment = (PlayerBottomSheetFragment) getSupportFragmentManager().findFragmentByTag("PlayerBottomSheet");

@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
     android:clipChildren="false"
-    android:clipToPadding="false"
-    android:paddingTop="8dp">
+    android:clipToPadding="false">
 
     <include
         android:id="@+id/player_body_layout"

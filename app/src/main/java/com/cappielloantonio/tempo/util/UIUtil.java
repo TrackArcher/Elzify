@@ -9,6 +9,7 @@ import android.util.TypedValue;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
+import androidx.core.graphics.ColorUtils;
 import androidx.core.os.LocaleListCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 
@@ -121,6 +122,19 @@ public class UIUtil {
         TypedValue typedValue = new TypedValue();
         context.getTheme().resolveAttribute(attr, typedValue, true);
         return typedValue.data;
+    }
+
+    @ColorInt
+    public static int getPlayerBackgroundColor(Context context) {
+        int surface = getThemeColor(context, com.google.android.material.R.attr.colorSurface);
+        int accent = Preferences.getAccentColor();
+
+        if (accent == -1) {
+            return getThemeColor(context, com.google.android.material.R.attr.colorSurfaceContainerHigh);
+        }
+
+        float blendRatio = ColorUtils.calculateLuminance(surface) > 0.5 ? 0.24f : 0.32f;
+        return ColorUtils.blendARGB(surface, accent, blendRatio);
     }
 
     public static int dpToPx(Context context, int dp) {

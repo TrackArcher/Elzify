@@ -4,6 +4,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
@@ -280,7 +282,7 @@ public class PlayerControllerFragment extends Fragment {
                 case Constants.METADATA_ARTIST:
                     if (mediaMetadata.artist != null) {
                         TextView artistView = createMetadataView(String.valueOf(mediaMetadata.artist), R.style.TitleMedium);
-                        artistView.setTextColor(UIUtil.getThemeColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant));
+                        artistView.setTextColor(getPlayerTextColor());
                         playerMetadataContainer.addView(artistView);
                         bindArtistLink(artistView);
                     }
@@ -288,7 +290,7 @@ public class PlayerControllerFragment extends Fragment {
                 case Constants.METADATA_ALBUM:
                     if (mediaMetadata.albumTitle != null) {
                         TextView albumView = createMetadataView(String.valueOf(mediaMetadata.albumTitle), R.style.TitleSmall);
-                        albumView.setTextColor(UIUtil.getThemeColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant));
+                        albumView.setTextColor(getPlayerTextColor());
                         playerMetadataContainer.addView(albumView);
                         bindAlbumLink(albumView);
                     }
@@ -296,18 +298,18 @@ public class PlayerControllerFragment extends Fragment {
                 case Constants.METADATA_YEAR:
                     if (mediaMetadata.releaseYear != null) {
                         TextView yearView = createMetadataView(String.valueOf(mediaMetadata.releaseYear), R.style.TitleSmall);
-                        yearView.setTextColor(UIUtil.getThemeColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant));
+                        yearView.setTextColor(getPlayerTextColor());
                         playerMetadataContainer.addView(yearView);
                     } else if (mediaMetadata.extras != null && mediaMetadata.extras.containsKey("year")) {
                         TextView yearView = createMetadataView(String.valueOf(mediaMetadata.extras.getInt("year")), R.style.TitleSmall);
-                        yearView.setTextColor(UIUtil.getThemeColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant));
+                        yearView.setTextColor(getPlayerTextColor());
                         playerMetadataContainer.addView(yearView);
                     }
                     break;
                 case Constants.METADATA_GENRE:
                     if (mediaMetadata.genre != null) {
                         TextView genreView = createMetadataView(String.valueOf(mediaMetadata.genre), R.style.TitleSmall);
-                        genreView.setTextColor(UIUtil.getThemeColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant));
+                        genreView.setTextColor(getPlayerTextColor());
                         playerMetadataContainer.addView(genreView);
                     }
                     break;
@@ -326,7 +328,7 @@ public class PlayerControllerFragment extends Fragment {
 
                         if (bitrateText.length() > 0) {
                             TextView bitrateView = createMetadataView(bitrateText.toString(), R.style.TitleSmall);
-                            bitrateView.setTextColor(UIUtil.getThemeColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant));
+                            bitrateView.setTextColor(getPlayerTextColor());
                             playerMetadataContainer.addView(bitrateView);
                         }
                     }
@@ -338,7 +340,7 @@ public class PlayerControllerFragment extends Fragment {
                         long effectivePlayCount = basePlayCount + MediaManager.getPlayCountIncrement(currentSongId);
                         if (effectivePlayCount != 0) {
                             TextView playCountView = createMetadataView(effectivePlayCount + " plays", R.style.TitleSmall);
-                            playCountView.setTextColor(UIUtil.getThemeColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant));
+                            playCountView.setTextColor(getPlayerTextColor());
                             playerMetadataContainer.addView(playCountView);
 
                             final long[] lastSeenVersion = {MediaManager.getScrobbleVersion()};
@@ -353,7 +355,7 @@ public class PlayerControllerFragment extends Fragment {
                             });
                         } else {
                             TextView playCountView = createMetadataView("", R.style.TitleSmall);
-                            playCountView.setTextColor(UIUtil.getThemeColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant));
+                            playCountView.setTextColor(getPlayerTextColor());
                             playCountView.setVisibility(View.GONE);
                             playerMetadataContainer.addView(playCountView);
 
@@ -373,7 +375,7 @@ public class PlayerControllerFragment extends Fragment {
                     break;
                 case Constants.METADATA_SCROBBLES:
                     TextView scrobbleView = createMetadataView("", R.style.TitleSmall);
-                    scrobbleView.setTextColor(UIUtil.getThemeColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant));
+                    scrobbleView.setTextColor(getPlayerTextColor());
                     scrobbleView.setVisibility(View.GONE);
                     playerMetadataContainer.addView(scrobbleView);
 
@@ -417,7 +419,7 @@ public class PlayerControllerFragment extends Fragment {
         playerMetadataContainer.addView(titleView);
 
         TextView stationView = createMetadataView(stationName, R.style.TitleMedium);
-        stationView.setTextColor(UIUtil.getThemeColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant));
+        stationView.setTextColor(getPlayerTextColor());
         playerMetadataContainer.addView(stationView);
     }
 
@@ -425,6 +427,7 @@ public class PlayerControllerFragment extends Fragment {
         TextView textView = new TextView(requireContext());
         textView.setText(text);
         textView.setTextAppearance(styleRes);
+        textView.setTextColor(getPlayerTextColor());
         textView.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
@@ -437,6 +440,11 @@ public class PlayerControllerFragment extends Fragment {
         return textView;
     }
 
+    private int getPlayerTextColor() {
+        int mode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        return mode == Configuration.UI_MODE_NIGHT_YES ? Color.WHITE : Color.BLACK;
+    }
+
     private void bindAlbumLink(View view) {
         playerBottomSheetViewModel.getLiveAlbum().observe(getViewLifecycleOwner(), album -> {
             if (album != null) {
@@ -446,7 +454,6 @@ public class PlayerControllerFragment extends Fragment {
                     NavHostFragment.findNavController(this).navigate(R.id.albumPageFragment, bundle);
                     activity.collapseBottomSheetDelayed();
                 });
-                AssetLinkUtil.applyLinkAppearance(view);
             }
         });
     }
@@ -460,7 +467,6 @@ public class PlayerControllerFragment extends Fragment {
                     NavHostFragment.findNavController(this).navigate(R.id.artistPageFragment, bundle);
                     activity.collapseBottomSheetDelayed();
                 });
-                AssetLinkUtil.applyLinkAppearance(view);
             }
         });
     }

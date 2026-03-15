@@ -1,6 +1,8 @@
 package com.cappielloantonio.tempo.ui.fragment;
 
 import android.content.ComponentName;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -36,8 +38,8 @@ import com.cappielloantonio.tempo.ui.fragment.pager.PlayerControllerVerticalPage
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
+import com.cappielloantonio.tempo.util.UIUtil;
 import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
-import com.google.android.material.elevation.SurfaceColors;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
@@ -66,6 +68,8 @@ public class PlayerBottomSheetFragment extends Fragment {
         initViewPager();
         setHeaderBookmarksButton();
         initFavoriteButton();
+        applyPlayerBackgroundColor();
+        applyPlayerTextColor();
 
         return view;
     }
@@ -116,6 +120,27 @@ public class PlayerBottomSheetFragment extends Fragment {
     private void initViewPager() {
         bind.playerBodyLayout.playerBodyBottomSheetViewPager.setOrientation(ViewPager2.ORIENTATION_VERTICAL);
         bind.playerBodyLayout.playerBodyBottomSheetViewPager.setAdapter(new PlayerControllerVerticalPager(this));
+    }
+
+    private void applyPlayerBackgroundColor() {
+        if (bind == null) return;
+
+        int playerBackgroundColor = UIUtil.getPlayerBackgroundColor(requireContext());
+        bind.getRoot().setBackgroundColor(Color.TRANSPARENT);
+        bind.playerBodyLayout.playerBodyBottomSheetViewPager.setBackgroundColor(playerBackgroundColor);
+    }
+
+    private void applyPlayerTextColor() {
+        if (bind == null) return;
+
+        int textColor = getPlayerTextColor();
+        bind.playerHeaderLayout.playerHeaderMediaTitleLabel.setTextColor(textColor);
+        bind.playerHeaderLayout.playerHeaderMediaArtistLabel.setTextColor(textColor);
+    }
+
+    private int getPlayerTextColor() {
+        int mode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        return mode == Configuration.UI_MODE_NIGHT_YES ? Color.WHITE : Color.BLACK;
     }
 
     private void initializeMediaBrowser() {
