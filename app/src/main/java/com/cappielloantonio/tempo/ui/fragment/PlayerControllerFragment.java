@@ -274,14 +274,14 @@ public class PlayerControllerFragment extends Fragment {
             switch (field) {
                 case Constants.METADATA_TITLE:
                     if (mediaMetadata.title != null) {
-                        TextView titleView = createMetadataView(String.valueOf(mediaMetadata.title), R.style.HeadlineLarge);
+                        TextView titleView = createMetadataView(String.valueOf(mediaMetadata.title), R.style.PlayerMetadataTitle);
                         playerMetadataContainer.addView(titleView);
                         bindAlbumLink(titleView);
                     }
                     break;
                 case Constants.METADATA_ARTIST:
                     if (mediaMetadata.artist != null) {
-                        TextView artistView = createMetadataView(String.valueOf(mediaMetadata.artist), R.style.TitleMedium);
+                        TextView artistView = createMetadataView(String.valueOf(mediaMetadata.artist), R.style.PlayerMetadataArtist);
                         artistView.setTextColor(getPlayerTextColor());
                         playerMetadataContainer.addView(artistView);
                         bindArtistLink(artistView);
@@ -289,7 +289,7 @@ public class PlayerControllerFragment extends Fragment {
                     break;
                 case Constants.METADATA_ALBUM:
                     if (mediaMetadata.albumTitle != null) {
-                        TextView albumView = createMetadataView(String.valueOf(mediaMetadata.albumTitle), R.style.TitleSmall);
+                        TextView albumView = createMetadataView(String.valueOf(mediaMetadata.albumTitle), R.style.PlayerMetadataAlbum);
                         albumView.setTextColor(getPlayerTextColor());
                         playerMetadataContainer.addView(albumView);
                         bindAlbumLink(albumView);
@@ -297,18 +297,18 @@ public class PlayerControllerFragment extends Fragment {
                     break;
                 case Constants.METADATA_YEAR:
                     if (mediaMetadata.releaseYear != null) {
-                        TextView yearView = createMetadataView(String.valueOf(mediaMetadata.releaseYear), R.style.TitleSmall);
+                        TextView yearView = createMetadataView(String.valueOf(mediaMetadata.releaseYear), R.style.PlayerMetadataSecondary);
                         yearView.setTextColor(getPlayerTextColor());
                         playerMetadataContainer.addView(yearView);
                     } else if (mediaMetadata.extras != null && mediaMetadata.extras.containsKey("year")) {
-                        TextView yearView = createMetadataView(String.valueOf(mediaMetadata.extras.getInt("year")), R.style.TitleSmall);
+                        TextView yearView = createMetadataView(String.valueOf(mediaMetadata.extras.getInt("year")), R.style.PlayerMetadataSecondary);
                         yearView.setTextColor(getPlayerTextColor());
                         playerMetadataContainer.addView(yearView);
                     }
                     break;
                 case Constants.METADATA_GENRE:
                     if (mediaMetadata.genre != null) {
-                        TextView genreView = createMetadataView(String.valueOf(mediaMetadata.genre), R.style.TitleSmall);
+                        TextView genreView = createMetadataView(String.valueOf(mediaMetadata.genre), R.style.PlayerMetadataSecondary);
                         genreView.setTextColor(getPlayerTextColor());
                         playerMetadataContainer.addView(genreView);
                     }
@@ -327,7 +327,7 @@ public class PlayerControllerFragment extends Fragment {
                         }
 
                         if (bitrateText.length() > 0) {
-                            TextView bitrateView = createMetadataView(bitrateText.toString(), R.style.TitleSmall);
+                            TextView bitrateView = createMetadataView(bitrateText.toString(), R.style.PlayerMetadataSecondary);
                             bitrateView.setTextColor(getPlayerTextColor());
                             playerMetadataContainer.addView(bitrateView);
                         }
@@ -339,7 +339,7 @@ public class PlayerControllerFragment extends Fragment {
                         long basePlayCount = mediaMetadata.extras.getLong("playCount", 0);
                         long effectivePlayCount = basePlayCount + MediaManager.getPlayCountIncrement(currentSongId);
                         if (effectivePlayCount != 0) {
-                            TextView playCountView = createMetadataView(effectivePlayCount + " plays", R.style.TitleSmall);
+                            TextView playCountView = createMetadataView(effectivePlayCount + " plays", R.style.PlayerMetadataSecondary);
                             playCountView.setTextColor(getPlayerTextColor());
                             playerMetadataContainer.addView(playCountView);
 
@@ -354,7 +354,7 @@ public class PlayerControllerFragment extends Fragment {
                                 }
                             });
                         } else {
-                            TextView playCountView = createMetadataView("", R.style.TitleSmall);
+                            TextView playCountView = createMetadataView("", R.style.PlayerMetadataSecondary);
                             playCountView.setTextColor(getPlayerTextColor());
                             playCountView.setVisibility(View.GONE);
                             playerMetadataContainer.addView(playCountView);
@@ -374,7 +374,7 @@ public class PlayerControllerFragment extends Fragment {
                     }
                     break;
                 case Constants.METADATA_SCROBBLES:
-                    TextView scrobbleView = createMetadataView("", R.style.TitleSmall);
+                    TextView scrobbleView = createMetadataView("", R.style.PlayerMetadataSecondary);
                     scrobbleView.setTextColor(getPlayerTextColor());
                     scrobbleView.setVisibility(View.GONE);
                     playerMetadataContainer.addView(scrobbleView);

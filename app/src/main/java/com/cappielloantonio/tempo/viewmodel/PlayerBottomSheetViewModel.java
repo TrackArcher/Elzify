@@ -21,6 +21,7 @@ import com.cappielloantonio.tempo.model.Queue;
 import com.cappielloantonio.tempo.repository.AlbumRepository;
 import com.cappielloantonio.tempo.repository.ArtistRepository;
 import com.cappielloantonio.tempo.repository.FavoriteRepository;
+import com.cappielloantonio.tempo.repository.LrcGetRepository;
 import com.cappielloantonio.tempo.repository.LyricsRepository;
 import com.cappielloantonio.tempo.repository.OpenRepository;
 import com.cappielloantonio.tempo.repository.QueueRepository;
@@ -53,6 +54,8 @@ import java.util.stream.Collectors;
 @OptIn(markerClass = UnstableApi.class)
 public class PlayerBottomSheetViewModel extends AndroidViewModel {
     private static final String TAG = "PlayerBottomSheetViewModel";
+    public static final int LYRICS_SOURCE_SERVER = 0;
+    public static final int LYRICS_SOURCE_LRCLIB = 1;
 
     private final SongRepository songRepository;
     private final AlbumRepository albumRepository;
@@ -60,10 +63,13 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
     private final QueueRepository queueRepository;
     private final FavoriteRepository favoriteRepository;
     private final OpenRepository openRepository;
+    private final LrcGetRepository lrcGetRepository;
     private final LyricsRepository lyricsRepository;
     private final MutableLiveData<String> lyricsLiveData = new MutableLiveData<>(null);
     private final MutableLiveData<LyricsList> lyricsListLiveData = new MutableLiveData<>(null);
     private final MutableLiveData<Boolean> lyricsCachedLiveData = new MutableLiveData<>(false);
+    private final MutableLiveData<Integer> lyricsSourceLiveData = new MutableLiveData<>(LYRICS_SOURCE_SERVER);
+    private final MutableLiveData<Boolean> lyricsSourceSwitchAvailableLiveData = new MutableLiveData<>(false);
     private final MutableLiveData<String> descriptionLiveData = new MutableLiveData<>(null);
     private final MutableLiveData<Child> liveMedia = new MutableLiveData<>(null);
     private final MutableLiveData<AlbumID3> liveAlbum = new MutableLiveData<>(null);
@@ -75,6 +81,11 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
     private LiveData<LyricsCache> cachedLyricsSource;
     private String currentSongId;
     private final Observer<LyricsCache> cachedLyricsObserver = this::onCachedLyricsChanged;
+    private int preferredLyricsSource = LYRICS_SOURCE_SERVER;
+    private String serverLyrics;
+    private LyricsList serverLyricsList;
+    private String lrcGetLyrics;
+    private LyricsList lrcGetLyricsList;
 
 
     public PlayerBottomSheetViewModel(@NonNull Application application) {
@@ -86,6 +97,7 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
         queueRepository = new QueueRepository();
         favoriteRepository = new FavoriteRepository();
         openRepository = new OpenRepository();
+        lrcGetRepository = new LrcGetRepository();
         lyricsRepository = new LyricsRepository();
     }
 
@@ -167,9 +179,29 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
         return lyricsListLiveData;
     }
 
+    public LiveData<Integer> getLyricsSource() {
+        return lyricsSourceLiveData;
+    }
+
+    public LiveData<Boolean> getLyricsSourceSwitchAvailable() {
+        return lyricsSourceSwitchAvailableLiveData;
+    }
+
+    public boolean switchLyricsSource() {
+        if (!canSwitchLyricsSource()) {
+            return false;
+        }
+
+        preferredLyricsSource = preferredLyricsSource == LYRICS_SOURCE_SERVER
+                ? LYRICS_SOURCE_LRCLIB
+                : LYRICS_SOURCE_SERVER;
+
+        publishLyricsByPreferredSource();
+        return true;
+    }
+
     public void refreshMediaInfo(LifecycleOwner owner, Child media) {
-        lyricsLiveData.postValue(null);
-        lyricsListLiveData.postValue(null);
+        resetLyricsSources();
         lyricsCachedLiveData.postValue(false);
 
         clearCachedLyricsObserver();
@@ -195,23 +227,39 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
 
         if (OpenSubsonicExtensionsUtil.isSongLyricsExtensionAvailable()) {
             openRepository.getLyricsBySongId(media.getId()).observe(owner, lyricsList -> {
-                lyricsListLiveData.postValue(lyricsList);
-                lyricsLiveData.postValue(null);
+                serverLyricsList = hasStructuredLyrics(lyricsList) ? lyricsList : null;
+                serverLyrics = null;
+                publishLyricsByPreferredSource();
 
-                if (shouldAutoDownloadLyrics() && hasStructuredLyrics(lyricsList)) {
+                if (shouldAutoDownloadLyrics() && hasStructuredLyrics(serverLyricsList)) {
                     saveLyricsToCache(media, null, lyricsList);
                 }
             });
         } else {
             songRepository.getSongLyrics(media).observe(owner, lyrics -> {
-                lyricsLiveData.postValue(lyrics);
-                lyricsListLiveData.postValue(null);
+                serverLyrics = lyrics;
+                serverLyricsList = null;
+                publishLyricsByPreferredSource();
 
                 if (shouldAutoDownloadLyrics() && !TextUtils.isEmpty(lyrics)) {
                     saveLyricsToCache(media, lyrics, null);
                 }
             });
         }
+
+        lrcGetRepository.getLyrics(media).observe(owner, result -> {
+            if (result == null) {
+                return;
+            }
+
+            lrcGetLyrics = result.getPlainLyrics();
+            lrcGetLyricsList = hasStructuredLyrics(result.getSyncedLyrics()) ? result.getSyncedLyrics() : null;
+            publishLyricsByPreferredSource();
+
+            if (shouldAutoDownloadLyrics() && !hasAnyServerLyrics()) {
+                saveLyricsToCache(media, lrcGetLyrics, lrcGetLyricsList);
+            }
+        });
     }
 
     public LiveData<Child> getLiveMedia() {
@@ -225,8 +273,7 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
             refreshMediaInfo(owner, null);
         } else {
             clearCachedLyricsObserver();
-            lyricsLiveData.postValue(null);
-            lyricsListLiveData.postValue(null);
+            resetLyricsSources();
             lyricsCachedLiveData.postValue(false);
         }
 
@@ -342,16 +389,84 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
         if (!TextUtils.isEmpty(lyricsCache.getStructuredLyrics())) {
             try {
                 LyricsList cachedList = gson.fromJson(lyricsCache.getStructuredLyrics(), LyricsList.class);
-                lyricsListLiveData.postValue(cachedList);
-                lyricsLiveData.postValue(null);
+                serverLyricsList = cachedList;
+                serverLyrics = null;
             } catch (Exception exception) {
-                lyricsListLiveData.postValue(null);
-                lyricsLiveData.postValue(lyricsCache.getLyrics());
+                serverLyricsList = null;
+                serverLyrics = lyricsCache.getLyrics();
             }
         } else {
-            lyricsListLiveData.postValue(null);
-            lyricsLiveData.postValue(lyricsCache.getLyrics());
+            serverLyricsList = null;
+            serverLyrics = lyricsCache.getLyrics();
         }
+
+        publishLyricsByPreferredSource();
+    }
+
+    private void resetLyricsSources() {
+        preferredLyricsSource = LYRICS_SOURCE_SERVER;
+        serverLyrics = null;
+        serverLyricsList = null;
+        lrcGetLyrics = null;
+        lrcGetLyricsList = null;
+
+        lyricsSourceLiveData.postValue(LYRICS_SOURCE_SERVER);
+        lyricsSourceSwitchAvailableLiveData.postValue(false);
+        lyricsLiveData.postValue(null);
+        lyricsListLiveData.postValue(null);
+    }
+
+    private void publishLyricsByPreferredSource() {
+        boolean hasServer = hasAnyServerLyrics();
+        boolean hasLrcGet = hasAnyLrcGetLyrics();
+
+        lyricsSourceSwitchAvailableLiveData.postValue(hasServer && hasLrcGet);
+
+        int effectiveSource = preferredLyricsSource;
+        if (effectiveSource == LYRICS_SOURCE_SERVER && !hasServer && hasLrcGet) {
+            effectiveSource = LYRICS_SOURCE_LRCLIB;
+        } else if (effectiveSource == LYRICS_SOURCE_LRCLIB && !hasLrcGet && hasServer) {
+            effectiveSource = LYRICS_SOURCE_SERVER;
+        }
+
+        lyricsSourceLiveData.postValue(effectiveSource);
+
+        if (effectiveSource == LYRICS_SOURCE_LRCLIB && hasLrcGet) {
+            lyricsListLiveData.postValue(lrcGetLyricsList);
+            lyricsLiveData.postValue(lrcGetLyrics);
+            return;
+        }
+
+        if (hasServer) {
+            lyricsListLiveData.postValue(serverLyricsList);
+            lyricsLiveData.postValue(serverLyrics);
+            return;
+        }
+
+        if (hasLrcGet) {
+            lyricsListLiveData.postValue(lrcGetLyricsList);
+            lyricsLiveData.postValue(lrcGetLyrics);
+            return;
+        }
+
+        lyricsListLiveData.postValue(null);
+        lyricsLiveData.postValue(null);
+    }
+
+    private boolean canSwitchLyricsSource() {
+        return hasAnyServerLyrics() && hasAnyLrcGetLyrics();
+    }
+
+    private boolean hasAnyServerLyrics() {
+        return hasStructuredLyrics(serverLyricsList) || hasText(serverLyrics);
+    }
+
+    private boolean hasAnyLrcGetLyrics() {
+        return hasStructuredLyrics(lrcGetLyricsList) || hasText(lrcGetLyrics);
+    }
+
+    private boolean hasText(String value) {
+        return !TextUtils.isEmpty(value) && !value.trim().isEmpty();
     }
 
     private void saveLyricsToCache(Child media, String lyrics, LyricsList lyricsList) {

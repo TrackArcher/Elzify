@@ -242,6 +242,12 @@
     <string name="player_lyrics_downloaded_content_description">Lyrics downloaded for offline playback</string>
     <string name="player_lyrics_download_success">Lyrics saved for offline playback.</string>
     <string name="player_lyrics_download_failure">Lyrics are not available to download.</string>
+    <string name="player_lyrics_source_server_content_description">Using server lyrics. Tap to switch source.</string>
+    <string name="player_lyrics_source_lrclib_content_description">Using LRCLIB lyrics. Tap to switch source.</string>
+    <string name="player_lyrics_source_server_label">SERVER</string>
+    <string name="player_lyrics_source_lrclib_label">LRCLIB</string>
+    <string name="player_lyrics_source_active">Lyrics source: %1$s</string>
+    <string name="player_lyrics_source_switch_unavailable">Only one lyrics source is available for this track.</string>
     <string name="player_server_priority">Server Priority</string>
     <string name="player_unknown_format">Unknown format</string>
     <string name="player_transcoding">Transcoding</string>
