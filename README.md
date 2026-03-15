@@ -1,6 +1,4 @@
-<p align="center">
-  <img alt="Rollynn" title="Rollynn" src="mockup/svg/tempus_horizontal_logo.png" width="250">
-</p>
+<h1 align="center">Rollynn</h1>
 
 ---
 
