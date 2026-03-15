@@ -21,7 +21,6 @@ tempus-release-key.jks
 *.jks
 app/tempus/
 app/degoogled/
-/screenshots/
 /release-apks/
 *.apk
 *.aab
