@@ -28,7 +28,7 @@
     <string name="album_page_release_dates_label">Sorti le %1$s, initialement %2$s</string>
     <string name="album_page_shuffle_button">Mélanger</string>
     <string name="album_page_tracks_count_and_duration">%1$d titres  •  %2$d minutes</string>
-    <string name="app_name">Tempus</string>
+    <string name="app_name">Rollynn</string>
     <string name="artist_adapter_radio_station_starting">Recherche…</string>
     <string name="artist_bottom_sheet_instant_mix">Mix instantané</string>
     <string name="artist_bottom_sheet_shuffle">Mélanger</string>
@@ -305,22 +305,22 @@
     <string name="server_unreachable_dialog_positive_button">Continuer quand même</string>
     <string name="server_unreachable_dialog_summary">Le serveur est injoignable. Si vous décidez de continuer, cette fenêtre n\'apparaîtra plus pendant une heure.</string>
     <string name="server_unreachable_dialog_title">Serveur injoignable</string>
-    <string name="settings_about_summary">Tempus est un client open source et léger pour Subsonic, développé et compilé nativement pour Android.</string>
+    <string name="settings_about_summary">Rollynn est un client open source et léger pour Subsonic, développé et compilé nativement pour Android.</string>
     <string name="settings_about_title">À propos</string>
     <string name="settings_always_on_display">Toujours visible</string>
     <string name="settings_allow_playlist_duplicates">Autoriser l\'ajout de doublons à une playlist</string>
     <string name="settings_allow_playlist_duplicates_summary">Si activé, les doublons ne seront pas détectés à l\'ajout d\'un titre à une playlist.</string>
     <string name="settings_audio_transcode_download_format">Format de transcodage</string>
-    <string name="settings_audio_transcode_download_priority_summary">Si activé, Tempus ne forcera pas le téléchargement de la piste avec les paramètres de transcodage ci-dessous.</string>
+    <string name="settings_audio_transcode_download_priority_summary">Si activé, Rollynn ne forcera pas le téléchargement de la piste avec les paramètres de transcodage ci-dessous.</string>
     <string name="settings_audio_transcode_download_priority_title">Prioriser les paramètres du serveurs, utilisés pour le streaming, dans les téléchargements</string>
-    <string name="settings_audio_transcode_download_summary">Si activé, Tempus téléchargera les pistes transcodées.</string>
+    <string name="settings_audio_transcode_download_summary">Si activé, Rollynn téléchargera les pistes transcodées.</string>
     <string name="settings_audio_transcode_download_title">Télécharger les pistes transcodées</string>
     <string name="settings_audio_transcode_estimate_content_length_summary">Si activé, une estimation de la durée de la piste sera demandée au serveur.</string>
     <string name="settings_audio_transcode_estimate_content_length_title">Estimer la durée du contenu</string>
     <string name="settings_audio_transcode_format_download">Format de transcodage pour les téléchargements</string>
     <string name="settings_audio_transcode_format_mobile">Format de transcodage (mobile)</string>
     <string name="settings_audio_transcode_format_wifi">Format de transcodage (Wi-Fi)</string>
-    <string name="settings_audio_transcode_priority_summary">Si activé, Tempus ne forcera pas le streaming des pistes avec les paramètres ci-dessous.</string>
+    <string name="settings_audio_transcode_priority_summary">Si activé, Rollynn ne forcera pas le streaming des pistes avec les paramètres ci-dessous.</string>
     <string name="settings_audio_transcode_priority_title">Prioriser les paramètres de transcodage du serveur</string>
     <string name="settings_audio_transcode_priority_toast">La priorité au transcodage de la piste est donnée au serveur</string>
     <string name="settings_buffering_strategy">Stratégie de mise en mémoire tampon</string>
@@ -426,7 +426,7 @@
     <string name="share_subtitle_item">Date d\'expiration : %1$s</string>
     <string name="share_no_expiration">Jamais</string>
     <string name="share_unsupported_error">Le partage n\'est pas supporté ou pas activé</string>
-    <string name="asset_link_clipboard_label">Lien ressource Tempus</string>
+    <string name="asset_link_clipboard_label">Lien ressource Rollynn</string>
     <string name="asset_link_label_song">UID titre</string>
     <string name="asset_link_label_album">UID album</string>
     <string name="asset_link_label_artist">UID artiste</string>
@@ -508,9 +508,9 @@
     <string name="track_info_transcoded_suffix">Transcodé suffixe</string>
     <string name="track_info_year">Année</string>
 
-    <string name="widget_label">Widget Tempus</string>
+    <string name="widget_label">Widget Rollynn</string>
     <string name="widget_not_playing">Pas de lecture</string>
-    <string name="widget_placeholder_subtitle">Ouvrir Tempus</string>
+    <string name="widget_placeholder_subtitle">Ouvrir Rollynn</string>
     <string name="widget_time_elapsed_placeholder">0:00</string>
     <string name="widget_time_duration_placeholder">0:00</string>
     <string name="widget_content_desc_album_art">Couverture de l\'album</string>

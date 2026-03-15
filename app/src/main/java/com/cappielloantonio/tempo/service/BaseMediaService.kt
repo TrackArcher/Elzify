@@ -605,7 +605,7 @@ open class BaseMediaService : MediaLibraryService() {
             // Only try HEAD request (lightweight) - skip GET fallback as it's unreliable
             connection.requestMethod = "HEAD"
             connection.setRequestProperty("Icy-MetaData", "1")
-            connection.setRequestProperty("User-Agent", "Tempus/1.0")
+            connection.setRequestProperty("User-Agent", "Rollynn/1.0")
             connection.connectTimeout = 3000 // Reduced timeout
             connection.readTimeout = 3000
             
