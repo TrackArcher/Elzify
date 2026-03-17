@@ -856,19 +856,42 @@ open class BaseMediaService : MediaLibraryService() {
 
     private inner class CustomNetworkCallback : ConnectivityManager.NetworkCallback() {
         var wasWifi = false
+        var wasConnected = false
 
         init {
             val manager = getSystemService(ConnectivityManager::class.java)
             val network = manager.activeNetwork
             val capabilities = manager.getNetworkCapabilities(network)
-            if (capabilities != null)
+            if (capabilities != null) {
                 wasWifi = capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+            }
+            updateConnectivityState(capabilities)
+        }
+
+        private fun isOnline(capabilities: NetworkCapabilities?): Boolean {
+            return capabilities != null
+                    && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+        }
+
+        private fun updateConnectivityState(capabilities: NetworkCapabilities?) {
+            val online = isOnline(capabilities)
+            if (online && !wasConnected) {
+                MediaManager.submitPendingScrobbles()
+            }
+            wasConnected = online
+        }
+
+        override fun onAvailable(network: Network) {
+            val manager = getSystemService(ConnectivityManager::class.java)
+            updateConnectivityState(manager.getNetworkCapabilities(network))
         }
 
         override fun onCapabilitiesChanged(
             network: Network,
             networkCapabilities: NetworkCapabilities
         ) {
+            updateConnectivityState(networkCapabilities)
             val isWifi = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
             if (isWifi != wasWifi) {
                 wasWifi = isWifi
@@ -876,6 +899,12 @@ open class BaseMediaService : MediaLibraryService() {
                     updateMediaItems(mediaLibrarySession.player)
                 }
             }
+        }
+
+        override fun onLost(network: Network) {
+            val manager = getSystemService(ConnectivityManager::class.java)
+            val activeCapabilities = manager.getNetworkCapabilities(manager.activeNetwork)
+            updateConnectivityState(activeCapabilities)
         }
     }
 
@@ -888,4 +917,3 @@ open class BaseMediaService : MediaLibraryService() {
 
 private const val WIDGET_UPDATE_INTERVAL_MS = 1000L
 private const val RADIO_HEADER_CHECK_INTERVAL_SECONDS = 30L // Reduced frequency - only fallback when ICY fails
-
