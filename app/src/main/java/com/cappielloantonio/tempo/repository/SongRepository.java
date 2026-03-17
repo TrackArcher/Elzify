@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,6 +34,7 @@ public class SongRepository {
 
     private static final String TAG = "SongRepository";
     private final ScrobbleDao scrobbleDao = AppDatabase.getInstance().scrobbleDao();
+    private final AtomicBoolean pendingScrobbleSyncInProgress = new AtomicBoolean(false);
 
     public interface MediaCallbackInternal {
         void onSongsAvailable(List<Child> songs);
@@ -363,7 +365,9 @@ public class SongRepository {
         App.getSubsonicClientInstance(false).getMediaAnnotationClient().scrobble(id, submission, time).enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                if (!response.isSuccessful()) {
+                if (response.isSuccessful()) {
+                    submitPendingScrobbles();
+                } else {
                     saveScrobbleLocally(id, submission, scrobbleTime, server);
                 }
             }
@@ -385,27 +389,33 @@ public class SongRepository {
     public void submitPendingScrobbles() {
         String server = Preferences.getServerId();
         if (server == null) return;
+        if (!pendingScrobbleSyncInProgress.compareAndSet(false, true)) return;
 
         new Thread(() -> {
-            List<Scrobble> pending = scrobbleDao.getPendingScrobbles(server);
-            if (pending.isEmpty()) return;
+            try {
+                List<Scrobble> pending = scrobbleDao.getPendingScrobbles(server);
+                if (pending.isEmpty()) return;
 
-            for (Scrobble scrobble : pending) {
-                App.getSubsonicClientInstance(false).getMediaAnnotationClient()
-                        .scrobble(scrobble.getId(), scrobble.getSubmission(), scrobble.getTimestamp())
-                        .enqueue(new Callback<ApiResponse>() {
-                            @Override
-                            public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                                if (response.isSuccessful()) {
-                                    new Thread(() -> scrobbleDao.delete(scrobble)).start();
-                                }
-                            }
+                for (Scrobble scrobble : pending) {
+                    try {
+                        Response<ApiResponse> response = App.getSubsonicClientInstance(false)
+                                .getMediaAnnotationClient()
+                                .scrobble(scrobble.getId(), scrobble.getSubmission(), scrobble.getTimestamp())
+                                .execute();
 
-                            @Override
-                            public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                                // Will retry on next sync
-                            }
-                        });
+                        if (response.isSuccessful()) {
+                            scrobbleDao.delete(scrobble);
+                        } else {
+                            Log.w(TAG, "Pending scrobble sync failed with HTTP " + response.code());
+                            break;
+                        }
+                    } catch (Exception e) {
+                        Log.w(TAG, "Pending scrobble sync failed", e);
+                        break;
+                    }
+                }
+            } finally {
+                pendingScrobbleSyncInProgress.set(false);
             }
         }).start();
     }
