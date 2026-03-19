@@ -23,6 +23,7 @@ import androidx.media3.session.SessionToken;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.cappielloantonio.tempo.R;
+import com.cappielloantonio.tempo.provider.AlbumArtContentProvider;
 import com.cappielloantonio.tempo.databinding.FragmentPlayerBottomSheetBinding;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.service.MediaManager;
@@ -37,6 +38,8 @@ import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
 import com.google.android.material.elevation.SurfaceColors;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.bumptech.glide.Glide;
+import android.net.Uri;
 
 import java.util.Objects;
 import java.util.stream.IntStream;
@@ -218,10 +221,25 @@ public class PlayerBottomSheetFragment extends Fragment {
                                 : View.GONE);
             }
 
-            CustomGlideRequest.Builder
-                    .from(requireContext(), mediaMetadata.extras.getString("coverArtId"), CustomGlideRequest.ResourceType.Song)
-                    .build()
-                    .into(bind.playerHeaderLayout.playerHeaderMediaCoverImage);
+            String coverArtId = mediaMetadata.extras.getString("coverArtId");
+            String homepageUrl = mediaMetadata.extras.getString("homepageUrl");
+
+            if (Objects.equals(type, Constants.MEDIA_TYPE_RADIO)
+                    && homepageUrl != null
+                    && !homepageUrl.trim().isEmpty()
+                    && (homepageUrl.startsWith("http://") || homepageUrl.startsWith("https://"))) {
+                CustomGlideRequest.Builder
+                        .from(requireContext(), homepageUrl.trim(), CustomGlideRequest.ResourceType.Radio)
+                        .build()
+                        .into(bind.playerHeaderLayout.playerHeaderMediaCoverImage);
+            } else {
+                // Fallback to the content provider so we can still render when `homepageUrl` isn't present.
+                Uri artworkUri = coverArtId != null ? AlbumArtContentProvider.contentUri(coverArtId) : null;
+                Glide.with(requireContext())
+                        .load(artworkUri)
+                        .apply(CustomGlideRequest.createRequestOptions(requireContext(), coverArtId, CustomGlideRequest.ResourceType.Radio))
+                        .into(bind.playerHeaderLayout.playerHeaderMediaCoverImage);
+            }
         }
     }
 

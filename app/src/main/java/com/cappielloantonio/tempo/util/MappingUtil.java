@@ -213,9 +213,15 @@ public class MappingUtil {
         String homePageUrl = internetRadioStation.getHomePageUrl();
         String coverArtId = null;
 
-        if (homePageUrl != null && !homePageUrl.isEmpty() && MusicUtil.isImageUrl(homePageUrl)) {
-                String encodedUrl = Base64.encodeToString(homePageUrl.getBytes(StandardCharsets.UTF_8),
-                                Base64.URL_SAFE | Base64.NO_WRAP);
+        if (homePageUrl != null && !homePageUrl.isEmpty()
+                && (homePageUrl.startsWith("http://") || homePageUrl.startsWith("https://"))) {
+                // Subsonic `homePageUrl` is expected to point directly to an image, but it often
+                // doesn't include a file extension (e.g. /image?id=123). So we can't rely on
+                // suffix-based checks here.
+                String encodedUrl = Base64.encodeToString(
+                        homePageUrl.getBytes(StandardCharsets.UTF_8),
+                        Base64.URL_SAFE | Base64.NO_WRAP
+                );
                 coverArtId = "ir_" + encodedUrl;
                 artworkUri = AlbumArtContentProvider.contentUri(coverArtId);
         }

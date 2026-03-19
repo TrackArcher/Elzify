@@ -195,6 +195,24 @@ public class PlayerCoverFragment extends Fragment {
     }
 
     private void setCover(MediaMetadata mediaMetadata) {
+        String type = mediaMetadata.extras != null ? mediaMetadata.extras.getString("type") : null;
+
+        if (Constants.MEDIA_TYPE_RADIO.equals(type)) {
+            String homepageUrl = mediaMetadata.extras != null ? mediaMetadata.extras.getString("homepageUrl") : null;
+
+            if (homepageUrl != null) {
+                homepageUrl = homepageUrl.trim();
+            }
+            if (homepageUrl != null && !homepageUrl.isEmpty()
+                    && (homepageUrl.startsWith("http://") || homepageUrl.startsWith("https://"))) {
+                CustomGlideRequest.Builder
+                        .from(requireContext(), homepageUrl, CustomGlideRequest.ResourceType.Radio)
+                        .build()
+                        .into(bind.nowPlayingSongCoverImageView);
+                return;
+            }
+        }
+
         CustomGlideRequest.Builder
                 .from(requireContext(), mediaMetadata.extras != null ? mediaMetadata.extras.getString("coverArtId") : null, CustomGlideRequest.ResourceType.Song)
                 .build()
