@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,7 +33,6 @@ import com.cappielloantonio.tempo.subsonic.models.PlayQueue;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.fragment.pager.PlayerControllerVerticalPager;
 import com.cappielloantonio.tempo.util.Constants;
-import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
 import com.google.android.material.elevation.SurfaceColors;
@@ -115,13 +115,14 @@ public class PlayerBottomSheetFragment extends Fragment {
         mediaBrowserListenableFuture.addListener(() -> {
             try {
                 MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
+                if (mediaBrowser == null) return;
 
                 mediaBrowser.setShuffleModeEnabled(Preferences.isShuffleModeEnabled());
                 mediaBrowser.setRepeatMode(Preferences.getRepeatMode());
 
                 setMediaControllerListener(mediaBrowser);
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e("PlayerBottomSheetFragment", "Failed to bind media controller", e);
             }
         }, MoreExecutors.directExecutor());
     }
@@ -154,7 +155,7 @@ public class PlayerBottomSheetFragment extends Fragment {
             }
 
             @Override
-            public void onEvents(Player player, Player.Events events) {
+            public void onEvents(@NonNull Player player, @NonNull Player.Events events) {
                 setHeaderNextButtonState(mediaBrowser.hasNextMediaItem());
             }
 
@@ -322,7 +323,7 @@ public class PlayerBottomSheetFragment extends Fragment {
     }
 
     public void setPlayerControllerVerticalPagerDraggableState(Boolean isDraggable) {
-        ViewPager2 playerControllerVerticalPager = (ViewPager2) bind.playerBodyLayout.playerBodyBottomSheetViewPager;
+        ViewPager2 playerControllerVerticalPager = bind.playerBodyLayout.playerBodyBottomSheetViewPager;
         playerControllerVerticalPager.setUserInputEnabled(isDraggable);
     }
 
@@ -351,8 +352,11 @@ public class PlayerBottomSheetFragment extends Fragment {
 
                     if (bind == null) return;
 
-                    if (playQueue != null && !playQueue.getEntries().isEmpty()) {
-                        int index = IntStream.range(0, playQueue.getEntries().size()).filter(ix -> playQueue.getEntries().get(ix).getId().equals(playQueue.getCurrent())).findFirst().orElse(-1);
+                    if (playQueue != null && playQueue.getEntries() != null && !playQueue.getEntries().isEmpty()) {
+                        int index = IntStream.range(0, playQueue.getEntries().size())
+                                .filter(ix -> playQueue.getEntries().get(ix).getId().equals(playQueue.getCurrent()))
+                                .findFirst()
+                                .orElse(-1);
 
                         if (index != -1) {
                             bind.playerHeaderLayout.playerHeaderBookmarkMediaButton.setVisibility(View.VISIBLE);

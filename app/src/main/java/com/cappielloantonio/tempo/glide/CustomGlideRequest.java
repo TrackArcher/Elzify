@@ -75,8 +75,8 @@ public class CustomGlideRequest {
                 return AppCompatResources.getDrawable(context, R.drawable.ic_placeholder_radio);
             case Song:
                 return AppCompatResources.getDrawable(context, R.drawable.ic_placeholder_song);
-            default:
             case Unknown:
+            default:
                 return new ColorDrawable(SurfaceColors.SURFACE_5.getColor(context));
         }
     }

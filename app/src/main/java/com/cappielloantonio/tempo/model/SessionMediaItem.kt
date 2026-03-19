@@ -1,6 +1,5 @@
 package com.cappielloantonio.tempo.model
 
-import android.content.ContentResolver
 import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.Keep
@@ -20,6 +19,7 @@ import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode
 import com.cappielloantonio.tempo.util.Constants
 import com.cappielloantonio.tempo.util.MusicUtil
 import android.util.Base64
+import androidx.core.net.toUri
 import java.util.Date
 
 @UnstableApi
@@ -304,7 +304,7 @@ class SessionMediaItem() {
             }
 
             Constants.MEDIA_TYPE_RADIO -> {
-                Uri.parse(streamUrl)
+                streamUrl?.toUri() ?: Uri.EMPTY
             }
 
             else -> {

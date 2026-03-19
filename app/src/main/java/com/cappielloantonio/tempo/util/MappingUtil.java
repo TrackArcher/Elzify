@@ -1,6 +1,5 @@
 package com.cappielloantonio.tempo.util;
 
-import android.content.ContentResolver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +14,6 @@ import androidx.media3.common.util.UnstableApi;
 import androidx.media3.common.HeartRating;
 
 import com.cappielloantonio.tempo.App;
-import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.provider.AlbumArtContentProvider;
 import com.cappielloantonio.tempo.repository.DownloadRepository;
@@ -90,7 +88,7 @@ public class MappingUtil {
             bundle.putInt("originalHeight", media.getOriginalHeight() != null ? media.getOriginalHeight() : 0);
             bundle.putString("uri", uri.toString());
             
-            bundle.putString("assetLinkSong", media.getId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_SONG, media.getId()) : null);
+            bundle.putString("assetLinkSong", AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_SONG, media.getId()));
             bundle.putString("assetLinkAlbum", media.getAlbumId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ALBUM, media.getAlbumId()) : null);
             bundle.putString("assetLinkArtist", media.getArtistId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ARTIST, media.getArtistId()) : null);
             bundle.putString("assetLinkGenre", AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_GENRE, media.getGenre()));
@@ -213,6 +211,12 @@ public class MappingUtil {
         String homePageUrl = internetRadioStation.getHomePageUrl();
         String coverArtId = null;
 
+        // `MediaItem.setMediaId()` requires a non-null id; different Subsonic servers may return null here.
+        String radioId = internetRadioStation.getId();
+        if (radioId == null || radioId.isEmpty()) radioId = internetRadioStation.getStreamUrl();
+        if (radioId == null || radioId.isEmpty()) radioId = internetRadioStation.getName();
+        if (radioId == null) radioId = "radio";
+
         if (homePageUrl != null && !homePageUrl.isEmpty()
                 && (homePageUrl.startsWith("http://") || homePageUrl.startsWith("https://"))) {
                 // Subsonic `homePageUrl` is expected to point directly to an image, but it often
@@ -227,7 +231,7 @@ public class MappingUtil {
         }
 
         Bundle bundle = new Bundle();
-        bundle.putString("id", internetRadioStation.getId());
+        bundle.putString("id", radioId);
         bundle.putString("title", internetRadioStation.getName());
         bundle.putString("stationName", internetRadioStation.getName());
         bundle.putString("uri", uri.toString());
@@ -238,7 +242,7 @@ public class MappingUtil {
         }
 
         return new MediaItem.Builder()
-                .setMediaId(internetRadioStation.getId())
+                .setMediaId(radioId)
                 .setMediaMetadata(
                         new MediaMetadata.Builder()
                                 .setTitle(internetRadioStation.getName())
@@ -263,8 +267,13 @@ public class MappingUtil {
         Uri uri = getUri(podcastEpisode);
         Uri artworkUri = AlbumArtContentProvider.contentUri(podcastEpisode.getCoverArtId());
 
+        // `MediaItem.setMediaId()` requires a non-null id; different servers may return null.
+        String podcastId = podcastEpisode.getId();
+        if (podcastId == null || podcastId.isEmpty()) podcastId = podcastEpisode.getStreamId();
+        if (podcastId == null || podcastId.isEmpty()) podcastId = "podcast";
+
         Bundle bundle = new Bundle();
-        bundle.putString("id", podcastEpisode.getId());
+        bundle.putString("id", podcastId);
         bundle.putString("parentId", podcastEpisode.getParentId());
         bundle.putBoolean("isDir", podcastEpisode.isDir());
         bundle.putString("title", podcastEpisode.getTitle());
@@ -284,8 +293,8 @@ public class MappingUtil {
         bundle.putString("type", Constants.MEDIA_TYPE_PODCAST);
         bundle.putString("uri", uri.toString());
 
-        MediaItem item = new MediaItem.Builder()
-                .setMediaId(podcastEpisode.getId())
+        return new MediaItem.Builder()
+                .setMediaId(podcastId)
                 .setMediaMetadata(
                         new MediaMetadata.Builder()
                                 .setTitle(podcastEpisode.getTitle())
@@ -307,8 +316,6 @@ public class MappingUtil {
                 .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
                 .setUri(uri)
                 .build();
-
-        return item;
     }
 
     private static Uri getUri(Child media) {
@@ -344,7 +351,8 @@ public class MappingUtil {
 
     private static Uri getDownloadUri(String id) {
         Download download = new DownloadRepository().getDownload(id);
-        return download != null && !download.getDownloadUri().isEmpty() ? Uri.parse(download.getDownloadUri()) : MusicUtil.getDownloadUri(id);
+        String downloadUri = download != null ? download.getDownloadUri() : null;
+        return downloadUri != null && !downloadUri.isEmpty() ? Uri.parse(downloadUri) : MusicUtil.getDownloadUri(id);
     }
 
     public static void observeExternalAudioRefresh(LifecycleOwner owner, Runnable onRefresh) {
