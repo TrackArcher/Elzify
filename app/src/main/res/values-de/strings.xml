@@ -256,7 +256,7 @@
     <string name="server_unreachable_dialog_positive_button">Trotzdem weitermachen</string>
     <string name="server_unreachable_dialog_summary">Der angefragte Server ist nicht erreichbar. Wenn Du trotzdem weitermachst, wird dieser Dialog für eine Stunden nicht wieder erscheinen.</string>
     <string name="server_unreachable_dialog_title">Server nicht erreichbar</string>
-    <string name="settings_about_summary">Tempus ist ein nativ für Android entwickelter, leichtgewichtiger Open-Source Client für Subsonic.</string>
+    <string name="settings_about_summary">Elzify ist ein nativ für Android entwickelter, leichtgewichtiger Open-Source Client für Subsonic.</string>
     <string name="settings_about_title">Über</string>
     <string name="settings_always_on_display">Immer anzeigen</string>
     <string name="settings_audio_transcode_download_format">Transkodierungs-Format</string>

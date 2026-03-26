@@ -1,0 +1,59 @@
+package com.elzify.music.repository;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
+
+import com.elzify.music.App;
+import com.elzify.music.subsonic.base.ApiResponse;
+import com.elzify.music.subsonic.models.InternetRadioStation;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class RadioRepository {
+    public MutableLiveData<List<InternetRadioStation>> getInternetRadioStations() {
+        MutableLiveData<List<InternetRadioStation>> radioStation = new MutableLiveData<>(new ArrayList<>());
+
+        App.getSubsonicClientInstance(false)
+                .getInternetRadioClient()
+                .getInternetRadioStations()
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getInternetRadioStations() != null && response.body().getSubsonicResponse().getInternetRadioStations().getInternetRadioStations() != null) {
+                            radioStation.setValue(response.body().getSubsonicResponse().getInternetRadioStations().getInternetRadioStations());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+
+                    }
+                });
+
+        return radioStation;
+    }
+
+        public Call<ApiResponse> createInternetRadioStation(String name, String streamURL, String homepageURL) {
+        return App.getSubsonicClientInstance(false)
+                .getInternetRadioClient()
+                .createInternetRadioStation(streamURL, name, homepageURL);
+    }
+
+    public Call<ApiResponse> updateInternetRadioStation(String id, String name, String streamURL, String homepageURL) {
+        return App.getSubsonicClientInstance(false)
+                .getInternetRadioClient()
+                .updateInternetRadioStation(id, streamURL, name, homepageURL);
+    }
+
+    public Call<ApiResponse> deleteInternetRadioStation(String id) {
+        return App.getSubsonicClientInstance(false)
+                .getInternetRadioClient()
+                .deleteInternetRadioStation(id);
+    }
+
+}

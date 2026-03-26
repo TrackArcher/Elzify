@@ -271,7 +271,7 @@
     <string name="server_unreachable_dialog_positive_button">Yine de devam et</string>
     <string name="server_unreachable_dialog_summary">İstenen sunucuya ulaşılamıyor. Devam etmeyi seçerseniz bu iletişim penceresi bir saat boyunca tekrar görünmez.</string>
     <string name="server_unreachable_dialog_title">Sunucuya ulaşılamıyor</string>
-    <string name="settings_about_summary">Tempus, Subsonic için açık kaynaklı ve hafif bir müzik istemcisidir, Android için yerel olarak tasarlanıp geliştirilmiştir.</string>
+    <string name="settings_about_summary">Elzify, Subsonic için açık kaynaklı ve hafif bir müzik istemcisidir, Android için yerel olarak tasarlanıp geliştirilmiştir.</string>
     <string name="settings_about_title">Hakkında</string>
     <string name="settings_always_on_display">Her zaman açık ekran</string>
     <string name="settings_audio_transcode_download_format">Dönüştürme formatı</string>

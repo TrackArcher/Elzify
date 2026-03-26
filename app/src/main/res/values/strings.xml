@@ -333,22 +333,22 @@
     <string name="server_unreachable_dialog_positive_button">Continue anyway</string>
     <string name="server_unreachable_dialog_summary">The requested server is unavailable. If you choose to continue this dialog will not appear for the next hour.</string>
     <string name="server_unreachable_dialog_title">Server unreachable</string>
-    <string name="settings_about_summary">Tempus is an open source and lightweight music client for Subsonic, designed and built natively for Android.</string>
+    <string name="settings_about_summary">Elzify is an open source and lightweight music client for Subsonic, designed and built natively for Android.</string>
     <string name="settings_about_title">About</string>
     <string name="settings_always_on_display">Always on display</string>
     <string name="settings_allow_playlist_duplicates">Allow adding duplicates to playlist</string>
     <string name="settings_allow_playlist_duplicates_summary">If enabled, duplicates won\'t be checked while adding to a playlist.</string>
     <string name="settings_audio_transcode_download_format">Transcode format</string>
-    <string name="settings_audio_transcode_download_priority_summary">If enabled, Tempus will not force download the track with the transcode settings below.</string>
+    <string name="settings_audio_transcode_download_priority_summary">If enabled, Elzify will not force download the track with the transcode settings below.</string>
     <string name="settings_audio_transcode_download_priority_title">Prioritize server settings used for streaming in downloads</string>
-    <string name="settings_audio_transcode_download_summary">If enabled, Tempus will download transcoded tracks.</string>
+    <string name="settings_audio_transcode_download_summary">If enabled, Elzify will download transcoded tracks.</string>
     <string name="settings_audio_transcode_download_title">Download transcoded tracks</string>
     <string name="settings_audio_transcode_estimate_content_length_summary">If enabled, the server will be asked for the estimated duration of the track.</string>
     <string name="settings_audio_transcode_estimate_content_length_title">Estimate content length</string>
     <string name="settings_audio_transcode_format_download">Transcode format for downloads</string>
     <string name="settings_audio_transcode_format_mobile">Transcode format in mobile</string>
     <string name="settings_audio_transcode_format_wifi">Transcode format in Wi-Fi</string>
-    <string name="settings_audio_transcode_priority_summary">If enabled, Tempus will not force stream the track with the transcode settings below.</string>
+    <string name="settings_audio_transcode_priority_summary">If enabled, Elzify will not force stream the track with the transcode settings below.</string>
     <string name="settings_audio_transcode_priority_title">Prioritize server transcode settings</string>
     <string name="settings_audio_transcode_priority_toast">Priority on transcoding of track given to server</string>
     <string name="settings_buffering_strategy">Buffering strategy</string>
@@ -368,7 +368,7 @@
     <string name="settings_set_download_folder">Set download folder</string>
     <string name="settings_system_equalizer_summary">Adjust audio settings</string>
     <string name="settings_system_equalizer_title">System equalizer</string>
-    <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
+    <string name="settings_github_link" translatable="false">https://github.com/TrackArcher/Elzify</string>
     <string name="settings_github_summary">Follow the development</string>
     <string name="settings_github_title">Github</string>
     <string name="settings_support_discussion_link" translatable="false">https://github.com/eddyizm/tempus/discussions</string>
@@ -480,7 +480,7 @@
     <string name="share_subtitle_item">Expiration date: %1$s</string>
     <string name="share_no_expiration">Never</string>
     <string name="share_unsupported_error">Sharing is not supported or not enabled</string>
-    <string name="asset_link_clipboard_label">Tempus asset link</string>
+    <string name="asset_link_clipboard_label">Elzify asset link</string>
     <string name="asset_link_label_song">Song UID</string>
     <string name="asset_link_label_album">Album UID</string>
     <string name="asset_link_label_artist">Artist UID</string>
@@ -566,9 +566,9 @@
     <string name="undraw_page">unDraw</string>
     <string name="undraw_thanks">A special thanks goes to unDraw without whose illustrations we could not have made this application more beautiful.</string>
     <string name="undraw_url" translatable="false">https://undraw.co/</string>
-    <string name="widget_label">Tempus Widget</string>
+    <string name="widget_label" translatable="false">Elzify Widget</string>
     <string name="widget_not_playing">Not playing</string>
-    <string name="widget_placeholder_subtitle">Open Tempus</string>
+    <string name="widget_placeholder_subtitle" translatable="false">Open Elzify</string>
     <string name="widget_time_elapsed_placeholder">0:00</string>
     <string name="widget_time_duration_placeholder">0:00</string>
     <string name="widget_content_desc_album_art">Album artwork</string>

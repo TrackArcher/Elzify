@@ -332,7 +332,7 @@
     <string name="server_unreachable_dialog_positive_button">Продолжить в любом случае</string>
     <string name="server_unreachable_dialog_summary">Запрошенный сервер недоступен. Если вы продолжите, это сообщение не появится в течение следующего часа.</string>
     <string name="server_unreachable_dialog_title">Сервер недоступен</string>
-    <string name="settings_about_summary">Tempus — это легкий музыкальный клиент с открытым исходным кодом для Subsonic, разработанный специально под Android.</string>
+    <string name="settings_about_summary">Elzify — это легкий музыкальный клиент с открытым исходным кодом для Subsonic, разработанный специально под Android.</string>
     <string name="settings_about_title">О приложении</string>
     <string name="settings_always_on_display">Always On Display</string>
     <string name="settings_allow_playlist_duplicates">Разрешить дубликаты в плейлистах</string>

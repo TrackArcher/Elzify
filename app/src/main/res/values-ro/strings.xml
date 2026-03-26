@@ -306,7 +306,7 @@
     <string name="server_unreachable_dialog_positive_button">Continuaţi oricum</string>
     <string name="server_unreachable_dialog_summary">Serverul solicitat este indisponibil. Dacă alegeți să continuați, acest dialog nu va apărea pentru următoarea oră.</string>
     <string name="server_unreachable_dialog_title">Server inaccesibil</string>
-    <string name="settings_about_summary">Tempus este un client de muzică open source și ușor pentru Subsonic, proiectat și construit nativ pentru Android.</string>
+    <string name="settings_about_summary">Elzify este un client de muzică open source și ușor pentru Subsonic, proiectat și construit nativ pentru Android.</string>
     <string name="settings_about_title">Despre</string>
     <string name="settings_always_on_display">Afișaj mereu activ</string>
     <string name="settings_allow_playlist_duplicates">Permiteți adăugarea duplicatelor la playlist</string>

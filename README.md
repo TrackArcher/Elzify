@@ -27,7 +27,7 @@
     <a href="https://www.openapk.net/tempus/com.eddyizm.degoogled.tempus/"><img src="https://camo.githubusercontent.com/cd56895b28a73ebd781a65b4f567add5419e45797a5cf1485ce408e851c2318e/68747470733a2f2f7777772e6f70656e61706b2e6e65742f696d616765732f6f70656e61706b2d62616467652e706e67" width="200"></a>
 </p>
 <!-- 
-    <a href="https://f-droid.org/packages/com.cappielloantonio.notquitemy.tempo"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" width="200"></a>
+    <a href="https://f-droid.org/packages/Elzify.notquitemy.tempo"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" width="200"></a>
 -->
   
 

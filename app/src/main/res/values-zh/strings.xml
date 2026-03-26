@@ -335,7 +335,7 @@
     <string name="server_unreachable_dialog_positive_button">仍然继续</string>
     <string name="server_unreachable_dialog_summary">请求的服务器不可用。 如果您选择继续，此对话框在接下来的一个小时内将不会再次出现。</string>
     <string name="server_unreachable_dialog_title">服务器无法访问</string>
-    <string name="settings_about_summary">Tempus 是 Subsonic 的开源轻量级音乐客户端，专为 Android 设计和构建。</string>
+    <string name="settings_about_summary">Elzify 是 Subsonic 的开源轻量级音乐客户端，专为 Android 设计和构建。</string>
     <string name="settings_about_title">关于</string>
     <string name="settings_album_detail">显示专辑详情</string>
     <string name="settings_album_detail_summary">启用后将在专辑页显示流派、歌曲数量等信息</string>
