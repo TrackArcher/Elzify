@@ -75,8 +75,8 @@ public class CustomGlideRequest {
                 return AppCompatResources.getDrawable(context, R.drawable.ic_placeholder_radio);
             case Song:
                 return AppCompatResources.getDrawable(context, R.drawable.ic_placeholder_song);
-            default:
             case Unknown:
+            default:
                 return new ColorDrawable(SurfaceColors.SURFACE_5.getColor(context));
         }
     }
@@ -131,7 +131,11 @@ public class CustomGlideRequest {
             this.requestManager = Glide.with(context);
 
             if (item != null && !Preferences.isDataSavingMode()) {
-                this.item = createUrl(item, Preferences.getImageSize());
+                if (item.startsWith("http://") || item.startsWith("https://")) {
+                    this.item = item;
+                } else {
+                    this.item = createUrl(item, Preferences.getImageSize());
+                }
             }
 
             requestManager.applyDefaultRequestOptions(createRequestOptions(context, item, type));

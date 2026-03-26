@@ -14,12 +14,13 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionToken;
+
+import android.util.Log;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerCoverBinding;
@@ -41,6 +42,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 @UnstableApi
 public class PlayerCoverFragment extends Fragment {
+    private static final String TAG = "PlayerCoverFragment";
     private PlayerBottomSheetViewModel playerBottomSheetViewModel;
     private InnerFragmentPlayerCoverBinding bind;
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
@@ -139,11 +141,12 @@ public class PlayerCoverFragment extends Fragment {
                         }
                 );
 
-                bind.innerButtonBottomLeft.setOnClickListener(view -> {
-                    playerBottomSheetViewModel.getMediaInstantMix(getViewLifecycleOwner(), song).observe(getViewLifecycleOwner(), media -> {
-                        MediaManager.enqueue(mediaBrowserListenableFuture, media, true);
-                    });
-                });
+                bind.innerButtonBottomLeft.setOnClickListener(view ->
+                        playerBottomSheetViewModel.getMediaInstantMix(getViewLifecycleOwner(), song)
+                                .observe(getViewLifecycleOwner(), media ->
+                                        MediaManager.enqueue(mediaBrowserListenableFuture, media, true)
+                                )
+                );
 
                 bind.innerButtonBottomRight.setOnClickListener(view -> {
                     if (playerBottomSheetViewModel.savePlayQueue()) {
@@ -175,9 +178,11 @@ public class PlayerCoverFragment extends Fragment {
         mediaBrowserListenableFuture.addListener(() -> {
             try {
                 MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
-                setMediaBrowserListener(mediaBrowser);
+                if (mediaBrowser != null) {
+                    setMediaBrowserListener(mediaBrowser);
+                }
             } catch (Exception exception) {
-                exception.printStackTrace();
+                Log.e(TAG, "Failed to bind media controller", exception);
             }
         }, MoreExecutors.directExecutor());
     }
@@ -195,8 +200,34 @@ public class PlayerCoverFragment extends Fragment {
     }
 
     private void setCover(MediaMetadata mediaMetadata) {
+        Bundle extras = mediaMetadata.extras;
+        if (extras == null) {
+            CustomGlideRequest.Builder
+                    .from(requireContext(), null, CustomGlideRequest.ResourceType.Song)
+                    .build()
+                    .into(bind.nowPlayingSongCoverImageView);
+            return;
+        }
+        String type = extras.getString("type");
+
+        if (Constants.MEDIA_TYPE_RADIO.equals(type)) {
+            String homepageUrl = extras.getString("homepageUrl");
+
+            if (homepageUrl != null) {
+                homepageUrl = homepageUrl.trim();
+            }
+            if (homepageUrl != null && !homepageUrl.isEmpty()
+                    && (homepageUrl.startsWith("http://") || homepageUrl.startsWith("https://"))) {
+                CustomGlideRequest.Builder
+                        .from(requireContext(), homepageUrl, CustomGlideRequest.ResourceType.Radio)
+                        .build()
+                        .into(bind.nowPlayingSongCoverImageView);
+                return;
+            }
+        }
+
         CustomGlideRequest.Builder
-                .from(requireContext(), mediaMetadata.extras != null ? mediaMetadata.extras.getString("coverArtId") : null, CustomGlideRequest.ResourceType.Song)
+                .from(requireContext(), extras.getString("coverArtId"), CustomGlideRequest.ResourceType.Song)
                 .build()
                 .into(bind.nowPlayingSongCoverImageView);
     }

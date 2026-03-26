@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,6 +24,7 @@ import androidx.media3.session.SessionToken;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.cappielloantonio.tempo.R;
+import com.cappielloantonio.tempo.provider.AlbumArtContentProvider;
 import com.cappielloantonio.tempo.databinding.FragmentPlayerBottomSheetBinding;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.service.MediaManager;
@@ -31,12 +33,13 @@ import com.cappielloantonio.tempo.subsonic.models.PlayQueue;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.fragment.pager.PlayerControllerVerticalPager;
 import com.cappielloantonio.tempo.util.Constants;
-import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
 import com.google.android.material.elevation.SurfaceColors;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.bumptech.glide.Glide;
+import android.net.Uri;
 
 import java.util.Objects;
 import java.util.stream.IntStream;
@@ -112,13 +115,14 @@ public class PlayerBottomSheetFragment extends Fragment {
         mediaBrowserListenableFuture.addListener(() -> {
             try {
                 MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
+                if (mediaBrowser == null) return;
 
                 mediaBrowser.setShuffleModeEnabled(Preferences.isShuffleModeEnabled());
                 mediaBrowser.setRepeatMode(Preferences.getRepeatMode());
 
                 setMediaControllerListener(mediaBrowser);
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e("PlayerBottomSheetFragment", "Failed to bind media controller", e);
             }
         }, MoreExecutors.directExecutor());
     }
@@ -151,7 +155,7 @@ public class PlayerBottomSheetFragment extends Fragment {
             }
 
             @Override
-            public void onEvents(Player player, Player.Events events) {
+            public void onEvents(@NonNull Player player, @NonNull Player.Events events) {
                 setHeaderNextButtonState(mediaBrowser.hasNextMediaItem());
             }
 
@@ -218,10 +222,25 @@ public class PlayerBottomSheetFragment extends Fragment {
                                 : View.GONE);
             }
 
-            CustomGlideRequest.Builder
-                    .from(requireContext(), mediaMetadata.extras.getString("coverArtId"), CustomGlideRequest.ResourceType.Song)
-                    .build()
-                    .into(bind.playerHeaderLayout.playerHeaderMediaCoverImage);
+            String coverArtId = mediaMetadata.extras.getString("coverArtId");
+            String homepageUrl = mediaMetadata.extras.getString("homepageUrl");
+
+            if (Objects.equals(type, Constants.MEDIA_TYPE_RADIO)
+                    && homepageUrl != null
+                    && !homepageUrl.trim().isEmpty()
+                    && (homepageUrl.startsWith("http://") || homepageUrl.startsWith("https://"))) {
+                CustomGlideRequest.Builder
+                        .from(requireContext(), homepageUrl.trim(), CustomGlideRequest.ResourceType.Radio)
+                        .build()
+                        .into(bind.playerHeaderLayout.playerHeaderMediaCoverImage);
+            } else {
+                // Fallback to the content provider so we can still render when `homepageUrl` isn't present.
+                Uri artworkUri = coverArtId != null ? AlbumArtContentProvider.contentUri(coverArtId) : null;
+                Glide.with(requireContext())
+                        .load(artworkUri)
+                        .apply(CustomGlideRequest.createRequestOptions(requireContext(), coverArtId, CustomGlideRequest.ResourceType.Radio))
+                        .into(bind.playerHeaderLayout.playerHeaderMediaCoverImage);
+            }
         }
     }
 
@@ -304,7 +323,7 @@ public class PlayerBottomSheetFragment extends Fragment {
     }
 
     public void setPlayerControllerVerticalPagerDraggableState(Boolean isDraggable) {
-        ViewPager2 playerControllerVerticalPager = (ViewPager2) bind.playerBodyLayout.playerBodyBottomSheetViewPager;
+        ViewPager2 playerControllerVerticalPager = bind.playerBodyLayout.playerBodyBottomSheetViewPager;
         playerControllerVerticalPager.setUserInputEnabled(isDraggable);
     }
 
@@ -333,8 +352,11 @@ public class PlayerBottomSheetFragment extends Fragment {
 
                     if (bind == null) return;
 
-                    if (playQueue != null && !playQueue.getEntries().isEmpty()) {
-                        int index = IntStream.range(0, playQueue.getEntries().size()).filter(ix -> playQueue.getEntries().get(ix).getId().equals(playQueue.getCurrent())).findFirst().orElse(-1);
+                    if (playQueue != null && playQueue.getEntries() != null && !playQueue.getEntries().isEmpty()) {
+                        int index = IntStream.range(0, playQueue.getEntries().size())
+                                .filter(ix -> playQueue.getEntries().get(ix).getId().equals(playQueue.getCurrent()))
+                                .findFirst()
+                                .orElse(-1);
 
                         if (index != -1) {
                             bind.playerHeaderLayout.playerHeaderBookmarkMediaButton.setVisibility(View.VISIBLE);

@@ -1,6 +1,5 @@
 package com.cappielloantonio.tempo.model
 
-import android.content.ContentResolver
 import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.Keep
@@ -13,14 +12,14 @@ import androidx.media3.common.util.UnstableApi
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.cappielloantonio.tempo.glide.CustomGlideRequest
 import com.cappielloantonio.tempo.provider.AlbumArtContentProvider
 import com.cappielloantonio.tempo.subsonic.models.Child
 import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode
 import com.cappielloantonio.tempo.util.Constants
 import com.cappielloantonio.tempo.util.MusicUtil
-import com.cappielloantonio.tempo.util.Preferences.getImageSize
+import android.util.Base64
+import androidx.core.net.toUri
 import java.util.Date
 
 @UnstableApi
@@ -196,11 +195,13 @@ class SessionMediaItem() {
         streamUrl = internetRadioStation.streamUrl
         type = Constants.MEDIA_TYPE_RADIO
 
-        val homePageUrl = internetRadioStation.homePageUrl
-        if (homePageUrl != null && homePageUrl.isNotEmpty() && MusicUtil.isImageUrl(homePageUrl)) {
-            val encodedUrl = android.util.Base64.encodeToString(
+        val homePageUrl = internetRadioStation.homePageUrl?.trim()
+        if (!homePageUrl.isNullOrEmpty()
+            && (homePageUrl.startsWith("http://") || homePageUrl.startsWith("https://"))
+        ) {
+            val encodedUrl = Base64.encodeToString(
                 homePageUrl.toByteArray(java.nio.charset.StandardCharsets.UTF_8),
-                android.util.Base64.URL_SAFE or android.util.Base64.NO_WRAP
+                Base64.URL_SAFE or Base64.NO_WRAP
             )
             coverArtId = "ir_$encodedUrl"
         }
@@ -221,6 +222,20 @@ class SessionMediaItem() {
         bundle.putInt("year", year ?: 0)
         bundle.putString("genre", genre)
         bundle.putString("coverArtId", coverArtId)
+        // Make the radio logo available to UI for any server implementation that stores it in `homepageUrl`,
+        // even when the URL doesn't end with a common image extension.
+        if (type == Constants.MEDIA_TYPE_RADIO && coverArtId != null && coverArtId!!.startsWith("ir_")) {
+            try {
+                val encodedUrl = coverArtId!!.removePrefix("ir_")
+                val decodedBytes = Base64.decode(encodedUrl, Base64.URL_SAFE or Base64.NO_WRAP)
+                val decodedUrl = String(decodedBytes, Charsets.UTF_8).trim()
+                if (decodedUrl.isNotEmpty()) {
+                    bundle.putString("homepageUrl", decodedUrl)
+                }
+            } catch (_: IllegalArgumentException) {
+                // If decoding fails, UI will fall back to placeholders.
+            }
+        }
         bundle.putLong("size", size ?: 0)
         bundle.putString("contentType", contentType)
         bundle.putString("suffix", suffix)
@@ -289,7 +304,7 @@ class SessionMediaItem() {
             }
 
             Constants.MEDIA_TYPE_RADIO -> {
-                Uri.parse(streamUrl)
+                streamUrl?.toUri() ?: Uri.EMPTY
             }
 
             else -> {
