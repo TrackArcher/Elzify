@@ -155,7 +155,7 @@
     <string name="home_title_starred_artists_see_all_button">Alles weergeven</string>
     <string name="home_title_starred_tracks">★ Favoriete nummers</string>
     <string name="home_title_starred_tracks_see_all_button">Alles weergeven</string>
-    <string name="home_title_top_songs">Je beste nummers</string>
+    <string name="home_title_top_songs">Je meest gespeelde nummers</string>
     <string name="home_option_reorganize">Reorganiseren</string>
     <string name="library_title_album">Albums</string>
     <string name="library_title_album_see_all_button">Alles weergeven</string>
@@ -260,7 +260,7 @@
     <string name="podcast_info_empty_subtitle">Zodra je een kanaal toevoegt, verschijnt het hier</string>
     <string name="podcast_info_empty_title">Geen podcasts</string>
     <string name="podcast_release_date_duration_formatter">%1$s  •  %2$s</string>
-    <string name="radio_editor_dialog_hint_homepage_url">URL van de radiowebsite</string>
+    <string name="radio_editor_dialog_hint_homepage_url">Foto Art Url</string>
     <string name="radio_editor_dialog_hint_name">Naam van station</string>
     <string name="radio_editor_dialog_hint_stream_url">Stream-URL</string>
     <string name="radio_editor_dialog_negative_button">Annuleren</string>
