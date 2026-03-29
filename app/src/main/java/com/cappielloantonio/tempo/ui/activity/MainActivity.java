@@ -425,6 +425,14 @@ public class MainActivity extends BaseActivity {
         bind.navigationDock.dockCard.setVisibility(visibility ? View.VISIBLE : View.GONE);
     }
 
+    public void toggleBottomNavigationBarVisibilityOnOrientationChange() {
+        if (!isLandscape && Preferences.getHideBottomNavbarOnPortrait()) {
+            setBottomNavigationBarVisibility(false);
+        } else {
+            setBottomNavigationBarVisibility(true);
+        }
+    }
+
     private void initService() {
         MediaManager.check(getMediaBrowserListenableFuture());
 

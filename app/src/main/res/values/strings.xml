@@ -328,6 +328,7 @@
     <string name="server_signup_dialog_hint_password">Password</string>
     <string name="server_signup_dialog_hint_url">Server URL</string>
     <string name="server_signup_dialog_hint_username">Username</string>
+    <string name="server_signup_dialog_hint_client_certificate">Client certificate (optional)</string>
     <string name="server_signup_dialog_negative_button">Cancel</string>
     <string name="server_signup_dialog_neutral_button">Delete</string>
     <string name="server_signup_dialog_positive_button">Save</string>
@@ -600,6 +601,9 @@
 
     <string name="search_sort_title">Sort recent searches chronologically</string>
     <string name="search_sort_summary">If enabled, sort searches chronologically. Sort by name if disabled.</string>
+    <string name="search_all_songs_loading">Loading all songs...</string>
+    <string name="search_all_songs_play">Playing all songs from %1$s</string>
+    <string name="search_all_songs">%1$s songs found</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_delete">Delete</string>
     <string name="dialog_button_confirm">Confirm</string>

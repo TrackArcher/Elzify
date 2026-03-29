@@ -91,6 +91,11 @@ object Preferences {
     private const val ACCENT_COLOR = "accent_color"
     private const val NOW_PLAYING_METADATA = "now_playing_metadata"
     private const val PLAY_NEXT_BEHAVIOR = "play_next_behavior"
+    private const val CLIENT_CERT = "client_cert"
+    private const val HIDE_BOTTOM_NAVBAR_ON_PORTRAIT = "hide_bottom_navbar_on_portrait"
+    private const val ENABLE_DRAWER_ON_PORTRAIT = "enable_drawer_on_portrait"
+    private const val BITRATE_VISIBLE = "bitrate_visible"
+    private const val TILE_SIZE = "tile_size"
     const val PLAY_NEXT_BEHAVIOR_TOP = "top"
     const val PLAY_NEXT_BEHAVIOR_SEQUENTIAL = "sequential"
     
@@ -837,5 +842,55 @@ object Preferences {
         if (encryptedPrefs !== plainPrefs) {
             plainPrefs.edit().remove(Constants.LAST_FM_API_KEY).apply()
         }
+    }
+
+    @JvmStatic
+    fun getClientCert(): String? {
+        return App.getInstance().preferences.getString(CLIENT_CERT, null)
+    }
+
+    @JvmStatic
+    fun setClientCert(clientCert: String?) {
+        App.getInstance().preferences.edit().putString(CLIENT_CERT, clientCert).apply()
+    }
+
+    @JvmStatic
+    fun getHideBottomNavbarOnPortrait(): Boolean {
+        return App.getInstance().preferences.getBoolean(HIDE_BOTTOM_NAVBAR_ON_PORTRAIT, false)
+    }
+
+    @JvmStatic
+    fun setHideBottomNavbarOnPortrait(hide: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(HIDE_BOTTOM_NAVBAR_ON_PORTRAIT, hide).apply()
+    }
+
+    @JvmStatic
+    fun getEnableDrawerOnPortrait(): Boolean {
+        return App.getInstance().preferences.getBoolean(ENABLE_DRAWER_ON_PORTRAIT, false)
+    }
+
+    @JvmStatic
+    fun setEnableDrawerOnPortrait(enable: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(ENABLE_DRAWER_ON_PORTRAIT, enable).apply()
+    }
+
+    @JvmStatic
+    fun getBitrateVisible(): Boolean {
+        return App.getInstance().preferences.getBoolean(BITRATE_VISIBLE, false)
+    }
+
+    @JvmStatic
+    fun setBitrateVisible(visible: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(BITRATE_VISIBLE, visible).apply()
+    }
+
+    @JvmStatic
+    fun getTileSize(): Int {
+        return App.getInstance().preferences.getInt(TILE_SIZE, 3)
+    }
+
+    @JvmStatic
+    fun setTileSize(size: Int) {
+        App.getInstance().preferences.edit().putInt(TILE_SIZE, size).apply()
     }
 }

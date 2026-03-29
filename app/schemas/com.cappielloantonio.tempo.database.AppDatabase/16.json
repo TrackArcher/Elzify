@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 16,
-    "identityHash": "a5b837b4c1dfe92a7cfb2d7eea9f0b7f",
+    "identityHash": "47867264ef33da252bb39a7625c48d2b",
     "entities": [
       {
         "tableName": "queue",
@@ -242,7 +242,7 @@
       },
       {
         "tableName": "server",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `server_name` TEXT NOT NULL, `username` TEXT NOT NULL, `password` TEXT NOT NULL, `address` TEXT NOT NULL, `local_address` TEXT, `timestamp` INTEGER NOT NULL, `low_security` INTEGER NOT NULL DEFAULT false, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `server_name` TEXT NOT NULL, `username` TEXT NOT NULL, `password` TEXT NOT NULL, `address` TEXT NOT NULL, `local_address` TEXT, `timestamp` INTEGER NOT NULL, `low_security` INTEGER NOT NULL DEFAULT false, `client_cert` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "serverId",
@@ -292,6 +292,12 @@
             "affinity": "INTEGER",
             "notNull": true,
             "defaultValue": "false"
+          },
+          {
+            "fieldPath": "clientCert",
+            "columnName": "client_cert",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -1202,7 +1208,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a5b837b4c1dfe92a7cfb2d7eea9f0b7f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '47867264ef33da252bb39a7625c48d2b')"
     ]
   }
 }
