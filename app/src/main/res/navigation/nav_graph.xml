@@ -220,6 +220,10 @@
         <action
             android:id="@+id/action_playlistCatalogueFragment_to_playlistPageFragment"
             app:destination="@id/playlistPageFragment" />
+        <argument
+            android:name="playlist_all"
+            app:argType="string"
+            android:defaultValue="ALL" />
     </fragment>
 
     <fragment
@@ -335,6 +339,11 @@
         android:name="com.cappielloantonio.tempo.ui.fragment.bottomsheetdialog.SongBottomSheetDialog"
         android:label="SongBottomSheetDialog"
         tools:layout="@layout/bottom_sheet_song_dialog" />
+    <dialog
+        android:id="@+id/playlistBottomSheetDialog"
+        android:name="com.cappielloantonio.tempo.ui.fragment.bottomsheetdialog.PlaylistBottomSheetDialog"
+        android:label="PlaylistBottomSheetDialog"
+        tools:layout="@layout/bottom_sheet_playlist_dialog" />
     <dialog
         android:id="@+id/artistBottomSheetDialog"
         android:name="com.cappielloantonio.tempo.ui.fragment.bottomsheetdialog.ArtistBottomSheetDialog"

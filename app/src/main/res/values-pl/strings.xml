@@ -1,4 +1,21 @@
 <resources>
+    <string name="aa_albums">Albumy</string>
+    <string name="aa_album_most_played">Najczęściej odtwarzane albumy</string>
+	<string name="aa_album_recently_added">Dodane albumy</string>
+    <string name="aa_artists">Wykonawcy</string>
+    <string name="aa_home">Strona główna</string>
+	<string name="aa_made_for_you">Dla ciebie</string>
+    <string name="aa_more">Więcej</string>
+    <string name="aa_music_folder">Foldery</string>
+    <string name="aa_playlists">Playlisty</string>
+	<string name="aa_podcast">Podcasty</string>
+	<string name="aa_radio">Radio</string>
+    <string name="aa_random">Losowe</string>
+    <string name="aa_recent_albums">Ostatnie</string>
+    <string name="aa_song_recently_played">Odtwarzane piosenki</string>
+    <string name="aa_starred_albums">★ Albumy</string>
+    <string name="aa_starred_artists">★ Wykonawcy</string>
+    <string name="aa_starred_tracks">★ Utwory</string>
     <string name="activity_battery_optimizations_conclusion">Jeżeli masz problemy odwiedź stronę https://dontkillmyapp.com. Podaje ona dokładne instrukcje na temat tego jak wyłączyć funkcje oszczędzania energii które mogą wpływać na wydajność aplikacji.</string>
     <string name="activity_battery_optimizations_summary">Wyłącz optymalizacje baterii aby odtwarzać media przy wyłączonym ekranie.</string>
     <string name="activity_battery_optimizations_title">Optymalizcje Baterii</string>
@@ -207,6 +224,8 @@
     <string name="menu_unpin_button">Usuń z ekranu głównego</string>
     <string name="menu_sort_year">Rok</string>
     <string name="player_playback_speed">%1$.2fx</string>
+    <string name="playback_speed_dialog_title">Prędkość odtwarzania</string>
+    <string name="playback_speed_dialog_negative_button">Anuluj</string>
     <string name="player_queue_clean_all_button">Wyczyść kolejkę odtwarzania</string>
     <string name="player_queue_save_queue_success">Zapisano kolejkę odtwarzania</string>
     <string name="player_queue_save_to_playlist">Zapisz kolejkę do playlisty</string>
@@ -227,6 +246,8 @@
     <string name="playlist_chooser_dialog_title">Dodaj do playlisty</string>
     <string name="playlist_chooser_dialog_toast_add_success">Dodano piosenki do playlisty</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Nie udało się dodać piosenek do playlisty</string>
+    <string name="playlist_chooser_dialog_toast_remove_success">Usunięto piosenkę z playlisty</string>
+    <string name="playlist_chooser_dialog_toast_remove_failure">Nie udało się usunąć piosenki z playlisty</string>
     <string name="playlist_chooser_dialog_toast_all_skipped">Pominięto wszystkie piosenki jako duplikaty</string>
     <string name="playlist_chooser_dialog_visibility_public">Publiczna</string>
     <string name="playlist_chooser_dialog_visibility_private">Prywatna</string>
@@ -288,6 +309,7 @@
     <string name="server_signup_dialog_hint_password">Hasło</string>
     <string name="server_signup_dialog_hint_url">URL Serwera</string>
     <string name="server_signup_dialog_hint_username">Nazwa użytkownika</string>
+    <string name="server_signup_dialog_hint_client_certificate">Certyfikat klienta (opcjonalny)</string>
     <string name="server_signup_dialog_negative_button">Anuluj</string>
     <string name="server_signup_dialog_neutral_button">Usuń</string>
     <string name="server_signup_dialog_positive_button">Zapisz</string>
@@ -356,6 +378,16 @@
     <string name="settings_podcast">Pokazuj podcasty</string>
     <string name="settings_podcast_summary">Jeżeli włączone, widoczna będzie sekcja z podcastami. Zrestartuj aplikację aby, zmiany przyniosły pełny efekt.</string>
     <string name="settings_playlist_sort">Sortowanie playlist</string>
+    <string name="settings_androidauto">Android Auto</string>
+	<string name="settings_androidauto_album_view">Układ siatki dla albumów</string>
+	<string name="settings_androidauto_home_view">Układ siatki dla strony głównej</string>
+    <string name="settings_androidauto_playlist_view">Układ siatki dla playlist</string>
+    <string name="settings_androidauto_podcast_view">Układ siatki dla podcastów</string>
+    <string name="settings_androidauto_radio_view">Układ siatki dla radia</string>
+	<string name="settings_androidauto_first_tab">Pierwsza zakładka</string>
+	<string name="settings_androidauto_second_tab">Druga zakładka</string>
+	<string name="settings_androidauto_third_tab">Trzecia zakładka</string>
+	<string name="settings_androidauto_fourth_tab">Czwarta zakładka</string>
     <string name="settings_audio_quality">Pokaż jakość audio</string>
     <string name="settings_audio_quality_summary">Bitrate i format audio będzie pokazywany dla każdego utworu.</string>
     <string name="settings_song_rating">Pokaż ocenę piosenek w gwiazdkach</string>
@@ -369,6 +401,10 @@
     <string name="settings_show_mini_shuffle_button_summary">Jeżeli włączone, pokazuje przycisk losowego odtwarzania, i usuwa przycisk serca w mini odtwarzaczu</string>
     <string name="settings_radio">Pokaż radio</string>
     <string name="settings_radio_summary">Jeżeli włączone, widoczna będzie sekcja radia. Zrestartuj aplikację aby, zmiany przyniosły pełny efekt.</string>
+    <string name="settings_enable_drawer_on_landscape">Włącz szufladę w trybie pionowym [Eksperymentalne]</string>
+    <string name="settings_enable_drawer_on_landscape_summary">Odblokowywuje boczną szufladę trybu poziomego w trybie pionowym. Zmiany przyniosą efekt po restarcie.</string>
+    <string name="settings_hide_bottom_navbar_on_portrait">Ukryj dolny pasek nawigacji w trybie pionowym [Eksperymentalne]</string>
+    <string name="settings_hide_bottom_navbar_on_portrait_summary">Eksperymentalne. Zwiększa ilość miejsca w pionie przez usunięcie dolnego paska nawigacji. Zmiany przyniosą efekt po restarcie.</string>
     <string name="settings_auto_download_lyrics">Automatyczne pobieranie tesktów</string>
     <string name="settings_auto_download_lyrics_summary">Automatycznie zapisuj teksty jeżeli, są dostępne aby, mogły być wyświetlane offline.</string>
     <string name="settings_replay_gain">Tryb wzmocnienia głośności przy ponownym odtwarzaniu</string>
@@ -392,6 +428,7 @@
     <string name="settings_summary_transcoding">Priorytet dawany trybowi transkodowania. Jeżeli ustawiony na \"Odtwarzanie bezpośrednie\" bitrate pliku nie zostanie zmieniony.</string>
     <string name="settings_summary_transcoding_download">Pobieraj transkdowane media. Jeżeli włączone, endpoint pobierania nie będzie używnany, poza następującymi ustawieniami. \n\n Jeżeli \"Format transkodowania dla pobierania\" jest ustawiony na \"Pobieranie bezpośrednie\" bitrate pliku nie zostanie zmieniony.</string>
     <string name="settings_summary_transcoding_estimate_content_length">Kiedy plik jest transkodowany w locie, klient nie pokazuje zwykle długości utworu.Jest możliwe odpytanie serwera który wspiera tą funkcjonalność aby oszacował długość odtwarzanego utworu, ale czasy odpowiedzi mogą być dłuższe.</string>
+    <string name="settings_summary_landscape_items_per_row">Ma zastosowanie do wszystkich list albumów i wykonawców. Domyślnie to 4</string>
     <string name="settings_sync_starred_artists_for_offline_use_summary">Jeżeli włączone, utwory wykonawców oznaczonych gwiazdką będą pobierane do użycia offline.</string>
     <string name="settings_sync_starred_artists_for_offline_use_title">Synchronizuj wykonawców oznacznych gwiazdką do użycia offline</string>
     <string name="settings_sync_starred_albums_for_offline_use_summary">Jeżeli włączone, albumy oznaczone gwiazdką będą pobieranew do użycia offline.</string>
@@ -399,6 +436,7 @@
     <string name="settings_sync_starred_tracks_for_offline_use_summary">Jeżeli włączone, utwory oznaczone gwiazdką będą pobrane do użycia offline.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Zsynchronizuj utwory oznaczone gwiazdką do użycia offline</string>
     <string name="settings_theme">Motyw</string>
+    <string name="settings_tile_size">Rozmiar kafelków</string>
     <string name="settings_title_data">Dane</string>
     <string name="settings_title_general">Ogólne</string>
     <string name="settings_title_playlist">Playlisty</string>
@@ -412,6 +450,8 @@
     <string name="settings_title_transcoding">Transkodowanie</string>
     <string name="settings_title_transcoding_download">Transkodowanie Pobrań</string>
     <string name="settings_title_ui">Interfejs</string>
+    <string name="settings_title_ui_landscape_items_per_row">Elementów na wiersz w poziomie</string>
+    <string name="settings_title_ui_landscape_items_per_row_dialog">Liczba elementów na wiersz</string>
     <string name="settings_transcoded_download">Transkodowane pobieranie</string>
     <string name="settings_version_summary" translatable="false">0.1.2</string>
     <string name="settings_version_title">Wersja</string>
@@ -454,7 +494,8 @@
     <string name="song_bottom_sheet_instant_mix">Natychmiastowy miks</string>
     <string name="song_bottom_sheet_play_next">Odtwarzaj jako następne</string>
     <string name="song_bottom_sheet_rate">Oceń</string>
-    <string name="song_bottom_sheet_remove">Usuń</string>
+    <string name="song_bottom_sheet_remove">Usuń z urządzenia</string>
+    <string name="song_bottom_sheet_remove_from_playlist">Usuń z playlisty</string>
     <string name="song_bottom_sheet_share">Udostępnij</string>
     <string name="song_list_page_downloaded">Pobrane</string>
     <string name="song_list_page_most_played">Najczęściej odtwarzane utwory</string>
