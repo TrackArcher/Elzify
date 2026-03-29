@@ -46,7 +46,7 @@
     <string name="album_page_release_dates_label">Sorti le %1$s, initialement %2$s</string>
     <string name="album_page_shuffle_button">Mélanger</string>
     <string name="album_page_tracks_count_and_duration">%1$d titres  •  %2$d minutes</string>
-    <string name="app_name">Rollynn</string>
+    <string name="app_name">Elzify</string>
     <string name="artist_adapter_radio_station_starting">Recherche…</string>
     <string name="artist_bottom_sheet_instant_mix">Mix instantané</string>
     <string name="artist_bottom_sheet_shuffle">Mélanger</string>
@@ -323,7 +323,7 @@
     <string name="server_unreachable_dialog_positive_button">Continuer quand même</string>
     <string name="server_unreachable_dialog_summary">Le serveur est injoignable. Si vous décidez de continuer, cette fenêtre n\'apparaîtra plus pendant une heure.</string>
     <string name="server_unreachable_dialog_title">Serveur injoignable</string>
-    <string name="settings_about_summary">Rollynn est un client open source et léger pour Subsonic, développé et compilé nativement pour Android.</string>
+    <string name="settings_about_summary">Elzify est un client open source et léger pour Subsonic, développé et compilé nativement pour Android.</string>
     <string name="settings_about_title">À propos</string>
     <string name="settings_always_on_display">Toujours visible</string>
     <string name="settings_allow_playlist_duplicates">Autoriser l\'ajout de doublons à une playlist</string>

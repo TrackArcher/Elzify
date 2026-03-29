@@ -1,115 +1,139 @@
-<h1 align="center">Rollynn</h1>
+<p align="center">
+  <img alt="Tempus" title="Tempus" src="mockup/svg/tempus-horizontal-banner.png" width="250">
+</p>
 
 ---
 
 <p align="center">
-  <b>Rollynn - Subsonic music client for Android</b>
+  <b>Access your music library on all your android devices</b>
 </p>
 
 <div align="center">
 
-<a href="https://github.com/beeetfarmer/rollynn/releases/">
-  <img alt="Releases" src="https://img.shields.io/github/downloads/beeetfarmer/rollynn/total.svg?color=4B95DE&style=flat">
+<a href="https://github.com/eddyizm/tempus/releases/">
+    <img alt="Releases" src="https://img.shields.io/github/downloads/eddyizm/tempus/total.svg?color=4B95DE&style=flat">
 </a>
+  <!-- Reproducible build  -->
+<a href="https://shields.rbtlog.dev/com.eddyizm.degoogled.tempus"><img src="https://shields.rbtlog.dev/simple/com.eddyizm.degoogled.tempus" alt="RB Status"></a>
 <a href="https://www.gnu.org/licenses/gpl-3.0">
-  <img alt="License: GPL v3" src="https://img.shields.io/badge/license-GPL%20v3-2B6DBE.svg?style=flat">
+    <img src="https://img.shields.io/badge/license-GPL%20v3-2B6DBE.svg?style=flat">
 </a>
-
 </div>
 
-Rollynn is an open source, native Android Subsonic client focused on practical playback, stable syncing, and a polished player experience. It is a fork of the Tempus app with significant UI changes and added features.
+<p align="center">
+    <a href="https://github.com/eddyizm/tempus/releases"><img src="https://i.ibb.co/q0mdc4Z/get-it-on-github.png" width="200"></a>
+    <a href="https://apt.izzysoft.de/fdroid/index/apk/com.eddyizm.degoogled.tempus"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width="200"></a>
+    <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%22com.eddyizm.tempus%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2Feddyizm%2Ftempus%22%2C%22author%22%3A%22eddyizm%22%2C%22name%22%3A%22Tempus%22%2C%22preferredApkIndex%22%3A0%2C%22additionalSettings%22%3A%22%7B%5C%22includePrereleases%5C%22%3Afalse%2C%5C%22fallbackToOlderReleases%5C%22%3Atrue%2C%5C%22filterReleaseTitlesByRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22filterReleaseNotesByRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22verifyLatestTag%5C%22%3Afalse%2C%5C%22sortMethodChoice%5C%22%3A%5C%22date%5C%22%2C%5C%22useLatestAssetDateAsReleaseDate%5C%22%3Afalse%2C%5C%22releaseTitleAsVersion%5C%22%3Afalse%2C%5C%22trackOnly%5C%22%3Afalse%2C%5C%22versionExtractionRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22matchGroupToUse%5C%22%3A%5C%22%5C%22%2C%5C%22versionDetection%5C%22%3Atrue%2C%5C%22releaseDateAsVersion%5C%22%3Afalse%2C%5C%22useVersionCodeAsOSVersion%5C%22%3Afalse%2C%5C%22apkFilterRegEx%5C%22%3A%5C%22tempus%5C%22%2C%5C%22invertAPKFilter%5C%22%3Afalse%2C%5C%22autoApkFilterByArch%5C%22%3Atrue%2C%5C%22appName%5C%22%3A%5C%22%5C%22%2C%5C%22appAuthor%5C%22%3A%5C%22%5C%22%2C%5C%22shizukuPretendToBeGooglePlay%5C%22%3Afalse%2C%5C%22allowInsecure%5C%22%3Afalse%2C%5C%22exemptFromBackgroundUpdates%5C%22%3Afalse%2C%5C%22skipUpdateNotifications%5C%22%3Afalse%2C%5C%22about%5C%22%3A%5C%22%5C%22%2C%5C%22refreshBeforeDownload%5C%22%3Afalse%2C%5C%22includeZips%5C%22%3Afalse%2C%5C%22zippedApkFilterRegEx%5C%22%3A%5C%22%5C%22%7D%22%2C%22overrideSource%22%3A%22GitHub%22%7D"><img width="200" src="https://github.com/user-attachments/assets/119e7ff4-2636-43cb-ab7f-1b6a58ac3570" /></a>
+    <a href="https://www.openapk.net/tempus/com.eddyizm.degoogled.tempus/"><img src="https://camo.githubusercontent.com/cd56895b28a73ebd781a65b4f567add5419e45797a5cf1485ce408e851c2318e/68747470733a2f2f7777772e6f70656e61706b2e6e65742f696d616765732f6f70656e61706b2d62616467652e706e67" width="200"></a>
+</p>
+<!-- 
+    <a href="https://f-droid.org/packages/Elzify.notquitemy.tempo"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" width="200"></a>
+-->
+  
 
-## Screenshots
+**Tempus** is an open-source and lightweight music client for Subsonic, designed and built natively for Android. It provides a seamless and intuitive music streaming experience, allowing you to access and play your Subsonic music library directly from your Android device. 
+
+Tempus does not rely on magic algorithms to decide what you should listen to. Instead, the interface is built around your listening history, randomness, and optionally integrates with services like Listenbrainz.org and Last.fm to personalize your music experience (These must be supported by your backend). 
+
+The project is a fork of [Tempo](#credits).
+
+[Changelog](CHANGELOG.md)  
+[Wiki](USAGE.md)  
+[Donate](https://github.com/eddyizm/tempus#donate)
+
+**If you find Tempus useful, please consider starring the project on GitHub. It would mean a lot to me and help promote the app to a wider audience.**
+
+**Use the Github version of the app for full Android Auto and Chromecast support.**
+
+sha256 signing key fingerprint   
+`B7:85:01:B9:34:D0:4E:0A:CA:8D:94:AF:D6:72:6A:4D:1D:CE:65:79:7F:1D:41:71:0F:64:3C:29:00:EB:1D:1D`  
+
+### Releases  
+
+Please note the two variants in the release assets include release/debug and 32/64 bit flavors.
+
+`app-tempus` <- The github release with all the android auto/chromecast features 
+
+`app-degoogled*` <- The izzyOnDroid release that goes without any of the google stuff. It is now available on izzyOnDroid (64bit) I am releasing the both 32/64bit apk's here on github for those who need a 32bit version.
+
+
+## Features
+- **Subsonic Integration**: Tempus seamlessly integrates with your Subsonic server, providing you with easy access to your entire music collection on the go.
+- **Sleek and Intuitive UI**: Enjoy a clean and user-friendly interface designed to enhance your music listening experience, tailored to your preferences and listening history.
+- **Browse and Search**: Easily navigate through your music library using various browsing and searching options, including artists, albums, genres, playlists, decades and more.
+- **Streaming and Offline Mode**: Stream music directly from your Subsonic server. Offline mode is currently under active development and may have limitations when using multiple servers.
+- **Playlist Management**: Create, edit, and manage playlists to curate your perfect music collection.
+- **Gapless Playback**: Experience uninterrupted playback with gapless listening mode.
+- **Chromecast Support**: Stream your music to Chromecast devices. The support is currently in a rudimentary state.*
+- **Scrobbling Integration**: Optionally integrate Tempus with Last.fm or Listenbrainz.org to scrobble your played tracks, gather music insights, and further personalize your music recommendations, if supported by your Subsonic server.
+- **Podcasts and Radio**: If your Subsonic server supports it, listen to podcasts and radio shows directly within Tempus, expanding your audio entertainment options.
+- **Instant Mix**: Full refactor of instant mix function which leverages subsonics similarSongs2 by artist/album and similarSongs endpoints to server a larger play queue more reliably.
+- **Transcoding Support**: Activate transcoding of tracks on your Subsonic server, allowing you to set a transcoding profile for optimized streaming directly from the app. This feature requires support from your Subsonic server.
+- **Android Auto Support**: Enjoy your favorite music on the go with full Android Auto integration, allowing you to seamlessly control and listen to your tracks directly from your mobile device while driving.* 
+- **Multiple Libraries**: Tempus handles multi-library setups gracefully. They are displayed as Library folders.
+- **Equalizer**: Option to use in app equalizer.
+- **Widget**: New widget to keeping the basic controls on your screen at all times.
+- **Available in 11 languages**: Currently in Chinese, French, German, Italian, Korean, Polish, Portuguese, Russion, Spanish and Turkish
+
+ **Github version only*
+ 
+## Screenshot
 
 <p align="center">
-  <img src="screenshots/1.jpg" alt="Rollynn screenshot 1" width="220">
-  <img src="screenshots/2.jpg" alt="Rollynn screenshot 2" width="220">
-  <img src="screenshots/3.jpg" alt="Rollynn screenshot 3" width="220">
-  <img src="screenshots/4.jpg" alt="Rollynn screenshot 4" width="220">
+  <b>Light theme</b>
 </p>
 
-## What makes Rollynn different from Tempus:
+<p align="center">
+    <img src="mockup/1_light_tempus.png" width=200>
+    <img src="mockup/2_light_tempus.png" width=200>
+    <img src="mockup/3_light_tempus.png" width=200>
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4_light.png" width=200>
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5_light.png" width=200>
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/6_light.png" width=200>
+    <!-- <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/8_light.png" width=200> -->
+</p>
 
-### New features
-- Last.fm scrobble counts on the now-playing screen.
-- Playlist improvements: multi-playlist selection, persistent pinning, real-time sync across tabs, client-side sorting, and inline track removal.
-- Home screen additions: "Recently Played" and "Top Played" sections for artists and songs, plus a clearer History section.
-- Player improvements: sequential Play Next, searchable playlist chooser with direct Add to Playlist action, configurable metadata display, and scrobble-threshold setting.
-- Artist page redesign with categorized album carousels, circular similar artists, and improved top-songs layout.
-- LRCLIB lyrics integration with synced LRC parsing support and source switching.
-- Player metadata typography system (`Title` / `Artist` / `Album` / `Secondary`) with screen-size-aware sizing.
-- Accent-aware player background color utility and system-bar color helpers.
+<br>
 
-### UI and UX
-- Rebrand from Tempus to **Rollynn** across app name, client name, user-agent strings, and localized strings.
-- Pill-shaped navigation dock.
-- Redesigned settings with card layout and pill-tab navigation.
-- Polished mini-player and circular artist images.
-- Search moved from toolbar to navigation dock.
-- Toolbar overflow menu removed from Library/Downloads; settings accessible from dock.
-- Added Track Info action in song context menu (3-dot menu).
-- Refined player spacing and hierarchy: larger album art, reduced art-to-metadata gap, increased metadata-to-rating spacing, increased controls-to-lyrics spacing, and adjusted play-controls vertical alignment.
-- Updated player info button behavior: moved closer to album-art bottom-right and shown only on album-art page (hidden on lyrics page).
-- Home section updates: Starred Tracks now shows a random sample of 20 tracks; Latest Releases is now a horizontal album carousel with larger aligned cover sizing.
+<p align="center">
+  <b>Dark theme</b>
+</p>
 
-### Security and privacy
-- Credentials (password, token, salt, Last.fm API key) moved to encrypted preferences (`AES256-GCM`) with auto-migration from plaintext.
-- Input validation added to album-art content provider (path traversal/invalid ID protection).
-- ProGuard hardening: source filenames stripped from release stack traces.
-- OkHttp logging interceptor moved from alpha to stable `4.12.0`.
-- Last.fm API key persistence fixed via secure fallback + auto-migration.
+<p align="center">
+    <img src="mockup/1_dark_tempus.png" width=200>
+    <img src="mockup/2_dark_tempus.png" width=200>
+    <img src="mockup/3_dark_tempus.png" width=200>
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4_dark.png" width=200>
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5_dark.png" width=200>
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/6_dark.png" width=200>
+    <!-- <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/8_dark.png" width=200> -->
+    
+</p>
 
-### Performance and system behavior
-- Large-list scrolling improved by fixing RecyclerView view recycling (`getItemViewType()` issue).
-- Reduced bind overhead by caching star-rating drawables and download-tracker lookups.
-- Replaced broad `notifyDataSetChanged()` refreshes with `DiffUtil`-based targeted updates.
-- Offline scrobble syncing with original timestamps.
-- Real-time propagation of favorites, ratings, and play counts across screens.
-- Home startup reliability fixes for History and Top Played sections.
-- Improved Navidrome-backed Home request/auth reliability.
-- Reorganize button on Home now appears immediately.
-- Album page now scrolls as a single consistent surface.
-- Fixed album page blank/cut-off region near mini-player/navigation dock.
-- Improved Starred Tracks loading responsiveness by reducing cover-art request stalls.
-- Last Played albums now refresh automatically after scrobble events.
+## Contributing  
 
-### Player and visual fixes
-- Player theme consistency fixes: player background follows selected accent/theme behavior, and status/navigation bars sync correctly with player and app state.
-- Player text color fixes: metadata text now uses black in light mode and white in dark mode (instead of accent color).
-- Visual artifact fixes: removed top seam/white-line issue at player start and removed collapsed mini-player background bleed.
-- Fixed unstable Starred Tracks rendering (section disappearing/intermittent population).
-- Artist image loading reliability fixes: Glide timeout increased from `1200ms` to `8000ms`, and failed-request suppression cache removed so retries can occur.
-- Added null-safety guards in song-list and Home observers for more stable updates.
-- Cleaned up player bottom-sheet expanded/collapsed transition behavior.
+Please fork and open PR's against the development branch. Make sure your PR builds successfully. 
 
-## Core features inherited from Tempus/Tempo lineage
+If there is an UI change, please include a before/after screenshot and a short video/gif if that helps elaborating the fix/feature in the PR. 
 
-- Subsonic/OpenSubsonic library browsing and playback
-- Search, playlists, radio, podcasts (server capability dependent)
-- Gapless playback and transcoding controls
-- Optional scrobbling integrations
-- Offline downloads and lyrics download support
-- Android widget support
-- Multi-language support
+Currently there are no tests but I would love to start on some unit tests. 
 
-## Credits
+Not a hard requirement but any new feature/change should ideally include an update to the nacent documention. 
 
-Rollynn is built on top of two upstream open source projects:
+*Special Thanks*  
+All the amazing [contributors](https://github.com/eddyizm/tempus/graphs/contributors)❤️
 
-- **Tempus** by [@eddyizm](https://github.com/eddyizm)  
-  Repository: https://github.com/eddyizm/tempus
-- **Tempo** by [@CappielloAntonio](https://github.com/CappielloAntonio)  
-  Repository: https://github.com/CappielloAntonio/tempo
+## Donate
 
-Thanks to all contributors from Tempus and Tempo.
-
-## Contributing
-
-PRs are welcome. Please include:
-- a clear description of the change
-- build verification details
-- before/after screenshots or short videos for UI updates
+[**Buy me a coffee**](https://ko-fi.com/eddyizm)  
+bitcoin: `3QVHSSCJvn6yXEcJ3A3cxYLMmbvFsrnUs5`  
 
 ## License
 
-Rollynn is released under the [GNU General Public License v3.0](LICENSE).
+Tempus is released under the [GNU General Public License v3.0](LICENSE). Feel free to modify, distribute, and use the app in accordance with the terms of the license. Contributions to the project are also welcome. 
+
+
+## Credits
+Thanks to the original repo/creator [CappielloAntonio](https://github.com/CappielloAntonio) (forked from v3.9.0)
+
+[SeattleGuy](https://github.com/SeattleGuy) for the new logo design. 

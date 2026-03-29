@@ -1,0 +1,149 @@
+package com.elzify.music.util;
+
+import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
+import android.util.TypedValue;
+
+import androidx.annotation.AttrRes;
+import androidx.annotation.ColorInt;
+import androidx.core.graphics.ColorUtils;
+import androidx.core.os.LocaleListCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+
+import com.elzify.music.App;
+import com.elzify.music.R;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+public class UIUtil {
+    public static int getSpanCount(int itemCount, int maxSpan) {
+        int itemSize = itemCount == 0 ? 1 : itemCount;
+
+        if (itemSize / maxSpan > 0) {
+            return maxSpan;
+        } else {
+            return itemSize % maxSpan;
+        }
+    }
+
+    public static DividerItemDecoration getDividerItemDecoration(Context context) {
+        int[] ATTRS = new int[]{android.R.attr.listDivider};
+
+        TypedArray a = context.obtainStyledAttributes(ATTRS);
+        Drawable divider = a.getDrawable(0);
+        InsetDrawable insetDivider = new InsetDrawable(divider, 42, 0, 42, 42);
+        a.recycle();
+
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
+        itemDecoration.setDrawable(insetDivider);
+
+        return itemDecoration;
+    }
+
+    private static LocaleListCompat getLocalesFromResources(Context context) {
+        final List<String> tagsList = new ArrayList<>();
+
+        XmlPullParser xpp = context.getResources().getXml(R.xml.locale_config);
+
+        try {
+            while (xpp.getEventType() != XmlPullParser.END_DOCUMENT) {
+                String tagName = xpp.getName();
+
+                if (xpp.getEventType() == XmlPullParser.START_TAG) {
+                    if ("locale".equals(tagName) && xpp.getAttributeCount() > 0 && xpp.getAttributeName(0).equals("name")) {
+                        tagsList.add(xpp.getAttributeValue(0));
+                    }
+                }
+
+                xpp.next();
+            }
+        } catch (XmlPullParserException | IOException e) {
+            e.printStackTrace();
+        }
+
+        return LocaleListCompat.forLanguageTags(String.join(",", tagsList));
+    }
+
+    public static Map<String, String> getLangPreferenceDropdownEntries(Context context) {
+        LocaleListCompat localeList = getLocalesFromResources(context);
+
+        List<Map.Entry<String, String>> localeArrayList = new ArrayList<>();
+
+        String systemDefaultLabel = App.getContext().getString(R.string.settings_system_language);
+        String systemDefaultValue = "default";
+
+        for (int i = 0; i < localeList.size(); i++) {
+            Locale locale = localeList.get(i);
+            if (locale != null) {
+                localeArrayList.add(
+                        new AbstractMap.SimpleEntry<>(
+                                Util.toPascalCase(locale.getDisplayName()),
+                                locale.toLanguageTag()
+                        )
+                );
+            }
+        }
+
+        localeArrayList.sort(Map.Entry.comparingByKey(String.CASE_INSENSITIVE_ORDER));
+
+        LinkedHashMap<String, String> orderedMap = new LinkedHashMap<>();
+        orderedMap.put(systemDefaultLabel, systemDefaultValue);
+        for (Map.Entry<String, String> entry : localeArrayList) {
+            orderedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return orderedMap;
+    }
+
+    public static String getReadableDate(Date date) {
+        if (date == null) {
+            return App.getContext().getString(R.string.share_no_expiration); 
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
+        return formatter.format(date);
+    }
+
+    @ColorInt
+    public static int getThemeColor(Context context, @AttrRes int attr) {
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(attr, typedValue, true);
+        return typedValue.data;
+    }
+
+    @ColorInt
+    public static int getPlayerBackgroundColor(Context context) {
+        int surface = getThemeColor(context, com.google.android.material.R.attr.colorSurface);
+        int accent = Preferences.getAccentColor();
+
+        if (accent == -1) {
+            return getThemeColor(context, com.google.android.material.R.attr.colorSurfaceContainerHigh);
+        }
+
+        float blendRatio = ColorUtils.calculateLuminance(surface) > 0.5 ? 0.24f : 0.32f;
+        return ColorUtils.blendARGB(surface, accent, blendRatio);
+    }
+
+    @ColorInt
+    public static int getSystemBarColor(Context context) {
+        return getThemeColor(context, com.google.android.material.R.attr.colorSurface);
+    }
+
+    public static int dpToPx(Context context, int dp) {
+        return (int) (dp * context.getResources().getDisplayMetrics().density);
+    }
+
+}

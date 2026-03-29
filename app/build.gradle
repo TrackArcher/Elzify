@@ -16,13 +16,9 @@ android {
 
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments += [
-                        "room.schemaLocation": "$projectDir/schemas".toString(),
-                        "room.incremental"   : "true"
-                ]
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
-
     }
 
     splits {
@@ -47,12 +43,12 @@ android {
     productFlavors {
         tempus {
             dimension = "default"
-            applicationId 'com.eddyizm.tempus'
+            applicationId 'com.elzify.music'
         }
 
         degoogled {
             dimension = "default"
-            applicationId "com.eddyizm.degoogled.tempus"
+            applicationId "com.elzify.degoogled.music"
         }
 
     }
@@ -85,7 +81,7 @@ android {
         buildConfig true
     }
 
-    namespace 'com.cappielloantonio.tempo'
+    namespace 'com.elzify.music'
 }
 
 dependencies {
