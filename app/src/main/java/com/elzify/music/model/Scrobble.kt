@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.model
+package com.elzify.music.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

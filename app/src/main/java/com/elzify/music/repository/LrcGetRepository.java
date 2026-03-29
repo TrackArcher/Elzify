@@ -1,14 +1,14 @@
-package com.cappielloantonio.tempo.repository;
+package com.elzify.music.repository;
 
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
-import com.cappielloantonio.tempo.subsonic.models.Child;
-import com.cappielloantonio.tempo.subsonic.models.Line;
-import com.cappielloantonio.tempo.subsonic.models.LyricsList;
-import com.cappielloantonio.tempo.subsonic.models.StructuredLyrics;
+import com.elzify.music.subsonic.models.Child;
+import com.elzify.music.subsonic.models.Line;
+import com.elzify.music.subsonic.models.LyricsList;
+import com.elzify.music.subsonic.models.StructuredLyrics;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 

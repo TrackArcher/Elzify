@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.ui.fragment;
+package com.elzify.music.ui.fragment;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -24,23 +24,23 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners;
-import com.cappielloantonio.tempo.R;
-import com.cappielloantonio.tempo.databinding.FragmentPlaylistPageBinding;
-import com.cappielloantonio.tempo.glide.CustomGlideRequest;
-import com.cappielloantonio.tempo.interfaces.ClickCallback;
-import com.cappielloantonio.tempo.model.Download;
-import com.cappielloantonio.tempo.service.MediaManager;
-import com.cappielloantonio.tempo.service.MediaService;
-import com.cappielloantonio.tempo.ui.activity.MainActivity;
-import com.cappielloantonio.tempo.ui.adapter.SongHorizontalAdapter;
-import com.cappielloantonio.tempo.util.Constants;
-import com.cappielloantonio.tempo.util.DownloadUtil;
-import com.cappielloantonio.tempo.util.MappingUtil;
-import com.cappielloantonio.tempo.util.MusicUtil;
-import com.cappielloantonio.tempo.util.ExternalAudioWriter;
-import com.cappielloantonio.tempo.util.Preferences;
-import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
-import com.cappielloantonio.tempo.viewmodel.PlaylistPageViewModel;
+import com.elzify.music.R;
+import com.elzify.music.databinding.FragmentPlaylistPageBinding;
+import com.elzify.music.glide.CustomGlideRequest;
+import com.elzify.music.interfaces.ClickCallback;
+import com.elzify.music.model.Download;
+import com.elzify.music.service.MediaManager;
+import com.elzify.music.service.MediaService;
+import com.elzify.music.ui.activity.MainActivity;
+import com.elzify.music.ui.adapter.SongHorizontalAdapter;
+import com.elzify.music.util.Constants;
+import com.elzify.music.util.DownloadUtil;
+import com.elzify.music.util.MappingUtil;
+import com.elzify.music.util.MusicUtil;
+import com.elzify.music.util.ExternalAudioWriter;
+import com.elzify.music.util.Preferences;
+import com.elzify.music.viewmodel.PlaybackViewModel;
+import com.elzify.music.viewmodel.PlaylistPageViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import android.widget.PopupMenu;
@@ -223,7 +223,7 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
                 });
 
                 bind.playlistPageShuffleButton.setOnClickListener(v -> {
-                    java.util.List<com.cappielloantonio.tempo.subsonic.models.Child> shuffledSongs = new java.util.ArrayList<>(songs);
+                    java.util.List<com.elzify.music.subsonic.models.Child> shuffledSongs = new java.util.ArrayList<>(songs);
                     java.util.Collections.shuffle(shuffledSongs);
                     MediaManager.startQueue(mediaBrowserListenableFuture, shuffledSongs, 0);
                     activity.setBottomSheetInPeek(true);
@@ -235,7 +235,7 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
     private void initBackCover() {
         playlistPageViewModel.getPlaylistSongLiveList().observe(requireActivity(), songs -> {
             if (bind != null && songs != null && !songs.isEmpty()) {
-                java.util.List<com.cappielloantonio.tempo.subsonic.models.Child> randomSongs = new java.util.ArrayList<>(songs);
+                java.util.List<com.elzify.music.subsonic.models.Child> randomSongs = new java.util.ArrayList<>(songs);
                 java.util.Collections.shuffle(randomSongs);
 
                 // Pic top-left

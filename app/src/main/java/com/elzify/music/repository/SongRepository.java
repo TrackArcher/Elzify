@@ -1,27 +1,26 @@
-package com.cappielloantonio.tempo.repository;
+package com.elzify.music.repository;
 
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
-import com.cappielloantonio.tempo.App;
-import com.cappielloantonio.tempo.database.AppDatabase;
-import com.cappielloantonio.tempo.database.dao.ScrobbleDao;
-import com.cappielloantonio.tempo.model.Scrobble;
-import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
-import com.cappielloantonio.tempo.subsonic.models.Child;
-import com.cappielloantonio.tempo.subsonic.models.SubsonicResponse;
-import com.cappielloantonio.tempo.util.Constants.SeedType;
-import com.cappielloantonio.tempo.util.Preferences;
+import com.elzify.music.App;
+import com.elzify.music.database.AppDatabase;
+import com.elzify.music.database.dao.ScrobbleDao;
+import com.elzify.music.model.Scrobble;
+import com.elzify.music.subsonic.base.ApiResponse;
+import com.elzify.music.subsonic.models.Child;
+import com.elzify.music.subsonic.models.SubsonicResponse;
+import com.elzify.music.util.Constants.SeedType;
+import com.elzify.music.util.Preferences;
 
-import com.cappielloantonio.tempo.subsonic.api.navidrome.NavidromeClient;
+import com.elzify.music.subsonic.api.navidrome.NavidromeClient;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;

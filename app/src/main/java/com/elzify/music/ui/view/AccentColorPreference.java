@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.ui.view;
+package com.elzify.music.ui.view;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -14,8 +14,8 @@ import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceViewHolder;
 
-import com.cappielloantonio.tempo.R;
-import com.cappielloantonio.tempo.util.Preferences;
+import com.elzify.music.R;
+import com.elzify.music.util.Preferences;
 
 public class AccentColorPreference extends Preference {
 

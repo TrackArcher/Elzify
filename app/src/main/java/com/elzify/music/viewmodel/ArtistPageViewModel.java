@@ -52,8 +52,8 @@ public class ArtistPageViewModel extends AndroidViewModel {
 
     public void fetchCategorizedAlbums(androidx.lifecycle.LifecycleOwner owner) {
         artistRepository.getArtist(artist.getId()).observe(owner, artistWithAlbums -> {
-            if (artistWithAlbums != null && artistWithAlbums instanceof com.cappielloantonio.tempo.subsonic.models.ArtistWithAlbumsID3) {
-                com.cappielloantonio.tempo.subsonic.models.ArtistWithAlbumsID3 fullArtist = (com.cappielloantonio.tempo.subsonic.models.ArtistWithAlbumsID3) artistWithAlbums;
+            if (artistWithAlbums != null && artistWithAlbums instanceof com.elzify.music.subsonic.models.ArtistWithAlbumsID3) {
+                com.elzify.music.subsonic.models.ArtistWithAlbumsID3 fullArtist = (com.elzify.music.subsonic.models.ArtistWithAlbumsID3) artistWithAlbums;
                 
                 List<AlbumID3> allAlbums = fullArtist.getAlbums();
                 if (allAlbums != null) {

@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.ui.fragment;
+package com.elzify.music.ui.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,8 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.media3.common.util.UnstableApi;
 
-import com.cappielloantonio.tempo.databinding.FragmentToolbarBinding;
-import com.cappielloantonio.tempo.ui.activity.MainActivity;
+import com.elzify.music.databinding.FragmentToolbarBinding;
+import com.elzify.music.ui.activity.MainActivity;
 
 @UnstableApi
 public class ToolbarFragment extends Fragment {

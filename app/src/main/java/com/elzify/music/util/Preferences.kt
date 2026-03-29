@@ -513,10 +513,6 @@ object Preferences {
 
     @JvmStatic
     fun setDownloadDirectoryUri(uri: String?) {
-        val current = App.getInstance().preferences.getString(DOWNLOAD_DIRECTORY_URI, null)
-        if (current != uri) {
-            ExternalDownloadMetadataStore.clear()
-        }
         App.getInstance().preferences.edit().putString(DOWNLOAD_DIRECTORY_URI, uri).apply()
     }
 
@@ -886,7 +882,16 @@ object Preferences {
 
     @JvmStatic
     fun getTileSize(): Int {
-        return App.getInstance().preferences.getInt(TILE_SIZE, 3)
+        val prefs = App.getInstance().preferences
+        return try {
+            prefs.getInt(TILE_SIZE, 3)
+        } catch (e: Exception) {
+            // If it's stored as a String (e.g. from a ListPreference), parse it and fix the preference type
+            val value = try { prefs.getString(TILE_SIZE, "3") } catch (e2: Exception) { "3" }
+            val intValue = value?.toIntOrNull() ?: 3
+            prefs.edit().putInt(TILE_SIZE, intValue).apply()
+            intValue
+        }
     }
 
     @JvmStatic

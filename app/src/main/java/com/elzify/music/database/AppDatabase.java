@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.database;
+package com.elzify.music.database;
 
 import androidx.media3.common.util.UnstableApi;
 import androidx.room.AutoMigration;
@@ -7,28 +7,28 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
-import com.cappielloantonio.tempo.App;
-import com.cappielloantonio.tempo.database.converter.DateConverters;
-import com.cappielloantonio.tempo.database.dao.ChronologyDao;
-import com.cappielloantonio.tempo.database.dao.DownloadDao;
-import com.cappielloantonio.tempo.database.dao.FavoriteDao;
-import com.cappielloantonio.tempo.database.dao.LyricsDao;
-import com.cappielloantonio.tempo.database.dao.PlaylistDao;
-import com.cappielloantonio.tempo.database.dao.QueueDao;
-import com.cappielloantonio.tempo.database.dao.RecentSearchDao;
-import com.cappielloantonio.tempo.database.dao.ScrobbleDao;
-import com.cappielloantonio.tempo.database.dao.ServerDao;
-import com.cappielloantonio.tempo.database.dao.SessionMediaItemDao;
-import com.cappielloantonio.tempo.model.Chronology;
-import com.cappielloantonio.tempo.model.Download;
-import com.cappielloantonio.tempo.model.Favorite;
-import com.cappielloantonio.tempo.model.LyricsCache;
-import com.cappielloantonio.tempo.model.Queue;
-import com.cappielloantonio.tempo.model.RecentSearch;
-import com.cappielloantonio.tempo.model.Scrobble;
-import com.cappielloantonio.tempo.model.Server;
-import com.cappielloantonio.tempo.model.SessionMediaItem;
-import com.cappielloantonio.tempo.subsonic.models.Playlist;
+import com.elzify.music.App;
+import com.elzify.music.database.converter.DateConverters;
+import com.elzify.music.database.dao.ChronologyDao;
+import com.elzify.music.database.dao.DownloadDao;
+import com.elzify.music.database.dao.FavoriteDao;
+import com.elzify.music.database.dao.LyricsDao;
+import com.elzify.music.database.dao.PlaylistDao;
+import com.elzify.music.database.dao.QueueDao;
+import com.elzify.music.database.dao.RecentSearchDao;
+import com.elzify.music.database.dao.ScrobbleDao;
+import com.elzify.music.database.dao.ServerDao;
+import com.elzify.music.database.dao.SessionMediaItemDao;
+import com.elzify.music.model.Chronology;
+import com.elzify.music.model.Download;
+import com.elzify.music.model.Favorite;
+import com.elzify.music.model.LyricsCache;
+import com.elzify.music.model.Queue;
+import com.elzify.music.model.RecentSearch;
+import com.elzify.music.model.Scrobble;
+import com.elzify.music.model.Server;
+import com.elzify.music.model.SessionMediaItem;
+import com.elzify.music.subsonic.models.Playlist;
 
 @UnstableApi
 @Database(

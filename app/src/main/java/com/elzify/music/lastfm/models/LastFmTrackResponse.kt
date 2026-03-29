@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.lastfm.models
+package com.elzify.music.lastfm.models
 
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName

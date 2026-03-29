@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.viewmodel;
+package com.elzify.music.viewmodel;
 
 import android.app.Application;
 import android.text.TextUtils;
@@ -9,16 +9,16 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.cappielloantonio.tempo.repository.AlbumRepository;
-import com.cappielloantonio.tempo.repository.ChronologyRepository;
-import com.cappielloantonio.tempo.repository.ArtistRepository;
-import com.cappielloantonio.tempo.repository.SongRepository;
-import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
-import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
-import com.cappielloantonio.tempo.subsonic.models.Child;
-import com.cappielloantonio.tempo.subsonic.models.Genre;
-import com.cappielloantonio.tempo.util.Constants;
-import com.cappielloantonio.tempo.util.Preferences;
+import com.elzify.music.repository.AlbumRepository;
+import com.elzify.music.repository.ChronologyRepository;
+import com.elzify.music.repository.ArtistRepository;
+import com.elzify.music.repository.SongRepository;
+import com.elzify.music.subsonic.models.AlbumID3;
+import com.elzify.music.subsonic.models.ArtistID3;
+import com.elzify.music.subsonic.models.Child;
+import com.elzify.music.subsonic.models.Genre;
+import com.elzify.music.util.Constants;
+import com.elzify.music.util.Preferences;
 
 import java.util.ArrayList;
 import java.util.List;

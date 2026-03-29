@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.viewmodel;
+package com.elzify.music.viewmodel;
 
 import android.app.Application;
 
@@ -8,27 +8,27 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.cappielloantonio.tempo.R;
-import com.cappielloantonio.tempo.interfaces.StarCallback;
-import com.cappielloantonio.tempo.model.Chronology;
-import com.cappielloantonio.tempo.model.Favorite;
-import com.cappielloantonio.tempo.model.HomeSector;
-import com.cappielloantonio.tempo.repository.AlbumRepository;
-import com.cappielloantonio.tempo.repository.ArtistRepository;
-import com.cappielloantonio.tempo.repository.ChronologyRepository;
-import com.cappielloantonio.tempo.repository.FavoriteRepository;
-import com.cappielloantonio.tempo.repository.PlaylistRepository;
-import com.cappielloantonio.tempo.repository.SharingRepository;
-import com.cappielloantonio.tempo.repository.SongRepository;
-import com.cappielloantonio.tempo.service.MediaManager;
-import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
-import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
-import com.cappielloantonio.tempo.subsonic.models.Child;
-import com.cappielloantonio.tempo.subsonic.models.Playlist;
-import com.cappielloantonio.tempo.subsonic.models.Share;
-import com.cappielloantonio.tempo.util.Constants;
-import com.cappielloantonio.tempo.util.Constants.SeedType;
-import com.cappielloantonio.tempo.util.Preferences;
+import com.elzify.music.R;
+import com.elzify.music.interfaces.StarCallback;
+import com.elzify.music.model.Chronology;
+import com.elzify.music.model.Favorite;
+import com.elzify.music.model.HomeSector;
+import com.elzify.music.repository.AlbumRepository;
+import com.elzify.music.repository.ArtistRepository;
+import com.elzify.music.repository.ChronologyRepository;
+import com.elzify.music.repository.FavoriteRepository;
+import com.elzify.music.repository.PlaylistRepository;
+import com.elzify.music.repository.SharingRepository;
+import com.elzify.music.repository.SongRepository;
+import com.elzify.music.service.MediaManager;
+import com.elzify.music.subsonic.models.AlbumID3;
+import com.elzify.music.subsonic.models.ArtistID3;
+import com.elzify.music.subsonic.models.Child;
+import com.elzify.music.subsonic.models.Playlist;
+import com.elzify.music.subsonic.models.Share;
+import com.elzify.music.util.Constants;
+import com.elzify.music.util.Constants.SeedType;
+import com.elzify.music.util.Preferences;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 

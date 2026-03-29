@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.ui.fragment;
+package com.elzify.music.ui.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,10 +15,10 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.cappielloantonio.tempo.R;
-import com.cappielloantonio.tempo.ui.activity.MainActivity;
-import com.cappielloantonio.tempo.util.Constants;
-import com.cappielloantonio.tempo.util.Preferences;
+import com.elzify.music.R;
+import com.elzify.music.ui.activity.MainActivity;
+import com.elzify.music.util.Constants;
+import com.elzify.music.util.Preferences;
 
 import java.util.ArrayList;
 import java.util.Arrays;

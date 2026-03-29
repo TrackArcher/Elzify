@@ -1,7 +1,7 @@
-package com.cappielloantonio.tempo.lastfm.api
+package com.elzify.music.lastfm.api
 
-import com.cappielloantonio.tempo.lastfm.LastFmRetrofitClient
-import com.cappielloantonio.tempo.lastfm.models.LastFmTrackResponse
+import com.elzify.music.lastfm.LastFmRetrofitClient
+import com.elzify.music.lastfm.models.LastFmTrackResponse
 import retrofit2.Call
 
 class TrackClient {

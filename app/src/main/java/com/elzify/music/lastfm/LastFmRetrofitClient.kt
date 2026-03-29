@@ -1,6 +1,6 @@
-package com.cappielloantonio.tempo.lastfm
+package com.elzify.music.lastfm
 
-import com.cappielloantonio.tempo.BuildConfig
+import com.elzify.music.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.ui.dialog;
+package com.elzify.music.ui.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -8,14 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.media3.common.MediaMetadata;
 
-import com.cappielloantonio.tempo.R;
-import com.cappielloantonio.tempo.databinding.DialogTrackInfoBinding;
-import com.cappielloantonio.tempo.glide.CustomGlideRequest;
-import com.cappielloantonio.tempo.service.MediaManager;
-import com.cappielloantonio.tempo.util.AssetLinkUtil;
-import com.cappielloantonio.tempo.util.Constants;
-import com.cappielloantonio.tempo.util.MusicUtil;
-import com.cappielloantonio.tempo.util.Preferences;
+import com.elzify.music.R;
+import com.elzify.music.databinding.DialogTrackInfoBinding;
+import com.elzify.music.glide.CustomGlideRequest;
+import com.elzify.music.service.MediaManager;
+import com.elzify.music.util.AssetLinkUtil;
+import com.elzify.music.util.Constants;
+import com.elzify.music.util.MusicUtil;
+import com.elzify.music.util.Preferences;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.Objects;
@@ -251,7 +251,7 @@ public class TrackInfoDialog extends DialogFragment {
         view.setOnClickListener(v -> {
             dismissAllowingStateLoss();
             boolean collapse = !AssetLinkUtil.TYPE_SONG.equals(assetLink.type);
-            ((com.cappielloantonio.tempo.ui.activity.MainActivity) requireActivity()).openAssetLink(assetLink, collapse);
+            ((com.elzify.music.ui.activity.MainActivity) requireActivity()).openAssetLink(assetLink, collapse);
         });
         view.setOnLongClickListener(v -> {
             AssetLinkUtil.copyToClipboard(requireContext(), assetLink);

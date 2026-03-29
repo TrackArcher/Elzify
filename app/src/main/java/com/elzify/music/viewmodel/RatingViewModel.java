@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.viewmodel;
+package com.elzify.music.viewmodel;
 
 import android.app.Application;
 
@@ -6,13 +6,13 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.cappielloantonio.tempo.repository.AlbumRepository;
-import com.cappielloantonio.tempo.repository.ArtistRepository;
-import com.cappielloantonio.tempo.repository.SongRepository;
-import com.cappielloantonio.tempo.service.MediaManager;
-import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
-import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
-import com.cappielloantonio.tempo.subsonic.models.Child;
+import com.elzify.music.repository.AlbumRepository;
+import com.elzify.music.repository.ArtistRepository;
+import com.elzify.music.repository.SongRepository;
+import com.elzify.music.service.MediaManager;
+import com.elzify.music.subsonic.models.AlbumID3;
+import com.elzify.music.subsonic.models.ArtistID3;
+import com.elzify.music.subsonic.models.Child;
 
 public class RatingViewModel extends AndroidViewModel {
     private final SongRepository songRepository;

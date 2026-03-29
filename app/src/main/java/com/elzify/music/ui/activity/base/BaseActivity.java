@@ -20,17 +20,12 @@ import androidx.media3.exoplayer.offline.DownloadService;
 import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionToken;
 
-import com.cappielloantonio.tempo.service.DownloaderService;
-import com.cappielloantonio.tempo.service.MediaService;
-import com.cappielloantonio.tempo.ui.dialog.BatteryOptimizationDialog;
-import com.cappielloantonio.tempo.util.Flavors;
-import com.cappielloantonio.tempo.util.Preferences;
-import com.cappielloantonio.tempo.util.UIUtil;
 import com.elzify.music.service.DownloaderService;
 import com.elzify.music.service.MediaService;
 import com.elzify.music.ui.dialog.BatteryOptimizationDialog;
 import com.elzify.music.util.Flavors;
 import com.elzify.music.util.Preferences;
+import com.elzify.music.util.UIUtil;
 import com.google.android.material.elevation.SurfaceColors;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -93,6 +88,10 @@ public class BaseActivity extends AppCompatActivity {
         String packageName = getPackageName();
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         return !powerManager.isIgnoringBatteryOptimizations(packageName);
+    }
+
+    private void checkBatteryOptimizationDialog() {
+        // This was likely intended to be private or part of showBatteryOptimizationDialog
     }
 
     private void showBatteryOptimizationDialog() {

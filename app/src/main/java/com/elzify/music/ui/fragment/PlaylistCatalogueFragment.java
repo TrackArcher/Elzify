@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.ui.fragment;
+package com.elzify.music.ui.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -23,16 +23,16 @@ import androidx.media3.common.util.UnstableApi;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.cappielloantonio.tempo.R;
-import com.cappielloantonio.tempo.databinding.FragmentPlaylistCatalogueBinding;
-import com.cappielloantonio.tempo.interfaces.ClickCallback;
-import com.cappielloantonio.tempo.repository.PlaylistRepository;
-import com.cappielloantonio.tempo.subsonic.models.Playlist;
-import com.cappielloantonio.tempo.ui.activity.MainActivity;
-import com.cappielloantonio.tempo.ui.adapter.PlaylistHorizontalAdapter;
-import com.cappielloantonio.tempo.ui.dialog.PlaylistEditorDialog;
-import com.cappielloantonio.tempo.util.Constants;
-import com.cappielloantonio.tempo.viewmodel.PlaylistCatalogueViewModel;
+import com.elzify.music.R;
+import com.elzify.music.databinding.FragmentPlaylistCatalogueBinding;
+import com.elzify.music.interfaces.ClickCallback;
+import com.elzify.music.repository.PlaylistRepository;
+import com.elzify.music.subsonic.models.Playlist;
+import com.elzify.music.ui.activity.MainActivity;
+import com.elzify.music.ui.adapter.PlaylistHorizontalAdapter;
+import com.elzify.music.ui.dialog.PlaylistEditorDialog;
+import com.elzify.music.util.Constants;
+import com.elzify.music.viewmodel.PlaylistCatalogueViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.List;

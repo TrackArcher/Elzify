@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import android.util.Log;
 
 import com.elzify.music.App;
+import com.elzify.music.subsonic.api.navidrome.NavidromeClient;
 import com.elzify.music.subsonic.base.ApiResponse;
 import com.elzify.music.subsonic.models.ArtistID3;
 import com.elzify.music.subsonic.models.AlbumID3;
@@ -366,7 +367,7 @@ public class ArtistRepository {
         MutableLiveData<List<ArtistID3>> result = new MutableLiveData<>();
         java.util.concurrent.Executors.newSingleThreadExecutor().execute(() -> {
             try {
-                List<ArtistID3> artists = com.cappielloantonio.tempo.subsonic.api.navidrome.NavidromeClient.getInstance().getRecentlyPlayedArtists(count);
+                List<ArtistID3> artists = NavidromeClient.getInstance().getRecentlyPlayedArtists(count);
                 Log.d("ArtistRepository", "getRecentlyPlayedArtists: returning " + artists.size() + " artists");
                 result.postValue(artists);
             } catch (Exception e) {
@@ -381,7 +382,7 @@ public class ArtistRepository {
         MutableLiveData<List<ArtistID3>> result = new MutableLiveData<>();
         java.util.concurrent.Executors.newSingleThreadExecutor().execute(() -> {
             try {
-                List<ArtistID3> artists = com.cappielloantonio.tempo.subsonic.api.navidrome.NavidromeClient.getInstance().getTopPlayedArtists(count);
+                List<ArtistID3> artists = NavidromeClient.getInstance().getTopPlayedArtists(count);
                 Log.d("ArtistRepository", "getTopPlayedArtists: returning " + artists.size() + " artists");
                 result.postValue(artists);
             } catch (Exception e) {

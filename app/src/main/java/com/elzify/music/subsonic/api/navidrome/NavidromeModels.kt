@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.subsonic.api.navidrome
+package com.elzify.music.subsonic.api.navidrome
 
 import androidx.annotation.Keep
 

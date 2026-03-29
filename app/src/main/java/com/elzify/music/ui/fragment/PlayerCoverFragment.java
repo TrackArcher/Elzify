@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.ui.fragment;
+package com.elzify.music.ui.fragment;
 
 import android.content.ComponentName;
 import android.os.Bundle;
@@ -15,10 +15,10 @@ import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionToken;
 
-import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerCoverBinding;
-import com.cappielloantonio.tempo.glide.CustomGlideRequest;
-import com.cappielloantonio.tempo.service.MediaService;
-import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
+import com.elzify.music.databinding.InnerFragmentPlayerCoverBinding;
+import com.elzify.music.glide.CustomGlideRequest;
+import com.elzify.music.service.MediaService;
+import com.elzify.music.viewmodel.PlayerBottomSheetViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 

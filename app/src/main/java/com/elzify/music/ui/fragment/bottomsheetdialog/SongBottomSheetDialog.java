@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.ui.fragment.bottomsheetdialog;
+package com.elzify.music.ui.fragment.bottomsheetdialog;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -22,31 +22,31 @@ import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionToken;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.cappielloantonio.tempo.R;
-import com.cappielloantonio.tempo.glide.CustomGlideRequest;
-import com.cappielloantonio.tempo.model.Download;
-import com.cappielloantonio.tempo.service.MediaManager;
-import com.cappielloantonio.tempo.service.MediaService;
-import com.cappielloantonio.tempo.subsonic.models.Child;
-import com.cappielloantonio.tempo.ui.activity.MainActivity;
-import com.cappielloantonio.tempo.ui.dialog.PlaylistChooserDialog;
-import com.cappielloantonio.tempo.ui.dialog.RatingDialog;
-import com.cappielloantonio.tempo.ui.dialog.TrackInfoDialog;
-import com.cappielloantonio.tempo.util.AssetLinkUtil;
-import com.cappielloantonio.tempo.util.Constants;
-import com.cappielloantonio.tempo.util.DownloadUtil;
-import com.cappielloantonio.tempo.util.ExternalAudioReader;
-import com.cappielloantonio.tempo.util.MappingUtil;
-import com.cappielloantonio.tempo.util.MusicUtil;
-import com.cappielloantonio.tempo.util.Preferences;
-import com.cappielloantonio.tempo.viewmodel.HomeViewModel;
-import com.cappielloantonio.tempo.viewmodel.SongBottomSheetViewModel;
+import com.elzify.music.R;
+import com.elzify.music.glide.CustomGlideRequest;
+import com.elzify.music.model.Download;
+import com.elzify.music.service.MediaManager;
+import com.elzify.music.service.MediaService;
+import com.elzify.music.subsonic.models.Child;
+import com.elzify.music.ui.activity.MainActivity;
+import com.elzify.music.ui.dialog.PlaylistChooserDialog;
+import com.elzify.music.ui.dialog.RatingDialog;
+import com.elzify.music.ui.dialog.TrackInfoDialog;
+import com.elzify.music.util.AssetLinkUtil;
+import com.elzify.music.util.Constants;
+import com.elzify.music.util.DownloadUtil;
+import com.elzify.music.util.ExternalAudioReader;
+import com.elzify.music.util.MappingUtil;
+import com.elzify.music.util.MusicUtil;
+import com.elzify.music.util.Preferences;
+import com.elzify.music.viewmodel.HomeViewModel;
+import com.elzify.music.viewmodel.SongBottomSheetViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import com.cappielloantonio.tempo.util.ExternalAudioWriter;
+import com.elzify.music.util.ExternalAudioWriter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -238,7 +238,7 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
         if (playlistId != null && itemPosition != -1) {
             removeFromPlaylist.setVisibility(View.VISIBLE);
             removeFromPlaylist.setOnClickListener(v -> {
-                songBottomSheetViewModel.removeFromPlaylist(playlistId, itemPosition, new com.cappielloantonio.tempo.repository.PlaylistRepository.AddToPlaylistCallback() {
+                songBottomSheetViewModel.removeFromPlaylist(playlistId, itemPosition, new com.elzify.music.repository.PlaylistRepository.AddToPlaylistCallback() {
                     @Override
                     public void onSuccess() {
                         Toast.makeText(requireContext(), R.string.playlist_chooser_dialog_toast_remove_success, Toast.LENGTH_SHORT).show();

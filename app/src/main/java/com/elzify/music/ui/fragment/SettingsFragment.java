@@ -1,11 +1,10 @@
-package com.cappielloantonio.tempo.ui.fragment;
+package com.elzify.music.ui.fragment;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Color;
 import android.media.audiofx.AudioEffect;
 import android.net.Uri;
 import android.os.Bundle;
@@ -41,25 +40,26 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreference;
 
-import com.cappielloantonio.tempo.BuildConfig;
-import com.cappielloantonio.tempo.R;
-import com.cappielloantonio.tempo.helper.ThemeHelper;
-import com.cappielloantonio.tempo.interfaces.DialogClickCallback;
-import com.cappielloantonio.tempo.interfaces.ScanCallback;
-import com.cappielloantonio.tempo.service.EqualizerManager;
-import com.cappielloantonio.tempo.service.MediaService;
-import com.cappielloantonio.tempo.ui.activity.MainActivity;
-import com.cappielloantonio.tempo.ui.dialog.DeleteDownloadStorageDialog;
-import com.cappielloantonio.tempo.ui.dialog.DownloadStorageDialog;
-import com.cappielloantonio.tempo.ui.dialog.StarredSyncDialog;
-import com.cappielloantonio.tempo.ui.dialog.StarredAlbumSyncDialog;
-import com.cappielloantonio.tempo.ui.dialog.StarredArtistSyncDialog;
-import com.cappielloantonio.tempo.ui.dialog.StreamingCacheStorageDialog;
-import com.cappielloantonio.tempo.util.DownloadUtil;
-import com.cappielloantonio.tempo.util.Preferences;
-import com.cappielloantonio.tempo.util.UIUtil;
-import com.cappielloantonio.tempo.util.ExternalAudioReader;
-import com.cappielloantonio.tempo.viewmodel.SettingViewModel;
+import com.elzify.music.BuildConfig;
+import com.elzify.music.R;
+import com.elzify.music.helper.ThemeHelper;
+import com.elzify.music.interfaces.DialogClickCallback;
+import com.elzify.music.interfaces.ScanCallback;
+import com.elzify.music.service.EqualizerManager;
+import com.elzify.music.service.MediaService;
+import com.elzify.music.ui.activity.MainActivity;
+import com.elzify.music.ui.dialog.DeleteDownloadStorageDialog;
+import com.elzify.music.ui.dialog.DownloadStorageDialog;
+import com.elzify.music.ui.dialog.StarredSyncDialog;
+import com.elzify.music.ui.dialog.StarredAlbumSyncDialog;
+import com.elzify.music.ui.dialog.StarredArtistSyncDialog;
+import com.elzify.music.ui.dialog.StreamingCacheStorageDialog;
+import com.elzify.music.util.DownloadUtil;
+import com.elzify.music.util.Preferences;
+import com.elzify.music.util.UIUtil;
+import com.elzify.music.util.ExternalAudioReader;
+import com.elzify.music.viewmodel.SettingViewModel;
+import com.elzify.music.ui.view.SettingsItemDecoration;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
@@ -243,7 +243,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
         if (getListView() != null) {
             getListView().setPadding(0, 0, 0, (int) getResources().getDimension(R.dimen.global_padding_bottom));
             getListView().setClipToPadding(false);
-            getListView().addItemDecoration(new com.cappielloantonio.tempo.ui.view.SettingsItemDecoration(requireContext()));
+            getListView().addItemDecoration(new SettingsItemDecoration(requireContext()));
         }
 
         initAppBar(view);

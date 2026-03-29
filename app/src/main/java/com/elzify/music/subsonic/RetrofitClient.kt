@@ -1,9 +1,9 @@
-package com.cappielloantonio.tempo.subsonic
+package com.elzify.music.subsonic
 
-import com.cappielloantonio.tempo.App
-import com.cappielloantonio.tempo.subsonic.utils.CacheUtil
-import com.cappielloantonio.tempo.subsonic.utils.EmptyDateTypeAdapter
-import com.cappielloantonio.tempo.BuildConfig
+import com.elzify.music.App
+import com.elzify.music.subsonic.utils.CacheUtil
+import com.elzify.music.subsonic.utils.EmptyDateTypeAdapter
+import com.elzify.music.BuildConfig
 import com.google.gson.GsonBuilder
 import okhttp3.Cache
 import okhttp3.OkHttpClient

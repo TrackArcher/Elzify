@@ -44,11 +44,11 @@ public class PlaylistDialogSongHorizontalAdapter extends RecyclerView.Adapter<Pl
             holder.item.ratingBarLayout.setVisibility(song.getUserRating() != null && song.getUserRating() > 0 ? android.view.View.VISIBLE : android.view.View.GONE);
 
             if (song.getUserRating() != null && song.getUserRating() > 0) {
-                holder.item.oneStarIcon.setImageDrawable(androidx.appcompat.content.res.AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 1 ? com.cappielloantonio.tempo.R.drawable.ic_star : com.cappielloantonio.tempo.R.drawable.ic_star_outlined));
-                holder.item.twoStarIcon.setImageDrawable(androidx.appcompat.content.res.AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 2 ? com.cappielloantonio.tempo.R.drawable.ic_star : com.cappielloantonio.tempo.R.drawable.ic_star_outlined));
-                holder.item.threeStarIcon.setImageDrawable(androidx.appcompat.content.res.AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 3 ? com.cappielloantonio.tempo.R.drawable.ic_star : com.cappielloantonio.tempo.R.drawable.ic_star_outlined));
-                holder.item.fourStarIcon.setImageDrawable(androidx.appcompat.content.res.AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 4 ? com.cappielloantonio.tempo.R.drawable.ic_star : com.cappielloantonio.tempo.R.drawable.ic_star_outlined));
-                holder.item.fiveStarIcon.setImageDrawable(androidx.appcompat.content.res.AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 5 ? com.cappielloantonio.tempo.R.drawable.ic_star : com.cappielloantonio.tempo.R.drawable.ic_star_outlined));
+                holder.item.oneStarIcon.setImageDrawable(androidx.appcompat.content.res.AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 1 ? com.elzify.music.R.drawable.ic_star : com.elzify.music.R.drawable.ic_star_outlined));
+                holder.item.twoStarIcon.setImageDrawable(androidx.appcompat.content.res.AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 2 ? com.elzify.music.R.drawable.ic_star : com.elzify.music.R.drawable.ic_star_outlined));
+                holder.item.threeStarIcon.setImageDrawable(androidx.appcompat.content.res.AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 3 ? com.elzify.music.R.drawable.ic_star : com.elzify.music.R.drawable.ic_star_outlined));
+                holder.item.fourStarIcon.setImageDrawable(androidx.appcompat.content.res.AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 4 ? com.elzify.music.R.drawable.ic_star : com.elzify.music.R.drawable.ic_star_outlined));
+                holder.item.fiveStarIcon.setImageDrawable(androidx.appcompat.content.res.AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 5 ? com.elzify.music.R.drawable.ic_star : com.elzify.music.R.drawable.ic_star_outlined));
             }
         }
 

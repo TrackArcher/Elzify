@@ -25,7 +25,7 @@
                 app:useSimpleSummaryProvider="true"
                 app:icon="@drawable/ic_settings" />
 
-            <com.cappielloantonio.tempo.ui.view.AccentColorPreference
+            <com.elzify.music.ui.view.AccentColorPreference
                 android:key="accent_color_picker"
                 app:icon="@drawable/ic_favorite" />
 

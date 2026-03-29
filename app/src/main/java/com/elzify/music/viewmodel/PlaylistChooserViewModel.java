@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.viewmodel;
+package com.elzify.music.viewmodel;
 
 import android.app.Application;
 import android.app.Dialog;
@@ -9,11 +9,11 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.cappielloantonio.tempo.R;
-import com.cappielloantonio.tempo.repository.PlaylistRepository;
-import com.cappielloantonio.tempo.subsonic.models.Child;
-import com.cappielloantonio.tempo.subsonic.models.Playlist;
-import com.cappielloantonio.tempo.util.Preferences;
+import com.elzify.music.R;
+import com.elzify.music.repository.PlaylistRepository;
+import com.elzify.music.subsonic.models.Child;
+import com.elzify.music.subsonic.models.Playlist;
+import com.elzify.music.util.Preferences;
 import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class PlaylistChooserViewModel extends AndroidViewModel {
         for (String playlistId : playlistIds) {
             String playlistName = getPlaylistNameById(playlistId);
             if (Preferences.allowPlaylistDuplicates()) {
-                playlistRepository.addSongToPlaylist(playlistId, new ArrayList<>(songIdsToAdd), getIsPlaylistPublic(), new com.cappielloantonio.tempo.repository.PlaylistRepository.AddToPlaylistCallback() {
+                playlistRepository.addSongToPlaylist(playlistId, new ArrayList<>(songIdsToAdd), getIsPlaylistPublic(), new com.elzify.music.repository.PlaylistRepository.AddToPlaylistCallback() {
                     @Override public void onSuccess() { 
                         addedToNames.add(playlistName);
                         checkCompletion(completedRequests, totalRequests, dialog, addedToNames, skippedFromNames, failedForNames); 
@@ -91,7 +91,7 @@ public class PlaylistChooserViewModel extends AndroidViewModel {
                         List<String> playlistSongIds = Lists.transform(playlistSongs, Child::getId);
                         specificSongIdsToAdd.removeAll(playlistSongIds);
                     }
-                    playlistRepository.addSongToPlaylist(playlistId, new ArrayList<>(specificSongIdsToAdd), getIsPlaylistPublic(), new com.cappielloantonio.tempo.repository.PlaylistRepository.AddToPlaylistCallback() {
+                    playlistRepository.addSongToPlaylist(playlistId, new ArrayList<>(specificSongIdsToAdd), getIsPlaylistPublic(), new com.elzify.music.repository.PlaylistRepository.AddToPlaylistCallback() {
                         @Override public void onSuccess() { 
                             addedToNames.add(playlistName);
                             checkCompletion(completedRequests, totalRequests, dialog, addedToNames, skippedFromNames, failedForNames); 

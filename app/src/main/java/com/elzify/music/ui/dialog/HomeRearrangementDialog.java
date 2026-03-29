@@ -2,6 +2,7 @@ package com.elzify.music.ui.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -9,9 +10,9 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import com.elzify.music.R;
 import com.elzify.music.databinding.DialogHomeRearrangementBinding;
+import com.elzify.music.interfaces.HomeRearrangementCallback;
 import com.elzify.music.ui.adapter.HomeSectorHorizontalAdapter;
 import com.elzify.music.viewmodel.HomeRearrangementViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;

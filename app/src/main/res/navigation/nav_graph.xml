@@ -326,12 +326,12 @@
         tools:layout="@layout/fragment_equalizer" />
     <fragment
         android:id="@+id/dockConfigurationFragment"
-        android:name="com.cappielloantonio.tempo.ui.fragment.DockConfigurationFragment"
+        android:name="com.elzify.music.ui.fragment.DockConfigurationFragment"
         android:label="DockConfigurationFragment"
         tools:layout="@layout/fragment_dock_configuration" />
     <fragment
         android:id="@+id/metadataConfigurationFragment"
-        android:name="com.cappielloantonio.tempo.ui.fragment.MetadataConfigurationFragment"
+        android:name="com.elzify.music.ui.fragment.MetadataConfigurationFragment"
         android:label="MetadataConfigurationFragment"
         tools:layout="@layout/fragment_metadata_configuration" />
     <dialog

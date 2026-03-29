@@ -25,22 +25,23 @@ import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionToken;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.cappielloantonio.tempo.R;
-import com.cappielloantonio.tempo.databinding.FragmentPlayerBottomSheetBinding;
-import com.cappielloantonio.tempo.glide.CustomGlideRequest;
-import com.cappielloantonio.tempo.service.MediaManager;
-import com.cappielloantonio.tempo.service.MediaService;
-import com.cappielloantonio.tempo.subsonic.models.Child;
-import com.cappielloantonio.tempo.subsonic.models.PlayQueue;
+import com.elzify.music.R;
+import com.elzify.music.databinding.FragmentPlayerBottomSheetBinding;
+import com.elzify.music.glide.CustomGlideRequest;
+import com.elzify.music.service.MediaManager;
+import com.elzify.music.service.MediaService;
+import com.elzify.music.subsonic.models.Child;
+import com.elzify.music.subsonic.models.PlayQueue;
 
 import java.util.Date;
-import com.cappielloantonio.tempo.ui.activity.MainActivity;
-import com.cappielloantonio.tempo.ui.fragment.pager.PlayerControllerVerticalPager;
-import com.cappielloantonio.tempo.util.Constants;
-import com.cappielloantonio.tempo.util.MusicUtil;
-import com.cappielloantonio.tempo.util.Preferences;
-import com.cappielloantonio.tempo.util.UIUtil;
-import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
+import com.elzify.music.ui.activity.MainActivity;
+import com.elzify.music.ui.fragment.pager.PlayerControllerVerticalPager;
+import com.elzify.music.util.Constants;
+import com.elzify.music.util.MusicUtil;
+import com.elzify.music.util.Preferences;
+import com.elzify.music.util.UIUtil;
+import com.elzify.music.viewmodel.PlayerBottomSheetViewModel;
+import com.google.android.material.elevation.SurfaceColors;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.bumptech.glide.Glide;
@@ -283,10 +284,15 @@ public class PlayerBottomSheetFragment extends Fragment {
                         .into(bind.playerHeaderLayout.playerHeaderMediaCoverImage);
             } else {
                 // Fallback to the content provider so we can still render when `homepageUrl` isn't present.
-                Uri artworkUri = coverArtId != null ? AlbumArtContentProvider.contentUri(coverArtId) : null;
-                Glide.with(requireContext())
-                        .load(artworkUri)
-                        .apply(CustomGlideRequest.createRequestOptions(requireContext(), coverArtId, CustomGlideRequest.ResourceType.Radio))
+                // Uri artworkUri = coverArtId != null ? AlbumArtContentProvider.contentUri(coverArtId) : null;
+                // Glide.with(requireContext())
+                //        .load(artworkUri)
+                //        .apply(CustomGlideRequest.createRequestOptions(requireContext(), coverArtId, CustomGlideRequest.ResourceType.Radio))
+                //        .into(bind.playerHeaderLayout.playerHeaderMediaCoverImage);
+                
+                CustomGlideRequest.Builder
+                        .from(requireContext(), coverArtId, CustomGlideRequest.ResourceType.Radio)
+                        .build()
                         .into(bind.playerHeaderLayout.playerHeaderMediaCoverImage);
             }
         }

@@ -1,6 +1,6 @@
-package com.cappielloantonio.tempo.lastfm
+package com.elzify.music.lastfm
 
-import com.cappielloantonio.tempo.lastfm.api.TrackClient
+import com.elzify.music.lastfm.api.TrackClient
 
 object LastFm {
     const val BASE_URL = "https://ws.audioscrobbler.com/2.0/"

@@ -1,11 +1,11 @@
-package com.cappielloantonio.tempo.database.dao;
+package com.elzify.music.database.dao;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import com.cappielloantonio.tempo.model.Scrobble;
+import com.elzify.music.model.Scrobble;
 
 import java.util.List;
 

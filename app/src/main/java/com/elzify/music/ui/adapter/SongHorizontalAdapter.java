@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.ui.adapter;
+package com.elzify.music.ui.adapter;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
@@ -17,21 +17,21 @@ import androidx.media3.session.MediaBrowser;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.cappielloantonio.tempo.R;
-import com.cappielloantonio.tempo.databinding.ItemHorizontalTrackBinding;
-import com.cappielloantonio.tempo.glide.CustomGlideRequest;
-import com.cappielloantonio.tempo.interfaces.ClickCallback;
-import com.cappielloantonio.tempo.service.DownloaderManager;
-import com.cappielloantonio.tempo.service.MediaManager;
-import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
-import com.cappielloantonio.tempo.subsonic.models.Child;
-import com.cappielloantonio.tempo.subsonic.models.DiscTitle;
-import com.cappielloantonio.tempo.util.Constants;
-import com.cappielloantonio.tempo.util.DownloadUtil;
-import com.cappielloantonio.tempo.util.ExternalAudioReader;
-import com.cappielloantonio.tempo.util.MappingUtil;
-import com.cappielloantonio.tempo.util.MusicUtil;
-import com.cappielloantonio.tempo.util.Preferences;
+import com.elzify.music.R;
+import com.elzify.music.databinding.ItemHorizontalTrackBinding;
+import com.elzify.music.glide.CustomGlideRequest;
+import com.elzify.music.interfaces.ClickCallback;
+import com.elzify.music.service.DownloaderManager;
+import com.elzify.music.service.MediaManager;
+import com.elzify.music.subsonic.models.AlbumID3;
+import com.elzify.music.subsonic.models.Child;
+import com.elzify.music.subsonic.models.DiscTitle;
+import com.elzify.music.util.Constants;
+import com.elzify.music.util.DownloadUtil;
+import com.elzify.music.util.ExternalAudioReader;
+import com.elzify.music.util.MappingUtil;
+import com.elzify.music.util.MusicUtil;
+import com.elzify.music.util.Preferences;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;

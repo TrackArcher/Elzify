@@ -1,15 +1,16 @@
-package com.cappielloantonio.tempo.subsonic.api.navidrome
+package com.elzify.music.subsonic.api.navidrome
 
-import com.cappielloantonio.tempo.subsonic.models.ArtistID3
-import com.cappielloantonio.tempo.subsonic.models.Child
-import com.cappielloantonio.tempo.util.Preferences
-import com.cappielloantonio.tempo.BuildConfig
+import com.elzify.music.subsonic.models.ArtistID3
+import com.elzify.music.subsonic.models.Child
+import com.elzify.music.util.Preferences
+import com.elzify.music.BuildConfig
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 class NavidromeClient {
@@ -180,7 +181,7 @@ class NavidromeClient {
             name = name,
             coverArtId = coverArtId ?: "ar-$id",
             albumCount = albumCount ?: 0,
-            starred = if (starred == true) java.util.Date() else null
+            starred = if (starred == true) Date() else null
         )
     }
 
@@ -205,7 +206,7 @@ class NavidromeClient {
             playCount = playCount,
             coverArtId = coverArtId ?: id,
             userRating = rating,
-            starred = if (starred == true) java.util.Date() else null
+            starred = if (starred == true) Date() else null
         )
     }
 }

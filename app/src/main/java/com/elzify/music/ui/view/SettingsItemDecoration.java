@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.ui.view;
+package com.elzify.music.ui.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -11,8 +11,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.cappielloantonio.tempo.R;
-import com.cappielloantonio.tempo.util.UIUtil;
+import com.elzify.music.R;
+import com.elzify.music.util.UIUtil;
 
 public class SettingsItemDecoration extends RecyclerView.ItemDecoration {
 
