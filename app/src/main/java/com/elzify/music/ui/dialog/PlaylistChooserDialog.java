@@ -2,6 +2,8 @@ package com.elzify.music.ui.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Toast;
 
@@ -19,7 +21,7 @@ import com.elzify.music.util.Constants;
 import com.elzify.music.viewmodel.PlaylistChooserViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-public class PlaylistChooserDialog extends DialogFragment implements ClickCallback {
+public class PlaylistChooserDialog extends DialogFragment {
     private DialogPlaylistChooserBinding bind;
     private PlaylistChooserViewModel playlistChooserViewModel;
     private PlaylistDialogHorizontalAdapter playlistDialogHorizontalAdapter;
@@ -27,7 +29,6 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        DialogPlaylistChooserBinding.inflate(getLayoutInflater());
         bind = DialogPlaylistChooserBinding.inflate(getLayoutInflater());
 
         playlistChooserViewModel = new ViewModelProvider(requireActivity()).get(PlaylistChooserViewModel.class);
@@ -38,11 +39,23 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
         );
         bind.playlistChooserDialogCreateButton.setOnClickListener(v -> launchPlaylistEditor());
         bind.playlistChooserDialogCancelButton.setOnClickListener(v -> dismiss());
+        bind.playlistChooserDialogConfirmButton.setOnClickListener(v -> {
+            if (playlistChooserViewModel.getSongsToAdd() != null && !playlistChooserViewModel.getSongsToAdd().isEmpty()) {
+                java.util.List<String> selectedIds = playlistDialogHorizontalAdapter.getSelectedIds();
+                if (!selectedIds.isEmpty()) {
+                    playlistChooserViewModel.addSongsToPlaylists(requireActivity(), getDialog(), selectedIds);
+                } else {
+                    Toast.makeText(requireContext(), R.string.playlist_chooser_dialog_toast_add_failure, Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(requireContext(), R.string.playlist_chooser_dialog_toast_add_failure, Toast.LENGTH_SHORT).show();
+            }
+        });
 
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
+        return new MaterialAlertDialogBuilder(requireContext())
                 .setView(bind.getRoot())
-                .setTitle(R.string.playlist_chooser_dialog_title);
-        return builder.create();
+                .setTitle(R.string.playlist_chooser_dialog_title)
+                .create();
     }
 
     @Override
@@ -83,7 +96,7 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
         bind.playlistDialogRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         bind.playlistDialogRecyclerView.setHasFixedSize(true);
 
-        playlistDialogHorizontalAdapter = new PlaylistDialogHorizontalAdapter(this);
+        playlistDialogHorizontalAdapter = new PlaylistDialogHorizontalAdapter(null);
         bind.playlistDialogRecyclerView.setAdapter(playlistDialogHorizontalAdapter);
 
         playlistChooserViewModel.getPlaylistList(requireActivity()).observe(requireActivity(), playlists -> {
@@ -98,15 +111,20 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
                 }
             }
         });
-    }
 
-    @Override
-    public void onPlaylistClick(Bundle bundle) {
-        if (playlistChooserViewModel.getSongsToAdd() != null && !playlistChooserViewModel.getSongsToAdd().isEmpty()) {
-            Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
-            playlistChooserViewModel.addSongsToPlaylist(this, getDialog(), playlist.getId());
-        } else {
-            Toast.makeText(requireContext(), R.string.playlist_chooser_dialog_toast_add_failure, Toast.LENGTH_SHORT).show();
-        }
+        bind.playlistSearchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (playlistDialogHorizontalAdapter != null) {
+                    playlistDialogHorizontalAdapter.filter(s.toString());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
     }
 }

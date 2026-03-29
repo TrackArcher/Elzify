@@ -1,6 +1,5 @@
 package com.elzify.music.util
 
-import android.util.Log
 import androidx.media3.common.Player
 import com.elzify.music.App
 import com.elzify.music.model.HomeSector
@@ -16,7 +15,6 @@ object Preferences {
     private const val TOKEN = "token"
     private const val SALT = "salt"
     private const val LOW_SECURITY = "low_security"
-    private const val CLIENT_CERT = "client_cert"
     private const val BATTERY_OPTIMIZATION = "battery_optimization"
     private const val SERVER_ID = "server_id"
     private const val OPEN_SUBSONIC = "open_subsonic"
@@ -25,15 +23,12 @@ object Preferences {
     private const val IN_USE_SERVER_ADDRESS = "in_use_server_address"
     private const val NEXT_SERVER_SWITCH = "next_server_switch"
     private const val PLAYBACK_SPEED = "playback_speed"
-    private const val BITRATE_VISIBLE = "bitrate_visible"
     private const val SKIP_SILENCE = "skip_silence"
     private const val SHUFFLE_MODE = "shuffle_mode"
     private const val REPEAT_MODE = "repeat_mode"
     private const val IMAGE_CACHE_SIZE = "image_cache_size"
     private const val STREAMING_CACHE_SIZE = "streaming_cache_size"
     private const val LANDSCAPE_ITEMS_PER_ROW = "landscape_items_per_row"
-    private const val ENABLE_DRAWER_ON_PORTRAIT = "enable_drawer_on_portrait"
-    private const val HIDE_BOTTOM_NAVBAR_ON_PORTRAIT = "hide_bottom_navbar_on_portrait"
     private const val IMAGE_SIZE = "image_size"
     private const val MAX_BITRATE_WIFI = "max_bitrate_wifi"
     private const val MAX_BITRATE_MOBILE = "max_bitrate_mobile"
@@ -65,6 +60,7 @@ object Preferences {
     private const val AUDIO_TRANSCODE_FORMAT_DOWNLOAD = "audio_transcode_format_download"
     private const val SHARE = "share"
     private const val SCROBBLING = "scrobbling"
+    private const val SCROBBLE_THRESHOLD = "scrobble_threshold"
     private const val ESTIMATE_CONTENT_LENGTH = "estimate_content_length"
     private const val BUFFERING_STRATEGY = "buffering_strategy"
     private const val SKIP_MIN_STAR_RATING = "skip_min_star_rating"
@@ -91,20 +87,20 @@ object Preferences {
     private const val SORT_SEARCH_CHRONOLOGICALLY= "sort_search_chronologically"
     private const val ARTIST_DISPLAY_BIOGRAPHY= "artist_display_biography"
     private const val NETWORK_PING_TIMEOUT = "network_ping_timeout_base"
-    
+    private const val DOCK_ITEMS = "dock_items"
+    private const val ACCENT_COLOR = "accent_color"
+    private const val NOW_PLAYING_METADATA = "now_playing_metadata"
+    private const val PLAY_NEXT_BEHAVIOR = "play_next_behavior"
+    private const val CLIENT_CERT = "client_cert"
+    private const val HIDE_BOTTOM_NAVBAR_ON_PORTRAIT = "hide_bottom_navbar_on_portrait"
+    private const val ENABLE_DRAWER_ON_PORTRAIT = "enable_drawer_on_portrait"
+    private const val BITRATE_VISIBLE = "bitrate_visible"
     private const val TILE_SIZE = "tile_size"
-    private const val AA_ALBUM_VIEW = "androidauto_album_view"
-	private const val AA_HOME_VIEW = "androidauto_home_view"
-    private const val AA_PLAYLIST_VIEW = "androidauto_playlist_view"
-    private const val AA_PODCAST_VIEW = "androidauto_podcast_view"
-    private const val AA_RADIO_VIEW = "androidauto_radio_view"
-	private const val AA_FIRST_TAB = "androidauto_first_tab"
-	private const val AA_SECOND_TAB = "androidauto_second_tab"
-	private const val AA_THIRD_TAB = "androidauto_third_tab"
-	private const val AA_FOURTH_TAB = "androidauto_fourth_tab"
-    private const val AA_SHUFFLE_GENRE_SONGS = "androidauto_shuffle_genre_songs"
+    const val PLAY_NEXT_BEHAVIOR_TOP = "top"
+    const val PLAY_NEXT_BEHAVIOR_SEQUENTIAL = "sequential"
     
-	@JvmStatic
+
+    @JvmStatic
     fun getServer(): String? {
         return App.getInstance().preferences.getString(SERVER, null)
     }
@@ -139,32 +135,32 @@ object Preferences {
 
     @JvmStatic
     fun getPassword(): String? {
-        return App.getInstance().preferences.getString(PASSWORD, null)
+        return App.getInstance().encryptedPreferences.getString(PASSWORD, null)
     }
 
     @JvmStatic
     fun setPassword(password: String?) {
-        App.getInstance().preferences.edit().putString(PASSWORD, password).apply()
+        App.getInstance().encryptedPreferences.edit().putString(PASSWORD, password).apply()
     }
 
     @JvmStatic
     fun getToken(): String? {
-        return App.getInstance().preferences.getString(TOKEN, null)
+        return App.getInstance().encryptedPreferences.getString(TOKEN, null)
     }
 
     @JvmStatic
     fun setToken(token: String?) {
-        App.getInstance().preferences.edit().putString(TOKEN, token).apply()
+        App.getInstance().encryptedPreferences.edit().putString(TOKEN, token).apply()
     }
 
     @JvmStatic
     fun getSalt(): String? {
-        return App.getInstance().preferences.getString(SALT, null)
+        return App.getInstance().encryptedPreferences.getString(SALT, null)
     }
 
     @JvmStatic
     fun setSalt(salt: String?) {
-        App.getInstance().preferences.edit().putString(SALT, salt).apply()
+        App.getInstance().encryptedPreferences.edit().putString(SALT, salt).apply()
     }
 
     @JvmStatic
@@ -175,16 +171,6 @@ object Preferences {
     @JvmStatic
     fun setLowSecurity(isLowSecurity: Boolean) {
         App.getInstance().preferences.edit().putBoolean(LOW_SECURITY, isLowSecurity).apply()
-    }
-
-    @JvmStatic
-    fun getClientCert(): String? {
-        return App.getInstance().preferences.getString(CLIENT_CERT, null)
-    }
-
-    @JvmStatic
-    fun setClientCert(clientCert: String?) {
-        App.getInstance().preferences.edit().putString(CLIENT_CERT, clientCert).apply()
     }
 
     @JvmStatic
@@ -296,16 +282,6 @@ object Preferences {
     }
 
     @JvmStatic
-    fun getBitrateVisible(): Boolean {
-        return App.getInstance().preferences.getBoolean(BITRATE_VISIBLE, true)
-    }
-
-    @JvmStatic
-    fun setBitrateVisible(bitrateVisible: Boolean) {
-        App.getInstance().preferences.edit().putBoolean(BITRATE_VISIBLE, bitrateVisible).apply()
-    }
-
-    @JvmStatic
     fun isSkipSilenceMode(): Boolean {
         return App.getInstance().preferences.getBoolean(SKIP_SILENCE, false)
     }
@@ -343,16 +319,6 @@ object Preferences {
     @JvmStatic
     fun getLandscapeItemsPerRow(): Int {
         return App.getInstance().preferences.getString(LANDSCAPE_ITEMS_PER_ROW, "4")!!.toInt()
-    }
-
-    @JvmStatic
-    fun getEnableDrawerOnPortrait(): Boolean {
-        return App.getInstance().preferences.getBoolean(ENABLE_DRAWER_ON_PORTRAIT, false)
-    }
-
-    @JvmStatic
-    fun getHideBottomNavbarOnPortrait(): Boolean {
-        return App.getInstance().preferences.getBoolean(HIDE_BOTTOM_NAVBAR_ON_PORTRAIT, false)
     }
 
     @JvmStatic
@@ -547,10 +513,6 @@ object Preferences {
 
     @JvmStatic
     fun setDownloadDirectoryUri(uri: String?) {
-        val current = App.getInstance().preferences.getString(DOWNLOAD_DIRECTORY_URI, null)
-        if (current != uri) {
-            ExternalDownloadMetadataStore.clear()
-        }
         App.getInstance().preferences.edit().putString(DOWNLOAD_DIRECTORY_URI, uri).apply()
     }
 
@@ -598,6 +560,16 @@ object Preferences {
     @JvmStatic
     fun isScrobblingEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(SCROBBLING, true)
+    }
+
+    @JvmStatic
+    fun getScrobbleThreshold(): Int {
+        return App.getInstance().preferences.getInt(SCROBBLE_THRESHOLD, 90)
+    }
+
+    @JvmStatic
+    fun setScrobbleThreshold(threshold: Int) {
+        App.getInstance().preferences.edit().putInt(SCROBBLE_THRESHOLD, threshold).apply()
     }
 
     @JvmStatic
@@ -747,12 +719,9 @@ object Preferences {
 
     @JvmStatic
     fun getArtistSortOrder(): String {
-        val sort_by_album_count = App.getInstance().preferences.getBoolean(ARTIST_SORT_BY_ALBUM_COUNT, false)
-        Log.d("Preferences", "getSortOrder")
-        if (sort_by_album_count)
-            return Constants.ARTIST_ORDER_BY_ALBUM_COUNT
-        else
-            return Constants.ARTIST_ORDER_BY_NAME
+        val sortByAlbumCount = App.getInstance().preferences.getBoolean(ARTIST_SORT_BY_ALBUM_COUNT, false)
+        return if (sortByAlbumCount) Constants.ARTIST_ORDER_BY_ALBUM_COUNT
+        else Constants.ARTIST_ORDER_BY_NAME
     }
 
     @JvmStatic
@@ -771,62 +740,162 @@ object Preferences {
     }
 
     @JvmStatic
+    fun getDockItems(): List<String> {
+        val json = App.getInstance().preferences.getString(DOCK_ITEMS, null)
+        if (json == null) {
+            return listOf(
+                Constants.DOCK_ITEM_HOME,
+                Constants.DOCK_ITEM_SEARCH,
+                Constants.DOCK_ITEM_LIBRARY,
+                Constants.DOCK_ITEM_DOWNLOADS,
+                Constants.DOCK_ITEM_SETTINGS
+            )
+        }
+        return Gson().fromJson(json, object : com.google.gson.reflect.TypeToken<List<String>>() {}.type)
+    }
+
+    @JvmStatic
+    fun setDockItems(items: List<String>) {
+        App.getInstance().preferences.edit().putString(DOCK_ITEMS, Gson().toJson(items)).apply()
+    }
+
+    @JvmStatic
+    fun getAccentColor(): Int {
+        return App.getInstance().preferences.getInt(ACCENT_COLOR, -1)
+    }
+
+    @JvmStatic
+    fun setAccentColor(color: Int) {
+        App.getInstance().preferences.edit().putInt(ACCENT_COLOR, color).apply()
+    }
+
+    @JvmStatic
+    fun getNowPlayingMetadata(): List<String> {
+        val json = App.getInstance().preferences.getString(NOW_PLAYING_METADATA, null)
+        if (json == null) {
+            return listOf(
+                Constants.METADATA_TITLE,
+                Constants.METADATA_ARTIST,
+                Constants.METADATA_ALBUM
+            )
+        }
+        return Gson().fromJson(json, object : com.google.gson.reflect.TypeToken<List<String>>() {}.type)
+    }
+
+    @JvmStatic
+    fun setNowPlayingMetadata(items: List<String>) {
+        App.getInstance().preferences.edit().putString(NOW_PLAYING_METADATA, Gson().toJson(items)).apply()
+    }
+
+    @JvmStatic
+    fun getPlayNextBehavior(): String {
+        return App.getInstance().preferences.getString(PLAY_NEXT_BEHAVIOR, PLAY_NEXT_BEHAVIOR_TOP) ?: PLAY_NEXT_BEHAVIOR_TOP
+    }
+
+    @JvmStatic
+    fun setPlayNextBehavior(behavior: String) {
+        App.getInstance().preferences.edit().putString(PLAY_NEXT_BEHAVIOR, behavior).apply()
+    }
+
+    @JvmStatic
+    fun getLastFmUser(): String? {
+        return App.getInstance().preferences.getString(Constants.LAST_FM_USER, null)
+    }
+
+    @JvmStatic
+    fun setLastFmUser(user: String?) {
+        App.getInstance().preferences.edit().putString(Constants.LAST_FM_USER, user).apply()
+    }
+
+    @JvmStatic
+    fun getLastFmApiKey(): String? {
+        val app = App.getInstance()
+        val encryptedPrefs = app.encryptedPreferences
+        val plainPrefs = app.preferences
+
+        val encryptedValue = encryptedPrefs.getString(Constants.LAST_FM_API_KEY, null)
+        if (!encryptedValue.isNullOrEmpty()) {
+            return encryptedValue
+        }
+
+        val plainValue = plainPrefs.getString(Constants.LAST_FM_API_KEY, null)
+        if (!plainValue.isNullOrEmpty() && encryptedPrefs !== plainPrefs) {
+            encryptedPrefs.edit().putString(Constants.LAST_FM_API_KEY, plainValue).apply()
+            plainPrefs.edit().remove(Constants.LAST_FM_API_KEY).apply()
+        }
+
+        return plainValue
+    }
+
+    @JvmStatic
+    fun setLastFmApiKey(apiKey: String?) {
+        val app = App.getInstance()
+        val encryptedPrefs = app.encryptedPreferences
+        val plainPrefs = app.preferences
+
+        encryptedPrefs.edit().putString(Constants.LAST_FM_API_KEY, apiKey).apply()
+
+        if (encryptedPrefs !== plainPrefs) {
+            plainPrefs.edit().remove(Constants.LAST_FM_API_KEY).apply()
+        }
+    }
+
+    @JvmStatic
+    fun getClientCert(): String? {
+        return App.getInstance().preferences.getString(CLIENT_CERT, null)
+    }
+
+    @JvmStatic
+    fun setClientCert(clientCert: String?) {
+        App.getInstance().preferences.edit().putString(CLIENT_CERT, clientCert).apply()
+    }
+
+    @JvmStatic
+    fun getHideBottomNavbarOnPortrait(): Boolean {
+        return App.getInstance().preferences.getBoolean(HIDE_BOTTOM_NAVBAR_ON_PORTRAIT, false)
+    }
+
+    @JvmStatic
+    fun setHideBottomNavbarOnPortrait(hide: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(HIDE_BOTTOM_NAVBAR_ON_PORTRAIT, hide).apply()
+    }
+
+    @JvmStatic
+    fun getEnableDrawerOnPortrait(): Boolean {
+        return App.getInstance().preferences.getBoolean(ENABLE_DRAWER_ON_PORTRAIT, false)
+    }
+
+    @JvmStatic
+    fun setEnableDrawerOnPortrait(enable: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(ENABLE_DRAWER_ON_PORTRAIT, enable).apply()
+    }
+
+    @JvmStatic
+    fun getBitrateVisible(): Boolean {
+        return App.getInstance().preferences.getBoolean(BITRATE_VISIBLE, false)
+    }
+
+    @JvmStatic
+    fun setBitrateVisible(visible: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(BITRATE_VISIBLE, visible).apply()
+    }
+
+    @JvmStatic
     fun getTileSize(): Int {
-        val parsed = App.getInstance().preferences.getString(TILE_SIZE, "2")?.toIntOrNull()
-        return parsed?.takeIf { it in 2..6 } ?: 2
-    }
-    fun isAndroidAutoAlbumViewEnabled(): Boolean {
-        return App.getInstance().preferences.getBoolean(AA_ALBUM_VIEW, true)
-    }
-
-    @JvmStatic
-    fun isAndroidAutoHomeViewEnabled(): Boolean {
-        return App.getInstance().preferences.getBoolean(AA_HOME_VIEW, false)
-    }
-
-    @JvmStatic
-    fun isAndroidAutoPlaylistViewEnabled(): Boolean {
-        return App.getInstance().preferences.getBoolean(AA_PLAYLIST_VIEW, false)
+        val prefs = App.getInstance().preferences
+        return try {
+            prefs.getInt(TILE_SIZE, 3)
+        } catch (e: Exception) {
+            // If it's stored as a String (e.g. from a ListPreference), parse it and fix the preference type
+            val value = try { prefs.getString(TILE_SIZE, "3") } catch (e2: Exception) { "3" }
+            val intValue = value?.toIntOrNull() ?: 3
+            prefs.edit().putInt(TILE_SIZE, intValue).apply()
+            intValue
+        }
     }
 
     @JvmStatic
-    fun isAndroidAutoPodcastViewEnabled(): Boolean {
-        return App.getInstance().preferences.getBoolean(AA_PODCAST_VIEW, false)
+    fun setTileSize(size: Int) {
+        App.getInstance().preferences.edit().putInt(TILE_SIZE, size).apply()
     }
-
-    @JvmStatic
-    fun isAndroidAutoRadioViewEnabled(): Boolean {
-        return App.getInstance().preferences.getBoolean(AA_RADIO_VIEW, false)
-    }
-
-    @JvmStatic
-    fun getAndroidAutoFirstTab(): Int {
-        return App.getInstance().preferences.getString(AA_FIRST_TAB, "0")!!.toInt()
-    }
-
-    @JvmStatic
-    fun getAndroidAutoSecondTab(): Int {
-        return App.getInstance().preferences.getString(AA_SECOND_TAB, "1")!!.toInt()
-    }
-
-    @JvmStatic
-    fun getAndroidAutoThirdTab(): Int {
-        return App.getInstance().preferences.getString(AA_THIRD_TAB, "2")!!.toInt()
-    }
-	
-    @JvmStatic
-    fun getAndroidAutoFourthTab(): Int {
-        return App.getInstance().preferences.getString(AA_FOURTH_TAB, "3")!!.toInt()
-    }
-	
-    @JvmStatic
-    fun isAndroidAutoShuffleGenreSongsEnabled(): Boolean {
-        return App.getInstance().preferences.getBoolean(AA_SHUFFLE_GENRE_SONGS, false)
-    }
-
-    @JvmStatic
-    fun setAndroidAutoShuffleGenreSongsEnabled(enabled: Boolean) {
-        App.getInstance().preferences.edit().putBoolean(AA_SHUFFLE_GENRE_SONGS, enabled).apply()
-    }
-	
 }

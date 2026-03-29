@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import android.util.Log;
 
 import com.elzify.music.App;
+import com.elzify.music.subsonic.api.navidrome.NavidromeClient;
 import com.elzify.music.subsonic.base.ApiResponse;
 import com.elzify.music.subsonic.models.ArtistID3;
 import com.elzify.music.subsonic.models.AlbumID3;
@@ -360,6 +361,36 @@ public class ArtistRepository {
                 });
 
         return topSongs;
+    }
+
+    public MutableLiveData<List<ArtistID3>> getRecentlyPlayedArtists(int count) {
+        MutableLiveData<List<ArtistID3>> result = new MutableLiveData<>();
+        java.util.concurrent.Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                List<ArtistID3> artists = NavidromeClient.getInstance().getRecentlyPlayedArtists(count);
+                Log.d("ArtistRepository", "getRecentlyPlayedArtists: returning " + artists.size() + " artists");
+                result.postValue(artists);
+            } catch (Exception e) {
+                Log.e("ArtistRepository", "getRecentlyPlayedArtists: exception", e);
+                result.postValue(null);
+            }
+        });
+        return result;
+    }
+
+    public MutableLiveData<List<ArtistID3>> getTopPlayedArtists(int count) {
+        MutableLiveData<List<ArtistID3>> result = new MutableLiveData<>();
+        java.util.concurrent.Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                List<ArtistID3> artists = NavidromeClient.getInstance().getTopPlayedArtists(count);
+                Log.d("ArtistRepository", "getTopPlayedArtists: returning " + artists.size() + " artists");
+                result.postValue(artists);
+            } catch (Exception e) {
+                Log.e("ArtistRepository", "getTopPlayedArtists: exception", e);
+                result.postValue(null);
+            }
+        });
+        return result;
     }
 
     private void addToMutableLiveData(MutableLiveData<List<ArtistID3>> liveData, ArtistID3 artist) {

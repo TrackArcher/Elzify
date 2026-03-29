@@ -3,7 +3,7 @@ package com.elzify.music.subsonic
 import com.elzify.music.App
 import com.elzify.music.subsonic.utils.CacheUtil
 import com.elzify.music.subsonic.utils.EmptyDateTypeAdapter
-import com.elzify.music.util.ClientCertManager
+import com.elzify.music.BuildConfig
 import com.google.gson.GsonBuilder
 import okhttp3.Cache
 import okhttp3.OkHttpClient
@@ -14,7 +14,7 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 
 class RetrofitClient(subsonic: Subsonic) {
-    val retrofit: Retrofit
+    var retrofit: Retrofit
 
     init {
         val gson = GsonBuilder()
@@ -51,25 +51,20 @@ class RetrofitClient(subsonic: Subsonic) {
             .addInterceptor(cacheUtil.offlineInterceptor)
             // .addNetworkInterceptor(cacheUtil.onlineInterceptor)
             .cache(getCache())
-            .setupSsl()
             .build()
     }
 
     private fun getHttpLoggingInterceptor(): HttpLoggingInterceptor {
         val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        loggingInterceptor.setLevel(
+            if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BASIC
+            else HttpLoggingInterceptor.Level.NONE
+        )
         return loggingInterceptor
     }
 
     private fun getCache(): Cache {
         val cacheSize = 10 * 1024 * 1024
         return Cache(App.getContext().cacheDir, cacheSize.toLong())
-    }
-
-    private fun OkHttpClient.Builder.setupSsl(): OkHttpClient.Builder {
-        ClientCertManager.sslSocketFactory?.let { sslSocketFactory ->
-            sslSocketFactory(sslSocketFactory, ClientCertManager.trustManager)
-        }
-        return this
     }
 }

@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
@@ -32,18 +33,65 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.lang.ref.WeakReference;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class MediaManager {
     private static final String TAG = "MediaManager";
     private static WeakReference<MediaBrowser> attachedBrowserRef = new WeakReference<>(null);
     public static AtomicBoolean justStarted = new AtomicBoolean(false);
+    private static int lastPlayNextInsertedIndex = -1;
 
     private static final ExecutorService backgroundExecutor = Executors.newSingleThreadExecutor();
+    private static final MutableLiveData<String> scrobbledSongId = new MutableLiveData<>();
+    private static final AtomicLong scrobbleVersion = new AtomicLong(0);
+    private static final Map<String, Integer> playCountIncrements = new ConcurrentHashMap<>();
+
+    public static LiveData<String> getScrobbledSongId() {
+        return scrobbledSongId;
+    }
+
+    public static long getScrobbleVersion() {
+        return scrobbleVersion.get();
+    }
+
+    public static int getPlayCountIncrement(String songId) {
+        if (songId == null) return 0;
+        return playCountIncrements.getOrDefault(songId, 0);
+    }
+
+    public static void postScrobbleEvent(String songId) {
+        scrobbleVersion.incrementAndGet();
+        playCountIncrements.merge(songId, 1, Integer::sum);
+        scrobbledSongId.postValue(songId);
+    }
+
+    private static final MutableLiveData<Object[]> favoriteEvent = new MutableLiveData<>();
+
+    public static LiveData<Object[]> getFavoriteEvent() {
+        return favoriteEvent;
+    }
+
+    public static void postFavoriteEvent(String songId, Date starred) {
+        favoriteEvent.postValue(new Object[]{songId, starred});
+    }
+
+    private static final MutableLiveData<Object[]> ratingEvent = new MutableLiveData<>();
+
+    public static LiveData<Object[]> getRatingEvent() {
+        return ratingEvent;
+    }
+
+    public static void postRatingEvent(String songId, int rating) {
+        ratingEvent.postValue(new Object[]{songId, rating});
+    }
 
     public static void registerPlaybackObserver(
             ListenableFuture<MediaBrowser> browserFuture,
@@ -59,6 +107,10 @@ public class MediaManager {
                     browser.addListener(new Player.Listener() {
                         @Override
                         public void onEvents(@NonNull Player player, @NonNull Player.Events events) {
+                            if (events.contains(Player.EVENT_MEDIA_ITEM_TRANSITION)) {
+                                lastPlayNextInsertedIndex = -1;
+                            }
+
                             if (events.contains(Player.EVENT_MEDIA_ITEM_TRANSITION)
                                     || events.contains(Player.EVENT_PLAY_WHEN_READY_CHANGED)
                                     || events.contains(Player.EVENT_PLAYBACK_STATE_CHANGED)) {
@@ -304,8 +356,20 @@ public class MediaManager {
                         Log.e(TAG, "enqueue");
                         MediaBrowser browser = mediaBrowserListenableFuture.get();
                         if (playImmediatelyAfter && browser.getNextMediaItemIndex() != -1) {
-                            enqueueDatabase(media, false, browser.getNextMediaItemIndex());
-                            browser.addMediaItems(browser.getNextMediaItemIndex(), MappingUtil.mapMediaItems(media));
+                            int insertIndex;
+                            if (Preferences.getPlayNextBehavior().equals(Preferences.PLAY_NEXT_BEHAVIOR_SEQUENTIAL)) {
+                                if (lastPlayNextInsertedIndex == -1) {
+                                    insertIndex = browser.getNextMediaItemIndex();
+                                } else {
+                                    insertIndex = Math.min(lastPlayNextInsertedIndex, browser.getMediaItemCount());
+                                }
+                                lastPlayNextInsertedIndex = insertIndex + media.size();
+                            } else {
+                                insertIndex = browser.getNextMediaItemIndex();
+                                lastPlayNextInsertedIndex = insertIndex + media.size();
+                            }
+                            enqueueDatabase(media, false, insertIndex);
+                            browser.addMediaItems(insertIndex, MappingUtil.mapMediaItems(media));
                         } else {
                             enqueueDatabase(media, false, mediaBrowserListenableFuture.get().getMediaItemCount());
                             mediaBrowserListenableFuture.get().addMediaItems(MappingUtil.mapMediaItems(media));
@@ -326,8 +390,20 @@ public class MediaManager {
                         Log.e(TAG, "enqueue");
                         MediaBrowser browser = mediaBrowserListenableFuture.get();
                         if (playImmediatelyAfter && browser.getNextMediaItemIndex() != -1) {
-                            enqueueDatabase(media, false, browser.getNextMediaItemIndex());
-                            browser.addMediaItem(browser.getNextMediaItemIndex(), MappingUtil.mapMediaItem(media));
+                            int insertIndex;
+                            if (Preferences.getPlayNextBehavior().equals(Preferences.PLAY_NEXT_BEHAVIOR_SEQUENTIAL)) {
+                                if (lastPlayNextInsertedIndex == -1) {
+                                    insertIndex = browser.getNextMediaItemIndex();
+                                } else {
+                                    insertIndex = Math.min(lastPlayNextInsertedIndex, browser.getMediaItemCount());
+                                }
+                                lastPlayNextInsertedIndex = insertIndex + 1;
+                            } else {
+                                insertIndex = browser.getNextMediaItemIndex();
+                                lastPlayNextInsertedIndex = insertIndex + 1;
+                            }
+                            enqueueDatabase(media, false, insertIndex);
+                            browser.addMediaItem(insertIndex, MappingUtil.mapMediaItem(media));
                         } else {
                             enqueueDatabase(media, false, mediaBrowserListenableFuture.get().getMediaItemCount());
                             mediaBrowserListenableFuture.get().addMediaItem(MappingUtil.mapMediaItem(media));
@@ -434,9 +510,17 @@ public class MediaManager {
     }
 
     public static void scrobble(MediaItem mediaItem, boolean submission) {
+        scrobble(mediaItem, submission, null);
+    }
+
+    public static void scrobble(MediaItem mediaItem, boolean submission, Long time) {
         if (mediaItem != null && Preferences.isScrobblingEnabled()) {
-            getSongRepository().scrobble(mediaItem.mediaMetadata.extras.getString("id"), submission);
+            getSongRepository().scrobble(mediaItem.mediaMetadata.extras.getString("id"), submission, time);
         }
+    }
+
+    public static void submitPendingScrobbles() {
+        getSongRepository().submitPendingScrobbles();
     }
 
     @OptIn(markerClass = UnstableApi.class)

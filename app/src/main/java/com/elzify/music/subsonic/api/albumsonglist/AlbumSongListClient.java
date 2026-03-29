@@ -44,6 +44,11 @@ public class AlbumSongListClient {
         return albumSongListService.getSongsByGenre(subsonic.getParams(), genre, count, offset);
     }
 
+    public Call<ApiResponse> getRecentlyPlayed(int count) {
+        Log.d(TAG, "getRecentlyPlayed()");
+        return albumSongListService.getRecentlyPlayed(subsonic.getParams(), count);
+    }
+
     public Call<ApiResponse> getNowPlaying() {
         Log.d(TAG, "getNowPlaying()");
         return albumSongListService.getNowPlaying(subsonic.getParams());

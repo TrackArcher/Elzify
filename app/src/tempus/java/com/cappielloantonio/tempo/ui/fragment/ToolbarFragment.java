@@ -2,9 +2,6 @@ package com.elzify.music.ui.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -13,10 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.media3.common.util.UnstableApi;
 
-import com.elzify.music.R;
 import com.elzify.music.databinding.FragmentToolbarBinding;
 import com.elzify.music.ui.activity.MainActivity;
-import com.google.android.gms.cast.framework.CastButtonFactory;
 
 @UnstableApi
 public class ToolbarFragment extends Fragment {
@@ -26,20 +21,6 @@ public class ToolbarFragment extends Fragment {
     private MainActivity activity;
 
     public ToolbarFragment() {
-        // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.main_page_menu, menu);
-        CastButtonFactory.setUpMediaRouteButton(requireContext(), menu, R.id.media_route_menu_item);
     }
 
     @Override
@@ -50,18 +31,5 @@ public class ToolbarFragment extends Fragment {
         View view = bind.getRoot();
 
         return view;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_search) {
-            activity.navController.navigate(R.id.searchFragment);
-            return true;
-        } else if (item.getItemId() == R.id.action_settings) {
-            activity.navController.navigate(R.id.settingsFragment);
-            return true;
-        }
-
-        return false;
     }
 }

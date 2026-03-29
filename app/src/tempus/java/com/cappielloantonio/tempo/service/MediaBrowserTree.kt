@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.service
+package com.elzify.music.service
 
 import android.content.Context
 import android.net.Uri
@@ -8,15 +8,15 @@ import androidx.media3.common.MediaItem.SubtitleConfiguration
 import androidx.media3.common.MediaMetadata
 import androidx.media3.session.LibraryResult
 import androidx.media3.session.MediaConstants
-import com.cappielloantonio.tempo.BuildConfig
-import com.cappielloantonio.tempo.repository.AutomotiveRepository
-import com.cappielloantonio.tempo.util.Preferences.getServerId
+import com.elzify.music.BuildConfig
+import com.elzify.music.repository.AutomotiveRepository
+import com.elzify.music.util.Preferences.getServerId
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
-import com.cappielloantonio.tempo.R
-import com.cappielloantonio.tempo.util.Preferences
+import com.elzify.music.R
+import com.elzify.music.util.Preferences
 
 object MediaBrowserTree {
     private lateinit var appContext: Context

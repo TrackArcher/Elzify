@@ -142,6 +142,10 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
             songListPageViewModel.year = requireArguments().getInt("year_object");
             songListPageViewModel.toolbarTitle = getString(R.string.song_list_page_year, songListPageViewModel.year);
             bind.pageTitleLabel.setText(getString(R.string.song_list_page_year, songListPageViewModel.year));
+        } else if (requireArguments().getString(Constants.MEDIA_TOP_PLAYED) != null) {
+            songListPageViewModel.title = Constants.MEDIA_TOP_PLAYED;
+            songListPageViewModel.toolbarTitle = getString(R.string.song_list_page_top_played);
+            bind.pageTitleLabel.setText(R.string.song_list_page_top_played);
         } else if (requireArguments().getString(Constants.MEDIA_STARRED) != null) {
             songListPageViewModel.title = Constants.MEDIA_STARRED;
             songListPageViewModel.toolbarTitle = getString(R.string.song_list_page_starred);
@@ -184,6 +188,8 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
 
     private void initButtons() {
         songListPageViewModel.getSongList().observe(getViewLifecycleOwner(), songs -> {
+            if (songs == null) return;
+
             if (bind != null) {
                 setSongListPageSorter();
 
@@ -206,6 +212,8 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         setMediaBrowserListenableFuture();
         reapplyPlayback();
         songListPageViewModel.getSongList().observe(getViewLifecycleOwner(), songs -> {
+            if (songs == null) return;
+
             isLoading = false;
             songHorizontalAdapter.setItems(songs);
             reapplyPlayback();
@@ -302,6 +310,8 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
             case Constants.MEDIA_BY_ARTIST:
             case Constants.MEDIA_BY_GENRES:
             case Constants.MEDIA_STARRED:
+            case Constants.MEDIA_TOP_PLAYED:
+            case Constants.MEDIA_RECENTLY_PLAYED:
                 bind.pageSubtitleLabel.setText(getString(R.string.generic_list_page_count, children.size()));
                 break;
         }
@@ -311,6 +321,8 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         switch (songListPageViewModel.title) {
             case Constants.MEDIA_BY_GENRE:
             case Constants.MEDIA_BY_YEAR:
+            case Constants.MEDIA_TOP_PLAYED:
+            case Constants.MEDIA_RECENTLY_PLAYED:
                 bind.songListSortImageView.setVisibility(View.GONE);
                 break;
             case Constants.MEDIA_BY_ARTIST:

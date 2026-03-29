@@ -9,6 +9,7 @@ import android.view.View;
 import androidx.annotation.OptIn;
 import androidx.media3.common.util.UnstableApi;
 
+import com.elzify.music.service.MediaManager;
 import com.elzify.music.ui.activity.MainActivity;
 
 @OptIn(markerClass = UnstableApi.class)
@@ -28,6 +29,7 @@ public class ConnectivityStatusBroadcastReceiver extends BroadcastReceiver {
                 activity.bind.offlineModeTextView.setVisibility(View.VISIBLE);
             } else {
                 activity.bind.offlineModeTextView.setVisibility(View.GONE);
+                MediaManager.submitPendingScrobbles();
             }
         }
     }

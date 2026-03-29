@@ -5,14 +5,16 @@
     android:layout_height="wrap_content"
     android:paddingEnd="8dp">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/similar_artist_cover_image_view"
         android:layout_width="256dp"
         android:layout_height="256dp"
         android:layout_gravity="center"
+        android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/CircleShapeAppearance" />
 
     <TextView
         android:id="@+id/artist_name_label"

@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData;
 import com.elzify.music.repository.AlbumRepository;
 import com.elzify.music.repository.ArtistRepository;
 import com.elzify.music.repository.SongRepository;
+import com.elzify.music.service.MediaManager;
 import com.elzify.music.subsonic.models.AlbumID3;
 import com.elzify.music.subsonic.models.ArtistID3;
 import com.elzify.music.subsonic.models.Child;
@@ -75,6 +76,8 @@ public class RatingViewModel extends AndroidViewModel {
     public void rate(int star) {
         if (song != null) {
             songRepository.setRating(song.getId(), star);
+            song.setUserRating(star);
+            MediaManager.postRatingEvent(song.getId(), star);
         } else if (album != null) {
             albumRepository.setRating(album.getId(), star);
         } else if (artist != null) {

@@ -299,16 +299,16 @@
     <string name="settings_allow_playlist_duplicates">Permet afegir duplicats a una llista de reproducció</string>
     <string name="settings_allow_playlist_duplicates_summary">Si s\'habilita, no es comprovarà si hi ha elements duplicats en afegir-los a una llista de reproducció.</string>
     <string name="settings_audio_transcode_download_format">Format de transcodificació</string>
-    <string name="settings_audio_transcode_download_priority_summary">Si s\'habilita, Tempus no forçarà la baixada de la pista amb els paràmetres de transcodificació següents.</string>
+    <string name="settings_audio_transcode_download_priority_summary">Si s\'habilita, Rollynn no forçarà la baixada de la pista amb els paràmetres de transcodificació següents.</string>
     <string name="settings_audio_transcode_download_priority_title">Prioritza els paràmetres del servidor per a la transmissió a les baixades</string>
-    <string name="settings_audio_transcode_download_summary">Si s\'habilita, Tempus baixarà les pistes transcodificades.</string>
+    <string name="settings_audio_transcode_download_summary">Si s\'habilita, Rollynn baixarà les pistes transcodificades.</string>
     <string name="settings_audio_transcode_download_title">Baixa les pistes transcodificades</string>
     <string name="settings_audio_transcode_estimate_content_length_summary">Si s\'habilita, es demanarà al servidor la durada estimada de la pista.</string>
     <string name="settings_audio_transcode_estimate_content_length_title">Estima la durada del contingut</string>
     <string name="settings_audio_transcode_format_download">Format de transcodificació per a les baixades</string>
     <string name="settings_audio_transcode_format_mobile">Format de transcodificació amb dades mòbils</string>
     <string name="settings_audio_transcode_format_wifi">Format de transcodificació amb wifi</string>
-    <string name="settings_audio_transcode_priority_summary">Si s\'habilita, Tempus no forçarà la transmissió de la pista amb els paràmetres de transcodificació següents.</string>
+    <string name="settings_audio_transcode_priority_summary">Si s\'habilita, Rollynn no forçarà la transmissió de la pista amb els paràmetres de transcodificació següents.</string>
     <string name="settings_audio_transcode_priority_title">Prioritza els paràmetres de transcodificació del servidor</string>
     <string name="settings_audio_transcode_priority_toast">Prioritat de transcodificació de la pista proporcionada al servidor</string>
     <string name="settings_buffering_strategy">Estratègia de memòria intermèdia</string>
@@ -331,12 +331,11 @@
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
     <string name="settings_github_summary">Seguiu el desenvolupament</string>
     <string name="settings_github_title">Github</string>
-    <string name="settings_support_discussion_link">https://github.com/eddyizm/tempus/discussions</string>
+
     <string name="settings_github_update">Actualitzacions</string>
     <string name="settings_github_update_title">Comprova si hi ha actualitzacions a GitHub</string>
     <string name="settings_github_update_summary">Si feu servir la versió de GitHub, per defecte l\'aplicació comprovarà si hi ha noves versions en format APK. Canvieu-ho per a inhabilitar les comprovacions automàtiques de GitHub.</string>
-    <string name="settings_support_summary">Uniu-vos a discussions de la comunitat i obteniu ajuda</string>
-    <string name="settings_support_title">Ajuda als usuaris</string>
+
     <string name="settings_scan_result">S\'està analitzant: s\'han comptat %1$d pistes</string>
     <string name="settings_image_size">Resolució de les imatges</string>
     <string name="settings_language">Llengua</string>
@@ -406,7 +405,7 @@
     <string name="settings_title_transcoding_download">Baixada transcodificada</string>
     <string name="settings_title_ui">Interfície d\'usuari</string>
     <string name="settings_transcoded_download">Baixada transcodificada</string>
-    <string name="settings_version_summary" translatable="false">3.1.0</string>
+    <string name="settings_version_summary" translatable="false">0.1.2</string>
     <string name="settings_version_title">Versió</string>
     <string name="settings_wifi_only_summary">Demana la confirmació de l\'usuari abans d\'iniciar la transmissió per la xarxa mòbil.</string>
     <string name="settings_wifi_only_title">Alerta de transmissió només per wifi</string>
@@ -416,7 +415,7 @@
     <string name="share_subtitle_item">Data de venciment: %1$s</string>
     <string name="share_no_expiration">Mai</string>
     <string name="share_unsupported_error">L\'ús compartit no s\'admet o no està habilitat</string>
-    <string name="asset_link_clipboard_label">Enllaç a recurs de Tempus</string>
+    <string name="asset_link_clipboard_label">Enllaç a recurs de Rollynn</string>
     <string name="asset_link_label_song">UID de la cançó</string>
     <string name="asset_link_label_album">UID de l\'àlbum</string>
     <string name="asset_link_label_artist">UID de l\'artista</string>
@@ -497,12 +496,10 @@
     <string name="track_info_transcoded_content_type">Tipus de contingut transcodificat</string>
     <string name="track_info_transcoded_suffix">Sufix de la transcodificació</string>
     <string name="track_info_year">Any</string>
-    <string name="undraw_page">unDraw</string>
-    <string name="undraw_thanks">Volem donar un agraïment especial a UnDraw; aquesta aplicació no seria tan bonica sense les seves il·lustracions.</string>
-    <string name="undraw_url">https://undraw.co/</string>
-    <string name="widget_label">Giny de Tempus</string>
+
+    <string name="widget_label">Giny de Rollynn</string>
     <string name="widget_not_playing">No hi ha res en reproducció</string>
-    <string name="widget_placeholder_subtitle">Obre Tempus</string>
+    <string name="widget_placeholder_subtitle">Obre Rollynn</string>
     <string name="widget_time_elapsed_placeholder">0:00</string>
     <string name="widget_time_duration_placeholder">0:00</string>
     <string name="widget_content_desc_album_art">Caràtula de l\'àlbum</string>

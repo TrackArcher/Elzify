@@ -91,4 +91,28 @@
         <item name="android:textFontWeight">400</item>
         <item name="android:textColor">@color/titleTextColor</item>
     </style>
+
+    <style name="PlayerMetadataTitle" parent="InterFontFamily">
+        <item name="android:textSize">@dimen/player_metadata_title_text_size</item>
+        <item name="android:textFontWeight">700</item>
+        <item name="android:textColor">@color/titleTextColor</item>
+    </style>
+
+    <style name="PlayerMetadataArtist" parent="InterFontFamily">
+        <item name="android:textSize">@dimen/player_metadata_artist_text_size</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textColor">@color/subtitleTextColor</item>
+    </style>
+
+    <style name="PlayerMetadataAlbum" parent="InterFontFamily">
+        <item name="android:textSize">@dimen/player_metadata_album_text_size</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textColor">@color/subtitleTextColor</item>
+    </style>
+
+    <style name="PlayerMetadataSecondary" parent="InterFontFamily">
+        <item name="android:textSize">@dimen/player_metadata_secondary_text_size</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textColor">@color/subtitleTextColor</item>
+    </style>
 </resources>

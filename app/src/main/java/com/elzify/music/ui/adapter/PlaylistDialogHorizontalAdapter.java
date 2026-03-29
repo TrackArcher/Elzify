@@ -14,6 +14,7 @@ import com.elzify.music.subsonic.models.Playlist;
 import com.elzify.music.util.Constants;
 import com.elzify.music.util.MusicUtil;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,10 +22,13 @@ public class PlaylistDialogHorizontalAdapter extends RecyclerView.Adapter<Playli
     private final ClickCallback click;
 
     private List<Playlist> playlists;
+    private List<Playlist> allPlaylists;
+    private final java.util.Set<String> selectedIds = new java.util.HashSet<>();
 
     public PlaylistDialogHorizontalAdapter(ClickCallback click) {
         this.click = click;
         this.playlists = Collections.emptyList();
+        this.allPlaylists = Collections.emptyList();
     }
 
     @NonNull
@@ -40,6 +44,16 @@ public class PlaylistDialogHorizontalAdapter extends RecyclerView.Adapter<Playli
 
         holder.item.playlistDialogTitleTextView.setText(playlist.getName());
         holder.item.playlistDialogCountTextView.setText(holder.itemView.getContext().getString(R.string.playlist_counted_tracks, playlist.getSongCount(), MusicUtil.getReadableDurationString(playlist.getDuration(), false)));
+
+        holder.item.playlistDialogCheckbox.setOnCheckedChangeListener(null);
+        holder.item.playlistDialogCheckbox.setChecked(selectedIds.contains(playlist.getId()));
+        holder.item.playlistDialogCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                selectedIds.add(playlist.getId());
+            } else {
+                selectedIds.remove(playlist.getId());
+            }
+        });
     }
 
     @Override
@@ -47,8 +61,28 @@ public class PlaylistDialogHorizontalAdapter extends RecyclerView.Adapter<Playli
         return playlists.size();
     }
 
+    public List<String> getSelectedIds() {
+        return new ArrayList<>(selectedIds);
+    }
+
     public void setItems(List<Playlist> playlists) {
+        this.allPlaylists = playlists;
         this.playlists = playlists;
+        notifyDataSetChanged();
+    }
+
+    public void filter(String query) {
+        if (query == null || query.isEmpty()) {
+            playlists = allPlaylists;
+        } else {
+            List<Playlist> filteredList = new ArrayList<>();
+            for (Playlist playlist : allPlaylists) {
+                if (playlist.getName() != null && playlist.getName().toLowerCase().contains(query.toLowerCase())) {
+                    filteredList.add(playlist);
+                }
+            }
+            playlists = filteredList;
+        }
         notifyDataSetChanged();
     }
 
@@ -66,14 +100,9 @@ public class PlaylistDialogHorizontalAdapter extends RecyclerView.Adapter<Playli
 
             item.playlistDialogTitleTextView.setSelected(true);
 
-            itemView.setOnClickListener(v -> onClick());
-        }
-
-        public void onClick() {
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(Constants.PLAYLIST_OBJECT, playlists.get(getBindingAdapterPosition()));
-
-            click.onPlaylistClick(bundle);
+            itemView.setOnClickListener(v -> {
+                item.playlistDialogCheckbox.toggle();
+            });
         }
     }
 }

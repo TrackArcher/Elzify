@@ -21,6 +21,7 @@ class SubsonicResponse {
     var newestPodcasts: NewestPodcasts? = null
     var podcasts: Podcasts? = null
     var lyrics: Lyrics? = null
+    var recentlyPlayed: Songs? = null
     var songsByGenre: Songs? = null
     var randomSongs: Songs? = null
     var albumList2: AlbumList2? = null

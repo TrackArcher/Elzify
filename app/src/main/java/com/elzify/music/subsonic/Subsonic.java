@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Subsonic {
-    private static final Version API_MAX_VERSION = Version.of("1.15.0");
+    private static final Version API_MAX_VERSION = Version.of("1.16.1");
 
     private final Version apiVersion = API_MAX_VERSION;
     private final SubsonicPreferences preferences;

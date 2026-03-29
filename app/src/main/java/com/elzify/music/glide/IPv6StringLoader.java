@@ -17,7 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class IPv6StringLoader implements ModelLoader<String, InputStream> {
-    private static final int DEFAULT_TIMEOUT_MS = 2500;
+    private static final int DEFAULT_TIMEOUT_MS = 8000;
 
     @Override
     public boolean handles(@NonNull String model) {

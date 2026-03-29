@@ -43,6 +43,9 @@ import com.elzify.music.viewmodel.PlaybackViewModel;
 import com.elzify.music.viewmodel.PlaylistPageViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import android.widget.PopupMenu;
+
+import java.util.Collections;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -138,7 +141,12 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_download_playlist) {
+        if (item.getItemId() == R.id.action_sort_playlist) {
+            View anchor = activity.findViewById(R.id.action_sort_playlist);
+            if (anchor == null) anchor = bind.animToolbar;
+            showSortPopupMenu(anchor);
+            return true;
+        } else if (item.getItemId() == R.id.action_download_playlist) {
             playlistPageViewModel.getPlaylistSongLiveList().observe(getViewLifecycleOwner(), songs -> {
                 if (isVisible() && getActivity() != null) {
                     if (Preferences.getDownloadDirectoryUri() == null) {
@@ -322,6 +330,27 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
             Boolean playing = playbackViewModel.getIsPlaying().getValue();
             songHorizontalAdapter.setPlaybackState(id, playing != null && playing);
         }
+    }
+
+    private void showSortPopupMenu(View anchor) {
+        PopupMenu popup = new PopupMenu(requireContext(), anchor);
+        popup.getMenuInflater().inflate(R.menu.sort_playlist_song_popup_menu, popup.getMenu());
+
+        popup.setOnMenuItemClickListener(menuItem -> {
+            if (menuItem.getItemId() == R.id.menu_playlist_song_sort_default) {
+                songHorizontalAdapter.sort(Constants.MEDIA_DEFAULT_ORDER);
+                return true;
+            } else if (menuItem.getItemId() == R.id.menu_playlist_song_sort_artist) {
+                songHorizontalAdapter.sort(Constants.MEDIA_BY_ARTIST);
+                return true;
+            } else if (menuItem.getItemId() == R.id.menu_playlist_song_sort_name) {
+                songHorizontalAdapter.sort(Constants.MEDIA_BY_TITLE);
+                return true;
+            }
+            return false;
+        });
+
+        popup.show();
     }
 
     private void setMediaBrowserListenableFuture() {

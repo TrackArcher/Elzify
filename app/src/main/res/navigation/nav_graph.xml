@@ -324,6 +324,16 @@
         android:name="com.elzify.music.ui.fragment.EqualizerFragment"
         android:label="EqualizerFragment"
         tools:layout="@layout/fragment_equalizer" />
+    <fragment
+        android:id="@+id/dockConfigurationFragment"
+        android:name="com.elzify.music.ui.fragment.DockConfigurationFragment"
+        android:label="DockConfigurationFragment"
+        tools:layout="@layout/fragment_dock_configuration" />
+    <fragment
+        android:id="@+id/metadataConfigurationFragment"
+        android:name="com.elzify.music.ui.fragment.MetadataConfigurationFragment"
+        android:label="MetadataConfigurationFragment"
+        tools:layout="@layout/fragment_metadata_configuration" />
     <dialog
         android:id="@+id/songBottomSheetDialog"
         android:name="com.elzify.music.ui.fragment.bottomsheetdialog.SongBottomSheetDialog"

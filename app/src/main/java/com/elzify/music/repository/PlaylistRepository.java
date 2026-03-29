@@ -1,11 +1,9 @@
 package com.elzify.music.repository;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.OptIn;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.media3.common.util.UnstableApi;
 
 import com.elzify.music.App;
 import com.elzify.music.R;
@@ -171,6 +169,10 @@ public class PlaylistRepository {
         }
     }
 
+    public void addSongToPlaylist(String playlistId, ArrayList<String> songsId, Boolean playlistVisibilityIsPublic) {
+        addSongToPlaylist(playlistId, songsId, playlistVisibilityIsPublic, null);
+    }
+
     public void removeSongFromPlaylist(String playlistId, int index, AddToPlaylistCallback callback) {
         ArrayList<Integer> indexes = new ArrayList<>();
         indexes.add(index);
@@ -192,10 +194,6 @@ public class PlaylistRepository {
                         if (callback != null) callback.onFailure();
                     }
                 });
-    }
-
-    public void addSongToPlaylist(String playlistId, ArrayList<String> songsId, Boolean playlistVisibilityIsPublic) {
-        addSongToPlaylist(playlistId, songsId, playlistVisibilityIsPublic, null);
     }
 
     public void createPlaylist(String playlistId, String name, ArrayList<String> songsId) {
@@ -241,7 +239,6 @@ public class PlaylistRepository {
                 });
     }
 
-    @OptIn(markerClass = UnstableApi.class)
     private void updateLocalPinnedPlaylistName(String id, String newName) {
         new Thread(() -> {
             List<Playlist> pinned = playlistDao.getAllSync();

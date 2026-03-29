@@ -36,6 +36,22 @@ public class PlaylistDialogSongHorizontalAdapter extends RecyclerView.Adapter<Pl
         holder.item.playlistDialogAlbumArtistTextView.setText(song.getArtist());
         holder.item.playlistDialogSongDurationTextView.setText(MusicUtil.getReadableDurationString(song.getDuration(), false));
 
+        if (song.getStarred() == null && (song.getUserRating() == null || song.getUserRating() == 0)) {
+            holder.item.ratingIndicatorImageView.setVisibility(android.view.View.GONE);
+        } else {
+            holder.item.ratingIndicatorImageView.setVisibility(android.view.View.VISIBLE);
+            holder.item.preferredIcon.setVisibility(song.getStarred() != null ? android.view.View.VISIBLE : android.view.View.GONE);
+            holder.item.ratingBarLayout.setVisibility(song.getUserRating() != null && song.getUserRating() > 0 ? android.view.View.VISIBLE : android.view.View.GONE);
+
+            if (song.getUserRating() != null && song.getUserRating() > 0) {
+                holder.item.oneStarIcon.setImageDrawable(androidx.appcompat.content.res.AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 1 ? com.elzify.music.R.drawable.ic_star : com.elzify.music.R.drawable.ic_star_outlined));
+                holder.item.twoStarIcon.setImageDrawable(androidx.appcompat.content.res.AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 2 ? com.elzify.music.R.drawable.ic_star : com.elzify.music.R.drawable.ic_star_outlined));
+                holder.item.threeStarIcon.setImageDrawable(androidx.appcompat.content.res.AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 3 ? com.elzify.music.R.drawable.ic_star : com.elzify.music.R.drawable.ic_star_outlined));
+                holder.item.fourStarIcon.setImageDrawable(androidx.appcompat.content.res.AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 4 ? com.elzify.music.R.drawable.ic_star : com.elzify.music.R.drawable.ic_star_outlined));
+                holder.item.fiveStarIcon.setImageDrawable(androidx.appcompat.content.res.AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 5 ? com.elzify.music.R.drawable.ic_star : com.elzify.music.R.drawable.ic_star_outlined));
+            }
+        }
+
         CustomGlideRequest.Builder
                 .from(holder.itemView.getContext(), song.getCoverArtId(), CustomGlideRequest.ResourceType.Song)
                 .build()

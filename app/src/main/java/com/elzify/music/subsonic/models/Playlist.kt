@@ -22,10 +22,15 @@ open class Playlist(
     var name: String? = null,
     @ColumnInfo(name = "duration")
     var duration: Long = 0,
+    @ColumnInfo(name = "songCount")
+    var songCount: Int = 0,
     @SerializedName("coverArt")
     @ColumnInfo(name = "coverArt")
     var coverArtId: String? = null,
 ) : Parcelable {
+    @Ignore
+    @IgnoredOnParcel
+    var isPinned: Boolean = false
     @Ignore
     @IgnoredOnParcel
     var comment: String? = null
@@ -36,9 +41,6 @@ open class Playlist(
     @IgnoredOnParcel
     @SerializedName("public")
     var isUniversal: Boolean? = null
-    @Ignore
-    @IgnoredOnParcel
-    var songCount: Int = 0
     @Ignore
     @IgnoredOnParcel
     var created: Date? = null
@@ -61,11 +63,10 @@ open class Playlist(
         changed: Date?,
         coverArtId: String?,
         allowedUsers: List<String>?,
-    ) : this(id, name, duration, coverArtId) {
+    ) : this(id, name, duration, songCount, coverArtId) {
         this.comment = comment
         this.owner = owner
         this.isUniversal = isUniversal
-        this.songCount = songCount
         this.created = created
         this.changed = changed
         this.allowedUsers = allowedUsers

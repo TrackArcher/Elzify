@@ -12,4 +12,7 @@ import retrofit2.http.QueryMap;
 public interface OpenService {
     @GET("getLyricsBySongId")
     Call<ApiResponse> getLyricsBySongId(@QueryMap Map<String, String> params, @Query("id") String id);
+
+    @GET("getRecentlyPlayed")
+    Call<ApiResponse> getRecentlyPlayed(@QueryMap Map<String, String> params, @Query("count") int count);
 }

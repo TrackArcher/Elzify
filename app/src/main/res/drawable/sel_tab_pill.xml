@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetLeft="6dp"
+    android:insetRight="6dp">
+    <selector>
+        <item android:drawable="@drawable/bg_tab_indicator" android:state_selected="true" />
+        <item android:drawable="@drawable/bg_tab_unselected" />
+    </selector>
+</inset>

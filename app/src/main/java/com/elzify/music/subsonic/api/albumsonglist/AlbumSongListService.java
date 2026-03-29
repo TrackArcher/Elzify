@@ -25,6 +25,9 @@ public interface AlbumSongListService {
     @GET("getSongsByGenre")
     Call<ApiResponse> getSongsByGenre(@QueryMap Map<String, String> params, @Query("genre") String genre, @Query("count") int count, @Query("offset") int offset);
 
+    @GET("getRecentlyPlayed.view")
+    Call<ApiResponse> getRecentlyPlayed(@QueryMap Map<String, String> params, @Query("count") int count);
+
     @GET("getNowPlaying")
     Call<ApiResponse> getNowPlaying(@QueryMap Map<String, String> params);
 

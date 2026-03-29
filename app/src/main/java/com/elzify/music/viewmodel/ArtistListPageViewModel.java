@@ -42,6 +42,12 @@ public class ArtistListPageViewModel extends AndroidViewModel {
             case Constants.ARTIST_STARRED:
                 artistList = artistRepository.getStarredArtists(false, -1);
                 break;
+            case Constants.ARTIST_RECENTLY_PLAYED:
+                artistList = artistRepository.getRecentlyPlayedArtists(500);
+                break;
+            case Constants.ARTIST_TOP_PLAYED:
+                artistList = artistRepository.getTopPlayedArtists(500);
+                break;
             case Constants.ARTIST_DOWNLOADED:
                 downloadRepository.getLiveDownload().observe(owner, downloads -> {
                     List<Download> unique = downloads

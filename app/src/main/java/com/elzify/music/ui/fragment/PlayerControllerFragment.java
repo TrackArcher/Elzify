@@ -4,6 +4,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
@@ -16,13 +18,13 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.MediaMetadata;
@@ -41,6 +43,10 @@ import androidx.transition.TransitionManager;
 import androidx.transition.TransitionSet;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.elzify.music.service.MediaManager;
+import com.elzify.music.subsonic.models.Child;
+import com.elzify.music.ui.dialog.PlaylistChooserDialog;
+
 import com.elzify.music.R;
 import com.elzify.music.databinding.InnerFragmentPlayerControllerBinding;
 import com.elzify.music.service.EqualizerManager;
@@ -54,15 +60,18 @@ import com.elzify.music.util.AssetLinkUtil;
 import com.elzify.music.util.Constants;
 import com.elzify.music.util.MusicUtil;
 import com.elzify.music.util.Preferences;
+import com.elzify.music.util.UIUtil;
 import com.elzify.music.viewmodel.PlayerBottomSheetViewModel;
 import com.elzify.music.viewmodel.RatingViewModel;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-import com.google.android.material.elevation.SurfaceColors;
+
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -75,17 +84,19 @@ public class PlayerControllerFragment extends Fragment {
     private ToggleButton buttonFavorite;
     private RatingViewModel ratingViewModel;
     private RatingBar songRatingBar;
-    private TextView playerMediaTitleLabel;
-    private TextView playerArtistNameLabel;
+    private LinearLayout playerMetadataContainer;
     private Button playbackSpeedButton;
     private ToggleButton skipSilenceToggleButton;
     private Chip playerMediaExtension;
     private TextView playerMediaBitrate;
-    private ConstraintLayout playerQuickActionView;
+    private View playerQuickActionView;
     private ImageButton playerOpenQueueButton;
     private ImageButton playerTrackInfo;
-    private LinearLayout ratingContainer;
+    private View ratingContainer;
     private ImageButton equalizerButton;
+    private ImageButton addToPlaylistButton;
+    private ImageButton overflowMenuButton;
+    private ImageButton lyricsButton;
     private ChipGroup assetLinkChipGroup;
     private Chip playerSongLinkChip;
     private Chip playerAlbumLinkChip;
@@ -97,6 +108,20 @@ public class PlayerControllerFragment extends Fragment {
 
     private MediaService.LocalBinder mediaServiceBinder;
     private boolean isServiceBound = false;
+    private boolean isFirstBatch = true;
+
+    private final android.content.SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = (sharedPreferences, key) -> {
+        if ("now_playing_metadata".equals(key)) {
+            if (bind != null && mediaBrowserListenableFuture != null && mediaBrowserListenableFuture.isDone()) {
+                try {
+                    MediaBrowser browser = mediaBrowserListenableFuture.get();
+                    setMetadata(browser.getMediaMetadata());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -112,9 +137,8 @@ public class PlayerControllerFragment extends Fragment {
         initQuickActionView();
         initCoverLyricsSlideView();
         initMediaListenable();
-        initMediaLabelButton();
-        initArtistLabelButton();
         initEqualizerButton();
+        initOverflowMenu();
 
         return view;
     }
@@ -122,12 +146,16 @@ public class PlayerControllerFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .registerOnSharedPreferenceChangeListener(preferenceChangeListener);
         initializeBrowser();
         bindMediaController();
     }
 
     @Override
     public void onStop() {
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
         releaseBrowser();
         super.onStop();
     }
@@ -141,8 +169,7 @@ public class PlayerControllerFragment extends Fragment {
     private void init() {
         playerMediaCoverViewPager = bind.getRoot().findViewById(R.id.player_media_cover_view_pager);
         buttonFavorite = bind.getRoot().findViewById(R.id.button_favorite);
-        playerMediaTitleLabel = bind.getRoot().findViewById(R.id.player_media_title_label);
-        playerArtistNameLabel = bind.getRoot().findViewById(R.id.player_artist_name_label);
+        playerMetadataContainer = bind.getRoot().findViewById(R.id.player_metadata_container);
         playbackSpeedButton = bind.getRoot().findViewById(R.id.player_playback_speed_button);
         skipSilenceToggleButton = bind.getRoot().findViewById(R.id.player_skip_silence_toggle_button);
         playerMediaExtension = bind.getRoot().findViewById(R.id.player_media_extension);
@@ -153,6 +180,12 @@ public class PlayerControllerFragment extends Fragment {
         songRatingBar =  bind.getRoot().findViewById(R.id.song_rating_bar);
         ratingContainer = bind.getRoot().findViewById(R.id.rating_container);
         equalizerButton = bind.getRoot().findViewById(R.id.player_open_equalizer_button);
+        addToPlaylistButton = bind.getRoot().findViewById(R.id.button_add_to_playlist);
+        if (addToPlaylistButton != null) {
+            addToPlaylistButton.setOnClickListener(v -> launchPlaylistChooser());
+        }
+        overflowMenuButton = bind.getRoot().findViewById(R.id.button_overflow_menu);
+        lyricsButton = bind.getRoot().findViewById(R.id.player_open_lyrics_button);
         assetLinkChipGroup = bind.getRoot().findViewById(R.id.asset_link_chip_group);
         playerSongLinkChip = bind.getRoot().findViewById(R.id.asset_link_song_chip);
         playerAlbumLinkChip = bind.getRoot().findViewById(R.id.asset_link_album_chip);
@@ -161,14 +194,22 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void initQuickActionView() {
-        playerQuickActionView.setBackgroundColor(SurfaceColors.getColorForElevation(requireContext(), 8));
-
         playerOpenQueueButton.setOnClickListener(view -> {
             PlayerBottomSheetFragment playerBottomSheetFragment = (PlayerBottomSheetFragment) requireActivity().getSupportFragmentManager().findFragmentByTag("PlayerBottomSheet");
             if (playerBottomSheetFragment != null) {
                 playerBottomSheetFragment.goToQueuePage();
             }
         });
+
+        if (lyricsButton != null) {
+            lyricsButton.setOnClickListener(view -> {
+                if (playerMediaCoverViewPager.getCurrentItem() == 1) {
+                    goToControllerPage();
+                } else {
+                    goToLyricsPage();
+                }
+            });
+        }
     }
 
     private void initializeBrowser() {
@@ -181,6 +222,7 @@ public class PlayerControllerFragment extends Fragment {
 
     private void bindMediaController() {
         mediaBrowserListenableFuture.addListener(() -> {
+            if (bind == null) return;
             try {
                 MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
 
@@ -220,66 +262,221 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void setMetadata(MediaMetadata mediaMetadata) {
+        setDynamicMetadata(mediaMetadata);
+        updateAssetLinkChips(mediaMetadata);
+    }
+
+    private void setDynamicMetadata(MediaMetadata mediaMetadata) {
+        if (playerMetadataContainer == null) return;
+        playerMetadataContainer.removeAllViews();
+
+        List<String> enabledFields = Preferences.getNowPlayingMetadata();
         String type = mediaMetadata.extras != null ? mediaMetadata.extras.getString("type") : null;
 
         if (Objects.equals(type, Constants.MEDIA_TYPE_RADIO)) {
-            // For radio: always read from extras first (radioArtist, radioTitle, stationName)
-            // MediaMetadata.title/artist are formatted for notification
-            String stationName = mediaMetadata.extras != null
-                    ? mediaMetadata.extras.getString("stationName",
-                    mediaMetadata.artist != null ? String.valueOf(mediaMetadata.artist) : "")
-                    : mediaMetadata.artist != null ? String.valueOf(mediaMetadata.artist) : "";
-
-            String artist = mediaMetadata.extras != null
-                    ? mediaMetadata.extras.getString("radioArtist", "")
-                    : "";
-
-            String title = mediaMetadata.extras != null
-                    ? mediaMetadata.extras.getString("radioTitle", "")
-                    : "";
-
-            // Format: "Artist - Song" or fallback to title or station name
-            String mainTitle;
-            if (!TextUtils.isEmpty(artist) && !TextUtils.isEmpty(title)) {
-                mainTitle = artist + " - " + title;
-            } else if (!TextUtils.isEmpty(title)) {
-                mainTitle = title;
-            } else if (!TextUtils.isEmpty(artist)) {
-                mainTitle = artist;
-            } else {
-                mainTitle = stationName;
-            }
-
-            playerMediaTitleLabel.setText(mainTitle);
-            playerArtistNameLabel.setText(stationName);
-
-            playerMediaTitleLabel.setSelected(true);
-            playerArtistNameLabel.setSelected(true);
-
-            playerMediaTitleLabel.setVisibility(!TextUtils.isEmpty(mainTitle) ? View.VISIBLE : View.GONE);
-            playerArtistNameLabel.setVisibility(!TextUtils.isEmpty(stationName) ? View.VISIBLE : View.GONE);
-
-            updateAssetLinkChips(mediaMetadata);
+            renderRadioMetadata(mediaMetadata, enabledFields);
             return;
         }
 
-        playerMediaTitleLabel.setText(String.valueOf(mediaMetadata.title));
-        playerArtistNameLabel.setText(
-                mediaMetadata.artist != null
-                        ? String.valueOf(mediaMetadata.artist)
-                        : "");
+        for (String field : enabledFields) {
+            switch (field) {
+                case Constants.METADATA_TITLE:
+                    if (mediaMetadata.title != null) {
+                        TextView titleView = createMetadataView(String.valueOf(mediaMetadata.title), R.style.PlayerMetadataTitle);
+                        playerMetadataContainer.addView(titleView);
+                        bindAlbumLink(titleView);
+                    }
+                    break;
+                case Constants.METADATA_ARTIST:
+                    if (mediaMetadata.artist != null) {
+                        TextView artistView = createMetadataView(String.valueOf(mediaMetadata.artist), R.style.PlayerMetadataArtist);
+                        artistView.setTextColor(getPlayerTextColor());
+                        playerMetadataContainer.addView(artistView);
+                        bindArtistLink(artistView);
+                    }
+                    break;
+                case Constants.METADATA_ALBUM:
+                    if (mediaMetadata.albumTitle != null) {
+                        TextView albumView = createMetadataView(String.valueOf(mediaMetadata.albumTitle), R.style.PlayerMetadataAlbum);
+                        albumView.setTextColor(getPlayerTextColor());
+                        playerMetadataContainer.addView(albumView);
+                        bindAlbumLink(albumView);
+                    }
+                    break;
+                case Constants.METADATA_YEAR:
+                    if (mediaMetadata.releaseYear != null) {
+                        TextView yearView = createMetadataView(String.valueOf(mediaMetadata.releaseYear), R.style.PlayerMetadataSecondary);
+                        yearView.setTextColor(getPlayerTextColor());
+                        playerMetadataContainer.addView(yearView);
+                    } else if (mediaMetadata.extras != null && mediaMetadata.extras.containsKey("year")) {
+                        TextView yearView = createMetadataView(String.valueOf(mediaMetadata.extras.getInt("year")), R.style.PlayerMetadataSecondary);
+                        yearView.setTextColor(getPlayerTextColor());
+                        playerMetadataContainer.addView(yearView);
+                    }
+                    break;
+                case Constants.METADATA_GENRE:
+                    if (mediaMetadata.genre != null) {
+                        TextView genreView = createMetadataView(String.valueOf(mediaMetadata.genre), R.style.PlayerMetadataSecondary);
+                        genreView.setTextColor(getPlayerTextColor());
+                        playerMetadataContainer.addView(genreView);
+                    }
+                    break;
+                case Constants.METADATA_BITRATE:
+                    if (mediaMetadata.extras != null) {
+                        int rawBitrate = mediaMetadata.extras.getInt("bitrate", 0);
+                        String suffix = mediaMetadata.extras.getString("suffix");
+                        StringBuilder bitrateText = new StringBuilder();
+                        if (!TextUtils.isEmpty(suffix)) {
+                            bitrateText.append(suffix.toUpperCase());
+                        }
+                        if (rawBitrate != 0) {
+                            if (bitrateText.length() > 0) bitrateText.append(" • ");
+                            bitrateText.append(rawBitrate).append(" kbps");
+                        }
 
-        playerMediaTitleLabel.setSelected(true);
-        playerArtistNameLabel.setSelected(true);
+                        if (bitrateText.length() > 0) {
+                            TextView bitrateView = createMetadataView(bitrateText.toString(), R.style.PlayerMetadataSecondary);
+                            bitrateView.setTextColor(getPlayerTextColor());
+                            playerMetadataContainer.addView(bitrateView);
+                        }
+                    }
+                    break;
+                case Constants.METADATA_PLAY_COUNT:
+                    if (mediaMetadata.extras != null) {
+                        String currentSongId = mediaMetadata.extras.getString("id");
+                        long basePlayCount = mediaMetadata.extras.getLong("playCount", 0);
+                        long effectivePlayCount = basePlayCount + MediaManager.getPlayCountIncrement(currentSongId);
+                        if (effectivePlayCount != 0) {
+                            TextView playCountView = createMetadataView(effectivePlayCount + " plays", R.style.PlayerMetadataSecondary);
+                            playCountView.setTextColor(getPlayerTextColor());
+                            playerMetadataContainer.addView(playCountView);
 
-        playerMediaTitleLabel.setVisibility(mediaMetadata.title != null && !Objects.equals(mediaMetadata.title, "") ? View.VISIBLE : View.GONE);
-        playerArtistNameLabel.setVisibility(
-                (mediaMetadata.artist != null && !Objects.equals(mediaMetadata.artist, ""))
-                        || mediaMetadata.extras != null && Objects.equals(mediaMetadata.extras.getString("type"), Constants.MEDIA_TYPE_RADIO) && mediaMetadata.extras.getString("uri") != null
-                        ? View.VISIBLE
-                        : View.GONE);
+                            final long[] lastSeenVersion = {MediaManager.getScrobbleVersion()};
+                            MediaManager.getScrobbledSongId().observe(getViewLifecycleOwner(), scrobbledId -> {
+                                long currentVersion = MediaManager.getScrobbleVersion();
+                                if (currentVersion <= lastSeenVersion[0]) return;
+                                lastSeenVersion[0] = currentVersion;
+                                if (currentSongId != null && currentSongId.equals(scrobbledId)) {
+                                    long updated = basePlayCount + MediaManager.getPlayCountIncrement(currentSongId);
+                                    playCountView.setText(updated + " plays");
+                                }
+                            });
+                        } else {
+                            TextView playCountView = createMetadataView("", R.style.PlayerMetadataSecondary);
+                            playCountView.setTextColor(getPlayerTextColor());
+                            playCountView.setVisibility(View.GONE);
+                            playerMetadataContainer.addView(playCountView);
 
-        updateAssetLinkChips(mediaMetadata);
+                            final long[] lastSeenVersion = {MediaManager.getScrobbleVersion()};
+                            MediaManager.getScrobbledSongId().observe(getViewLifecycleOwner(), scrobbledId -> {
+                                long currentVersion = MediaManager.getScrobbleVersion();
+                                if (currentVersion <= lastSeenVersion[0]) return;
+                                lastSeenVersion[0] = currentVersion;
+                                if (currentSongId != null && currentSongId.equals(scrobbledId)) {
+                                    long updated = basePlayCount + MediaManager.getPlayCountIncrement(currentSongId);
+                                    playCountView.setText(updated + " plays");
+                                    playCountView.setVisibility(View.VISIBLE);
+                                }
+                            });
+                        }
+                    }
+                    break;
+                case Constants.METADATA_SCROBBLES:
+                    TextView scrobbleView = createMetadataView("", R.style.PlayerMetadataSecondary);
+                    scrobbleView.setTextColor(getPlayerTextColor());
+                    scrobbleView.setVisibility(View.GONE);
+                    playerMetadataContainer.addView(scrobbleView);
+
+                    String artist = mediaMetadata.artist != null ? String.valueOf(mediaMetadata.artist) : null;
+                    String title = mediaMetadata.title != null ? String.valueOf(mediaMetadata.title) : null;
+                    playerBottomSheetViewModel.fetchLastFmScrobbleCount(artist, title);
+                    playerBottomSheetViewModel.getLastFmScrobbleCount().observe(getViewLifecycleOwner(), count -> {
+                        if (count != null && count > 0) {
+                            scrobbleView.setText(count + " scrobbles");
+                            scrobbleView.setVisibility(View.VISIBLE);
+                        } else {
+                            scrobbleView.setVisibility(View.GONE);
+                        }
+                    });
+                    break;
+            }
+        }
+    }
+
+    private void renderRadioMetadata(MediaMetadata mediaMetadata, List<String> enabledFields) {
+        String stationName = mediaMetadata.extras != null
+                ? mediaMetadata.extras.getString("stationName",
+                mediaMetadata.artist != null ? String.valueOf(mediaMetadata.artist) : "")
+                : mediaMetadata.artist != null ? String.valueOf(mediaMetadata.artist) : "";
+
+        String artist = mediaMetadata.extras != null ? mediaMetadata.extras.getString("radioArtist", "") : "";
+        String title = mediaMetadata.extras != null ? mediaMetadata.extras.getString("radioTitle", "") : "";
+
+        String mainTitle;
+        if (!TextUtils.isEmpty(artist) && !TextUtils.isEmpty(title)) {
+            mainTitle = artist + " - " + title;
+        } else if (!TextUtils.isEmpty(title)) {
+            mainTitle = title;
+        } else if (!TextUtils.isEmpty(artist)) {
+            mainTitle = artist;
+        } else {
+            mainTitle = stationName;
+        }
+
+        TextView titleView = createMetadataView(mainTitle, R.style.HeadlineLarge);
+        playerMetadataContainer.addView(titleView);
+
+        TextView stationView = createMetadataView(stationName, R.style.TitleMedium);
+        stationView.setTextColor(getPlayerTextColor());
+        playerMetadataContainer.addView(stationView);
+    }
+
+    private TextView createMetadataView(String text, int styleRes) {
+        TextView textView = new TextView(requireContext());
+        textView.setText(text);
+        textView.setTextAppearance(styleRes);
+        textView.setTextColor(getPlayerTextColor());
+        textView.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+        textView.setGravity(android.view.Gravity.CENTER);
+        textView.setSingleLine(true);
+        textView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+        textView.setSelected(true);
+        textView.setPadding(0, UIUtil.dpToPx(requireContext(), 2), 0, UIUtil.dpToPx(requireContext(), 2));
+        return textView;
+    }
+
+    private int getPlayerTextColor() {
+        int mode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        return mode == Configuration.UI_MODE_NIGHT_YES ? Color.WHITE : Color.BLACK;
+    }
+
+    private void bindAlbumLink(View view) {
+        playerBottomSheetViewModel.getLiveAlbum().observe(getViewLifecycleOwner(), album -> {
+            if (album != null) {
+                view.setOnClickListener(v -> {
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(Constants.ALBUM_OBJECT, album);
+                    NavHostFragment.findNavController(this).navigate(R.id.albumPageFragment, bundle);
+                    activity.collapseBottomSheetDelayed();
+                });
+            }
+        });
+    }
+
+    private void bindArtistLink(View view) {
+        playerBottomSheetViewModel.getLiveArtist().observe(getViewLifecycleOwner(), artist -> {
+            if (artist != null) {
+                view.setOnClickListener(v -> {
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(Constants.ARTIST_OBJECT, artist);
+                    NavHostFragment.findNavController(this).navigate(R.id.artistPageFragment, bundle);
+                    activity.collapseBottomSheetDelayed();
+                });
+            }
+        });
     }
 
     private void setMediaInfo(MediaMetadata mediaMetadata) {
@@ -377,8 +574,6 @@ public class PlayerControllerFragment extends Fragment {
         AssetLinkUtil.AssetLink songLink = bindAssetLinkChip(playerSongLinkChip, AssetLinkUtil.TYPE_SONG, songId);
         AssetLinkUtil.AssetLink albumLink = bindAssetLinkChip(playerAlbumLinkChip, AssetLinkUtil.TYPE_ALBUM, albumId);
         AssetLinkUtil.AssetLink artistLink = bindAssetLinkChip(playerArtistLinkChip, AssetLinkUtil.TYPE_ARTIST, artistId);
-        bindAssetLinkView(playerMediaTitleLabel, songLink);
-        bindAssetLinkView(playerArtistNameLabel, artistLink != null ? artistLink : songLink);
         bindAssetLinkView(playerMediaCoverViewPager, songLink);
         syncAssetLinkGroupVisibility();
     }
@@ -475,9 +670,9 @@ public class PlayerControllerFragment extends Fragment {
                     bind.getRoot().setShowNextButton(false);
                     bind.getRoot().setShowFastForwardButton(true);
                     bind.getRoot().setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_NONE);
-                    bind.getRoot().findViewById(R.id.player_playback_speed_button).setVisibility(View.VISIBLE);
-                    bind.getRoot().findViewById(R.id.player_skip_silence_toggle_button).setVisibility(View.VISIBLE);
-                    bind.getRoot().findViewById(R.id.button_favorite).setVisibility(View.GONE);
+                    setViewVisibilityIfPresent(R.id.button_favorite, View.GONE);
+                    setViewVisibilityIfPresent(R.id.button_add_to_playlist, View.GONE);
+                    setViewVisibilityIfPresent(R.id.button_overflow_menu, View.GONE);
                     setPlaybackParameters(mediaBrowser);
                     break;
                 case Constants.MEDIA_TYPE_RADIO:
@@ -487,9 +682,9 @@ public class PlayerControllerFragment extends Fragment {
                     bind.getRoot().setShowNextButton(false);
                     bind.getRoot().setShowFastForwardButton(false);
                     bind.getRoot().setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_NONE);
-                    bind.getRoot().findViewById(R.id.player_playback_speed_button).setVisibility(View.GONE);
-                    bind.getRoot().findViewById(R.id.player_skip_silence_toggle_button).setVisibility(View.GONE);
-                    bind.getRoot().findViewById(R.id.button_favorite).setVisibility(View.GONE);
+                    setViewVisibilityIfPresent(R.id.button_favorite, View.GONE);
+                    setViewVisibilityIfPresent(R.id.button_add_to_playlist, View.GONE);
+                    setViewVisibilityIfPresent(R.id.button_overflow_menu, View.GONE);
                     setPlaybackParameters(mediaBrowser);
                     break;
                 case Constants.MEDIA_TYPE_MUSIC:
@@ -500,9 +695,9 @@ public class PlayerControllerFragment extends Fragment {
                     bind.getRoot().setShowNextButton(true);
                     bind.getRoot().setShowFastForwardButton(false);
                     bind.getRoot().setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ALL | RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE);
-                    bind.getRoot().findViewById(R.id.player_playback_speed_button).setVisibility(View.VISIBLE);
-                    bind.getRoot().findViewById(R.id.player_skip_silence_toggle_button).setVisibility(View.GONE);
-                    bind.getRoot().findViewById(R.id.button_favorite).setVisibility(View.VISIBLE);
+                    setViewVisibilityIfPresent(R.id.button_favorite, View.VISIBLE);
+                    setViewVisibilityIfPresent(R.id.button_add_to_playlist, View.VISIBLE);
+                    setViewVisibilityIfPresent(R.id.button_overflow_menu, View.VISIBLE);
                     setPlaybackParameters(mediaBrowser);
                     break;
             }
@@ -512,11 +707,13 @@ public class PlayerControllerFragment extends Fragment {
     private void initCoverLyricsSlideView() {
         playerMediaCoverViewPager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
         playerMediaCoverViewPager.setAdapter(new PlayerControllerHorizontalPager(this));
+        updateTrackInfoVisibility(playerMediaCoverViewPager.getCurrentItem());
 
         playerMediaCoverViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
+                updateTrackInfoVisibility(position);
 
                 PlayerBottomSheetFragment playerBottomSheetFragment = (PlayerBottomSheetFragment) requireActivity().getSupportFragmentManager().findFragmentByTag("PlayerBottomSheet");
 
@@ -535,6 +732,11 @@ public class PlayerControllerFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void updateTrackInfoVisibility(int position) {
+        if (playerTrackInfo == null) return;
+        playerTrackInfo.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
     }
 
     private void initMediaListenable() {
@@ -569,6 +771,7 @@ public class PlayerControllerFragment extends Fragment {
                         if (fromUser) {
                             ratingViewModel.rate((int) rating);
                             media.setUserRating((int) rating);
+                            MediaManager.postRatingEvent(media.getId(), (int) rating);
                         }
                     }
                 });
@@ -579,29 +782,31 @@ public class PlayerControllerFragment extends Fragment {
                 }
             }
         });
-    }
 
-    private void initMediaLabelButton() {
-        playerBottomSheetViewModel.getLiveAlbum().observe(getViewLifecycleOwner(), album -> {
-            if (album != null) {
-                playerMediaTitleLabel.setOnClickListener(view -> {
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable(Constants.ALBUM_OBJECT, album);
-                    NavHostFragment.findNavController(this).navigate(R.id.albumPageFragment, bundle);
-                    activity.collapseBottomSheetDelayed();
-                });
+        MediaManager.getFavoriteEvent().observe(getViewLifecycleOwner(), event -> {
+            if (event == null) return;
+            String songId = (String) event[0];
+            Date starred = (Date) event[1];
+            Child media = playerBottomSheetViewModel.getLiveMedia().getValue();
+            if (media != null && media.getId().equals(songId)) {
+                buttonFavorite.setChecked(starred != null);
             }
         });
-    }
 
-    private void initArtistLabelButton() {
-        playerBottomSheetViewModel.getLiveArtist().observe(getViewLifecycleOwner(), artist -> {
-            if (artist != null) {
-                playerArtistNameLabel.setOnClickListener(view -> {
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable(Constants.ARTIST_OBJECT, artist);
-                    NavHostFragment.findNavController(this).navigate(R.id.artistPageFragment, bundle);
-                    activity.collapseBottomSheetDelayed();
+        MediaManager.getRatingEvent().observe(getViewLifecycleOwner(), event -> {
+            if (event == null) return;
+            String songId = (String) event[0];
+            int rating = (Integer) event[1];
+            Child media = playerBottomSheetViewModel.getLiveMedia().getValue();
+            if (media != null && media.getId().equals(songId)) {
+                songRatingBar.setOnRatingBarChangeListener(null);
+                songRatingBar.setRating(rating);
+                songRatingBar.setOnRatingBarChangeListener((ratingBar, r, fromUser) -> {
+                    if (fromUser) {
+                        ratingViewModel.rate((int) r);
+                        media.setUserRating((int) r);
+                        MediaManager.postRatingEvent(media.getId(), (int) r);
+                    }
                 });
             }
         });
@@ -623,6 +828,7 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void initEqualizerButton() {
+        if (equalizerButton == null) return;
         equalizerButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(this);
             NavOptions navOptions = new NavOptions.Builder()
@@ -634,6 +840,79 @@ public class PlayerControllerFragment extends Fragment {
         });
     }
 
+    private void initOverflowMenu() {
+        if (overflowMenuButton == null) return;
+        overflowMenuButton.setOnClickListener(v -> {
+            PopupMenu popup = new PopupMenu(requireContext(), v);
+            popup.getMenuInflater().inflate(R.menu.menu_now_playing_overflow, popup.getMenu());
+            popup.setOnMenuItemClickListener(item -> {
+                int id = item.getItemId();
+                if (id == R.id.menu_add_to_playlist) {
+                    launchPlaylistChooser();
+                    return true;
+                } else if (id == R.id.menu_go_to_album) {
+                    playerBottomSheetViewModel.getLiveAlbum().observe(getViewLifecycleOwner(), album -> {
+                        if (album != null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putParcelable(Constants.ALBUM_OBJECT, album);
+                            NavHostFragment.findNavController(this).navigate(R.id.albumPageFragment, bundle);
+                            activity.collapseBottomSheetDelayed();
+                        }
+                    });
+                    return true;
+                } else if (id == R.id.menu_go_to_artist) {
+                    playerBottomSheetViewModel.getLiveArtist().observe(getViewLifecycleOwner(), artist -> {
+                        if (artist != null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putParcelable(Constants.ARTIST_OBJECT, artist);
+                            NavHostFragment.findNavController(this).navigate(R.id.artistPageFragment, bundle);
+                            activity.collapseBottomSheetDelayed();
+                        }
+                    });
+                    return true;
+                } else if (id == R.id.menu_instant_mix) {
+                    Child media = playerBottomSheetViewModel.getLiveMedia().getValue();
+                    if (media != null) {
+                        ListenableFuture<MediaBrowser> activityBrowserFuture = activity.getMediaBrowserListenableFuture();
+                        if (activityBrowserFuture == null) return true;
+
+                        isFirstBatch = true;
+                        Toast.makeText(requireContext(), R.string.bottom_sheet_generating_instant_mix, Toast.LENGTH_SHORT).show();
+
+                        playerBottomSheetViewModel.getMediaInstantMix(activity, media).observe(activity, mixMedia -> {
+                            if (mixMedia == null || mixMedia.isEmpty()) return;
+                            if (getActivity() == null) return;
+
+                            MusicUtil.ratingFilter(mixMedia);
+
+                            if (isFirstBatch) {
+                                isFirstBatch = false;
+                                MediaManager.startQueue(activityBrowserFuture, mixMedia, 0);
+                                activity.setBottomSheetInPeek(true);
+                            } else {
+                                MediaManager.enqueue(activityBrowserFuture, mixMedia, true);
+                            }
+                        });
+                    }
+                    return true;
+                }
+                return false;
+            });
+            popup.show();
+        });
+    }
+
+    private void launchPlaylistChooser() {
+        Child media = playerBottomSheetViewModel.getLiveMedia().getValue();
+        if (media != null) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, new ArrayList<>(Collections.singletonList(media)));
+            PlaylistChooserDialog dialog = new PlaylistChooserDialog();
+            dialog.setArguments(bundle);
+            dialog.show(requireActivity().getSupportFragmentManager(), null);
+        }
+    }
+
     public void goToControllerPage() {
         playerMediaCoverViewPager.setCurrentItem(0, false);
     }
@@ -643,13 +922,17 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void checkAndSetRatingContainerVisibility() {
-     if (ratingContainer == null) return;
+        if (ratingContainer == null) return;
 
-     if (Preferences.showItemStarRating()) {
-            ratingContainer.setVisibility(View.VISIBLE);
-         }
-     else {
-            ratingContainer.setVisibility(View.GONE);
+        if (Preferences.showItemStarRating()) {
+            songRatingBar.setVisibility(View.VISIBLE);
+        } else {
+            songRatingBar.setVisibility(View.GONE);
+        }
+
+        TextView ratingText = bind.getRoot().findViewById(R.id.rating_text);
+        if (ratingText != null) {
+            ratingText.setVisibility(Preferences.showItemStarRating() ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -659,10 +942,21 @@ public class PlayerControllerFragment extends Fragment {
         boolean skipSilence = Preferences.isSkipSilenceMode();
 
         mediaBrowser.setPlaybackParameters(new PlaybackParameters(currentSpeed));
-        playbackSpeedButton.setText(getString(R.string.player_playback_speed, currentSpeed));
+        if (playbackSpeedButton != null) {
+            playbackSpeedButton.setText(getString(R.string.player_playback_speed, currentSpeed));
+        }
 
         // TODO Skippare il silenzio
-        skipSilenceToggleButton.setChecked(skipSilence);
+        if (skipSilenceToggleButton != null) {
+            skipSilenceToggleButton.setChecked(skipSilence);
+        }
+    }
+
+    private void setViewVisibilityIfPresent(int viewId, int visibility) {
+        View view = bind.getRoot().findViewById(viewId);
+        if (view != null) {
+            view.setVisibility(visibility);
+        }
     }
 
     private void resetPlaybackParameters(MediaBrowser mediaBrowser) {
@@ -698,21 +992,7 @@ public class PlayerControllerFragment extends Fragment {
             short numBands = eqManager.getNumberOfBands();
 
             if (equalizerButton != null) {
-                if (numBands == 0) {
-                    equalizerButton.setVisibility(View.GONE);
-
-                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) playerOpenQueueButton.getLayoutParams();
-                    params.startToEnd = ConstraintLayout.LayoutParams.UNSET;
-                    params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
-                    playerOpenQueueButton.setLayoutParams(params);
-                } else {
-                    equalizerButton.setVisibility(View.VISIBLE);
-
-                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) playerOpenQueueButton.getLayoutParams();
-                    params.startToStart = ConstraintLayout.LayoutParams.UNSET;
-                    params.startToEnd = R.id.player_open_equalizer_button;
-                    playerOpenQueueButton.setLayoutParams(params);
-                }
+                equalizerButton.setVisibility(numBands == 0 ? View.GONE : View.VISIBLE);
             }
         }
     }

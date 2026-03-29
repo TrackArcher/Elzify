@@ -54,6 +54,7 @@ public class PlayerLyricsFragment extends Fragment {
     private LyricsList currentLyricsList;
     private Integer lastLineIdx;
     private String currentDescription;
+    private boolean lyricsSourceSwitchAvailable;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,6 +74,7 @@ public class PlayerLyricsFragment extends Fragment {
 
         initPanelContent();
         observeDownloadState();
+        observeLyricsSourceState();
     }
 
     @Override
@@ -112,12 +114,13 @@ public class PlayerLyricsFragment extends Fragment {
         currentLyricsList = null;
         currentDescription = null;
         lastLineIdx = null;
+        lyricsSourceSwitchAvailable = false;
     }
 
     private void initOverlay() {
-        bind.syncLyricsTapButton.setOnClickListener(view -> {
-            playerBottomSheetViewModel.changeSyncLyricsState();
-        });
+        float overlayLift = getResources().getDisplayMetrics().density * 64f;
+        bind.lyricsSourceToggleButton.setTranslationY(-overlayLift);
+        bind.downloadLyricsButton.setTranslationY(-overlayLift);
 
         bind.downloadLyricsButton.setOnClickListener(view -> {
             boolean saved = playerBottomSheetViewModel.downloadCurrentLyrics();
@@ -128,6 +131,20 @@ public class PlayerLyricsFragment extends Fragment {
                         Toast.LENGTH_SHORT
                 ).show();
             }
+        });
+
+        bind.lyricsSourceToggleButton.setOnClickListener(view -> {
+            Integer sourceBefore = playerBottomSheetViewModel.getLyricsSource().getValue();
+            boolean switched = playerBottomSheetViewModel.switchLyricsSource();
+            if (!switched) {
+                Toast.makeText(requireContext(), R.string.player_lyrics_source_switch_unavailable, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            int labelRes = sourceBefore != null && sourceBefore == PlayerBottomSheetViewModel.LYRICS_SOURCE_SERVER
+                    ? R.string.player_lyrics_source_lrclib_label
+                    : R.string.player_lyrics_source_server_label;
+            Toast.makeText(requireContext(), getString(R.string.player_lyrics_source_active, getString(labelRes)), Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -190,6 +207,27 @@ public class PlayerLyricsFragment extends Fragment {
         });
     }
 
+    private void observeLyricsSourceState() {
+        playerBottomSheetViewModel.getLyricsSourceSwitchAvailable().observe(getViewLifecycleOwner(), canSwitch -> {
+            lyricsSourceSwitchAvailable = canSwitch != null && canSwitch;
+            updateLyricsSourceButtonVisibility(hasStructuredLyrics(currentLyricsList) || hasText(currentLyrics));
+        });
+
+        playerBottomSheetViewModel.getLyricsSource().observe(getViewLifecycleOwner(), source -> {
+            if (bind == null) {
+                return;
+            }
+
+            if (source != null && source == PlayerBottomSheetViewModel.LYRICS_SOURCE_LRCLIB) {
+                bind.lyricsSourceToggleButton.setText(getString(R.string.player_lyrics_source_lrclib_label));
+                bind.lyricsSourceToggleButton.setContentDescription(getString(R.string.player_lyrics_source_lrclib_content_description));
+            } else {
+                bind.lyricsSourceToggleButton.setText(getString(R.string.player_lyrics_source_server_label));
+                bind.lyricsSourceToggleButton.setContentDescription(getString(R.string.player_lyrics_source_server_content_description));
+            }
+        });
+    }
+
     private void updatePanelContent() {
         if (bind == null) {
             return;
@@ -202,7 +240,6 @@ public class PlayerLyricsFragment extends Fragment {
             bind.nowPlayingSongLyricsTextView.setVisibility(View.VISIBLE);
             bind.emptyDescriptionImageView.setVisibility(View.GONE);
             bind.titleEmptyDescriptionLabel.setVisibility(View.GONE);
-            bind.syncLyricsTapButton.setVisibility(View.VISIBLE);
             bind.downloadLyricsButton.setVisibility(View.VISIBLE);
             bind.downloadLyricsButton.setEnabled(true);
         } else if (hasText(currentLyrics)) {
@@ -210,7 +247,6 @@ public class PlayerLyricsFragment extends Fragment {
             bind.nowPlayingSongLyricsTextView.setVisibility(View.VISIBLE);
             bind.emptyDescriptionImageView.setVisibility(View.GONE);
             bind.titleEmptyDescriptionLabel.setVisibility(View.GONE);
-            bind.syncLyricsTapButton.setVisibility(View.GONE);
             bind.downloadLyricsButton.setVisibility(View.VISIBLE);
             bind.downloadLyricsButton.setEnabled(true);
         } else if (hasText(currentDescription)) {
@@ -218,17 +254,27 @@ public class PlayerLyricsFragment extends Fragment {
             bind.nowPlayingSongLyricsTextView.setVisibility(View.VISIBLE);
             bind.emptyDescriptionImageView.setVisibility(View.GONE);
             bind.titleEmptyDescriptionLabel.setVisibility(View.GONE);
-            bind.syncLyricsTapButton.setVisibility(View.GONE);
             bind.downloadLyricsButton.setVisibility(View.GONE);
             bind.downloadLyricsButton.setEnabled(false);
         } else {
             bind.nowPlayingSongLyricsTextView.setVisibility(View.GONE);
             bind.emptyDescriptionImageView.setVisibility(View.VISIBLE);
             bind.titleEmptyDescriptionLabel.setVisibility(View.VISIBLE);
-            bind.syncLyricsTapButton.setVisibility(View.GONE);
             bind.downloadLyricsButton.setVisibility(View.GONE);
             bind.downloadLyricsButton.setEnabled(false);
         }
+
+        updateLyricsSourceButtonVisibility(hasStructuredLyrics(currentLyricsList) || hasText(currentLyrics));
+    }
+
+    private void updateLyricsSourceButtonVisibility(boolean hasLyrics) {
+        if (bind == null) {
+            return;
+        }
+
+        bind.lyricsSourceToggleButton.setVisibility(hasLyrics ? View.VISIBLE : View.GONE);
+        bind.lyricsSourceToggleButton.setEnabled(hasLyrics);
+        bind.lyricsSourceToggleButton.setAlpha(lyricsSourceSwitchAvailable ? 0.85f : 0.65f);
     }
 
     private boolean hasText(String value) {

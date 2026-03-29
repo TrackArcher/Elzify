@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -23,6 +24,27 @@
         android:text="@string/playlist_chooser_dialog_visibility_summary"
         android:layout_marginTop="8dp"/>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/playlist_search_layout"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:hint="@string/menu_search_button"
+        app:startIconDrawable="@drawable/ic_search"
+        app:endIconMode="clear_text">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/playlist_search_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textFilter"
+            android:maxLines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
     <TextView
         android:id="@+id/no_playlists_created_text_view"
         style="@style/TitleMedium"
@@ -39,8 +61,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/playlist_dialog_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="300dp"
         android:layout_marginTop="8dp"
         android:clipToPadding="false" />
 
@@ -51,7 +72,7 @@
         android:gravity="bottom|center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="2"
+        android:weightSum="3"
         android:layout_marginTop="16dp">
 
         <Button
@@ -62,6 +83,14 @@
             android:layout_weight="1"
             android:layout_gravity="start"
             android:text="@string/playlist_chooser_dialog_create_button" />
+
+        <Button
+            android:id="@+id/playlist_chooser_dialog_confirm_button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/dialog_button_confirm" />
 
         <Button
             android:id="@+id/playlist_chooser_dialog_cancel_button"

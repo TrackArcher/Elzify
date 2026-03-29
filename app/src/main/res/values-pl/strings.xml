@@ -45,7 +45,7 @@
     <string name="album_page_release_dates_label">Wydane %1$s, oryginalnie %2$s</string>
     <string name="album_page_shuffle_button">Odtwarzaj losowo</string>
     <string name="album_page_tracks_count_and_duration">%1$d utworów  •  %2$d minut</string>
-    <string name="app_name">Elzify</string>
+    <string name="app_name">Rollynn</string>
     <string name="artist_adapter_radio_station_starting">Szukanie…</string>
     <string name="artist_bottom_sheet_instant_mix">Natychmiastowy mix mix</string>
     <string name="artist_bottom_sheet_shuffle">Odtwórz losowo</string>
@@ -319,22 +319,22 @@
     <string name="server_unreachable_dialog_positive_button">Kontynuuj mimo wszystko</string>
     <string name="server_unreachable_dialog_summary">Wybrany serwer jest niedostępny. Jeżeli wybierzesz żeby kontynuować ta informacja nie będzie się wyświetlać przez następną godzinę.</string>
     <string name="server_unreachable_dialog_title">Serwer jest niedostępny</string>
-    <string name="settings_about_summary">Elzify jest otwarto-źródłowym i lekkim klientem muzycznym dla Subsonic, stworzonym i zbudowanym natywnie dla Androida.</string>
+    <string name="settings_about_summary">Rollynn jest otwarto-źródłowym i lekkim klientem muzycznym dla Subsonic, stworzonym i zbudowanym natywnie dla Androida.</string>
     <string name="settings_about_title">O aplikacji</string>
     <string name="settings_always_on_display">Always on display</string>
     <string name="settings_allow_playlist_duplicates">Zezwalaj na dodawania duplikatów do playlist</string>
     <string name="settings_allow_playlist_duplicates_summary">Jeżeli włączone, duplikaty nie będą sprawdzane podczas dodawania do playlisty.</string>
     <string name="settings_audio_transcode_download_format">Format transkodowania</string>
-    <string name="settings_audio_transcode_download_priority_summary">Jeżeli włączone, Tempus nie będzię wymuszał pobierania utworu z ustawieniami transkodowania wybranymi poniżej.</string>
+    <string name="settings_audio_transcode_download_priority_summary">Jeżeli włączone, Rollynn nie będzię wymuszał pobierania utworu z ustawieniami transkodowania wybranymi poniżej.</string>
     <string name="settings_audio_transcode_download_priority_title">Priorytetyzuj ustawienia serwera używanego do strumieniowania w pobieraniach</string>
-    <string name="settings_audio_transcode_download_summary">Jeżeli włączone, Tempus będzie pobierał transkodowane utwory.</string>
+    <string name="settings_audio_transcode_download_summary">Jeżeli włączone, Rollynn będzie pobierał transkodowane utwory.</string>
     <string name="settings_audio_transcode_download_title">Pobieraj transkodowane utwory</string>
     <string name="settings_audio_transcode_estimate_content_length_summary">Jeżeli włączone, serwer bedzię odpytywany o przybliżoną długość utworu.</string>
     <string name="settings_audio_transcode_estimate_content_length_title">Szacuj długość treści</string>
     <string name="settings_audio_transcode_format_download">Format transkodowania dla pobierania</string>
     <string name="settings_audio_transcode_format_mobile">Format transkodowania w sieci komórkowej</string>
     <string name="settings_audio_transcode_format_wifi">Format transkodowania w sieci Wi-Fi</string>
-    <string name="settings_audio_transcode_priority_summary">Jeżeli włączone, Tempus nie będzie wymuszał strumieniowania utworu z ustawieniami transkodowania wybranymi poniżej.</string>
+    <string name="settings_audio_transcode_priority_summary">Jeżeli włączone, Rollynn nie będzie wymuszał strumieniowania utworu z ustawieniami transkodowania wybranymi poniżej.</string>
     <string name="settings_audio_transcode_priority_title">Priorytetyzuj ustawienia transkodowania serwera</string>
     <string name="settings_audio_transcode_priority_toast">Priorytet przy transkodowaniu utworu danego serwerowi</string>
     <string name="settings_buffering_strategy">Strategia buforowania</string>
@@ -357,12 +357,11 @@
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
     <string name="settings_github_summary">Śledź tworzenie aplikacji</string>
     <string name="settings_github_title">GitHub</string>
-    <string name="settings_support_discussion_link">https://github.com/eddyizm/tempus/discussions</string>
+
     <string name="settings_github_update">Aktualizacje</string>
     <string name="settings_github_update_title">Sprawdzaj dostępność nowych aktualizacji na githubie</string>
     <string name="settings_github_update_summary">Jeżeli używana jest wersja z githuba, domyślnie aplikacja będzie sprawdzać czy są dostępne nowe wydania apk. Kliknij przełącznik aby, wyłączyć automatyczne sprawdzanie</string>
-    <string name="settings_support_summary">Dołącz do dyskusji i wsparcia społeczności</string>
-    <string name="settings_support_title">Wsparcie użytkowników</string>
+
     <string name="settings_scan_result">Skanowanie: naliczono %1$d utworów</string>
     <string name="settings_image_size">Rozdzielczość obrazów</string>
     <string name="settings_language">Język</string>
@@ -454,7 +453,7 @@
     <string name="settings_title_ui_landscape_items_per_row">Elementów na wiersz w poziomie</string>
     <string name="settings_title_ui_landscape_items_per_row_dialog">Liczba elementów na wiersz</string>
     <string name="settings_transcoded_download">Transkodowane pobieranie</string>
-    <string name="settings_version_summary" translatable="false">3.1.0</string>
+    <string name="settings_version_summary" translatable="false">0.1.2</string>
     <string name="settings_version_title">Wersja</string>
     <string name="settings_wifi_only_summary">Pytaj o potwierdzenie od użytkownika przed strumieniowaniem przez sieć komórkową.</string>
     <string name="settings_wifi_only_title">Alert o strumieniowaniu tylko przez Wi-Fi</string>
@@ -464,7 +463,7 @@
     <string name="share_subtitle_item">Data wygaśnięcia: %1$s</string>
     <string name="share_no_expiration">Nigdy</string>
     <string name="share_unsupported_error">Udostępnianie nie jest wspierane lub włączone</string>
-    <string name="asset_link_clipboard_label">Link zasobu Tempus</string>
+    <string name="asset_link_clipboard_label">Link zasobu Rollynn</string>
     <string name="asset_link_label_song">UID piosenki</string>
     <string name="asset_link_label_album">UID albumu</string>
     <string name="asset_link_label_artist">UID wykonmawcy</string>
@@ -546,12 +545,10 @@
     <string name="track_info_transcoded_content_type">Typ transkodowanej treści</string>
     <string name="track_info_transcoded_suffix">Sufiks transkodowania</string>
     <string name="track_info_year">Rok</string>
-    <string name="undraw_page">unDraw</string>
-    <string name="undraw_thanks">Specjalne podziękowania dla unDraw bez którego ilustracji nie mogliśmy uczynić tej aplikacji jeszcze piękniejszą.</string>
-    <string name="undraw_url">https://undraw.co/</string>
-    <string name="widget_label">Widget Tempus</string>
+
+    <string name="widget_label">Widget Rollynn</string>
     <string name="widget_not_playing">Nie odtwarza</string>
-    <string name="widget_placeholder_subtitle">Otwórz Tempus</string>
+    <string name="widget_placeholder_subtitle">Otwórz Rollynn</string>
     <string name="widget_time_elapsed_placeholder">0:00</string>
     <string name="widget_time_duration_placeholder">0:00</string>
     <string name="widget_content_desc_album_art">Okładka albumu</string>

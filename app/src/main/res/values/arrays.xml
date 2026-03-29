@@ -249,6 +249,15 @@
         <item>ORDER_BY_RANDOM</item>
     </string-array>
 
+    <string-array name="play_next_behavior_titles">
+        <item>@string/settings_play_next_behavior_top</item>
+        <item>@string/settings_play_next_behavior_sequential</item>
+    </string-array>
+    <string-array name="play_next_behavior_values">
+        <item>top</item>
+        <item>sequential</item>
+    </string-array>
+
 
     <string-array name="skip_min_star_rating_titles">
         <item>0 star minimum</item>

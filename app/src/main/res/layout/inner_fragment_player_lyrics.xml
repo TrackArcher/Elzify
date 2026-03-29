@@ -54,6 +54,25 @@
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/lyrics_source_toggle_button"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_marginBottom="8dp"
+        android:alpha="0.85"
+        android:contentDescription="@string/player_lyrics_source_server_content_description"
+        android:text="@string/player_lyrics_source_server_label"
+        android:textAllCaps="false"
+        android:visibility="gone"
+        app:cornerRadius="64dp"
+        app:icon="@drawable/ic_swap_horiz"
+        app:iconGravity="textStart"
+        app:iconPadding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/download_lyrics_button"
         style="@style/Widget.Material3.Button.TonalButton.Icon"
         android:layout_width="48dp"
@@ -68,25 +87,8 @@
         android:visibility="gone"
         app:cornerRadius="64dp"
         app:icon="@drawable/ic_download"
-        app:layout_constraintBottom_toTopOf="@+id/sync_lyrics_tap_button"
-        app:layout_constraintEnd_toEndOf="@+id/now_playing_song_lyrics_sroll_view" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/sync_lyrics_tap_button"
-        style="@style/Widget.Material3.Button.TonalButton.Icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_margin="16dp"
-        android:insetLeft="0dp"
-        android:insetTop="0dp"
-        android:insetRight="0dp"
-        android:insetBottom="0dp"
-        app:cornerRadius="64dp"
-        android:alpha="0.7"
-        android:visibility="visible"
-        app:icon="@drawable/ic_lyrics_sync_lock"
-        app:layout_constraintEnd_toEndOf="@+id/now_playing_song_lyrics_sroll_view"
-        app:layout_constraintBottom_toBottomOf="@+id/now_playing_song_lyrics_sroll_view" />
+        app:layout_constraintBottom_toTopOf="@+id/lyrics_source_toggle_button"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/temp_lyrics_line_text_view"

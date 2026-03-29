@@ -1,6 +1,8 @@
 package com.elzify.music.ui.fragment;
 
 import android.content.ComponentName;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -24,16 +26,20 @@ import androidx.media3.session.SessionToken;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.elzify.music.R;
-import com.elzify.music.provider.AlbumArtContentProvider;
 import com.elzify.music.databinding.FragmentPlayerBottomSheetBinding;
 import com.elzify.music.glide.CustomGlideRequest;
 import com.elzify.music.service.MediaManager;
 import com.elzify.music.service.MediaService;
+import com.elzify.music.subsonic.models.Child;
 import com.elzify.music.subsonic.models.PlayQueue;
+
+import java.util.Date;
 import com.elzify.music.ui.activity.MainActivity;
 import com.elzify.music.ui.fragment.pager.PlayerControllerVerticalPager;
 import com.elzify.music.util.Constants;
+import com.elzify.music.util.MusicUtil;
 import com.elzify.music.util.Preferences;
+import com.elzify.music.util.UIUtil;
 import com.elzify.music.viewmodel.PlayerBottomSheetViewModel;
 import com.google.android.material.elevation.SurfaceColors;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -66,8 +72,30 @@ public class PlayerBottomSheetFragment extends Fragment {
         customizeBottomSheetAction();
         initViewPager();
         setHeaderBookmarksButton();
+        initFavoriteButton();
+        applyPlayerBackgroundColor();
+        applyPlayerTextColor();
 
         return view;
+    }
+
+    private void initFavoriteButton() {
+        playerBottomSheetViewModel.getLiveMedia().observe(getViewLifecycleOwner(), media -> {
+            if (media != null && bind != null) {
+                bind.playerHeaderLayout.buttonFavoriteMini.setChecked(media.getStarred() != null);
+                bind.playerHeaderLayout.buttonFavoriteMini.setOnClickListener(v -> playerBottomSheetViewModel.setFavorite(requireContext(), media));
+            }
+        });
+
+        MediaManager.getFavoriteEvent().observe(getViewLifecycleOwner(), event -> {
+            if (event == null || bind == null) return;
+            String songId = (String) event[0];
+            Date starred = (Date) event[1];
+            Child media = playerBottomSheetViewModel.getLiveMedia().getValue();
+            if (media != null && media.getId().equals(songId)) {
+                bind.playerHeaderLayout.buttonFavoriteMini.setChecked(starred != null);
+            }
+        });
     }
 
     @Override
@@ -103,6 +131,27 @@ public class PlayerBottomSheetFragment extends Fragment {
         bind.playerBodyLayout.playerBodyBottomSheetViewPager.setAdapter(new PlayerControllerVerticalPager(this));
     }
 
+    private void applyPlayerBackgroundColor() {
+        if (bind == null) return;
+
+        int playerBackgroundColor = UIUtil.getPlayerBackgroundColor(requireContext());
+        bind.getRoot().setBackgroundColor(Color.TRANSPARENT);
+        bind.playerBodyLayout.playerBodyBottomSheetViewPager.setBackgroundColor(playerBackgroundColor);
+    }
+
+    private void applyPlayerTextColor() {
+        if (bind == null) return;
+
+        int textColor = getPlayerTextColor();
+        bind.playerHeaderLayout.playerHeaderMediaTitleLabel.setTextColor(textColor);
+        bind.playerHeaderLayout.playerHeaderMediaArtistLabel.setTextColor(textColor);
+    }
+
+    private int getPlayerTextColor() {
+        int mode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        return mode == Configuration.UI_MODE_NIGHT_YES ? Color.WHITE : Color.BLACK;
+    }
+
     private void initializeMediaBrowser() {
         mediaBrowserListenableFuture = new MediaBrowser.Builder(requireContext(), new SessionToken(requireContext(), new ComponentName(requireContext(), MediaService.class))).buildAsync();
     }
@@ -133,7 +182,7 @@ public class PlayerBottomSheetFragment extends Fragment {
         setMetadata(mediaBrowser.getMediaMetadata());
         setContentDuration(mediaBrowser.getContentDuration());
         setPlayingState(mediaBrowser.isPlaying());
-        setHeaderMediaController();
+        setHeaderMediaController(mediaBrowser);
         setHeaderNextButtonState(mediaBrowser.hasNextMediaItem());
 
         mediaBrowser.addListener(new Player.Listener() {
@@ -235,10 +284,15 @@ public class PlayerBottomSheetFragment extends Fragment {
                         .into(bind.playerHeaderLayout.playerHeaderMediaCoverImage);
             } else {
                 // Fallback to the content provider so we can still render when `homepageUrl` isn't present.
-                Uri artworkUri = coverArtId != null ? AlbumArtContentProvider.contentUri(coverArtId) : null;
-                Glide.with(requireContext())
-                        .load(artworkUri)
-                        .apply(CustomGlideRequest.createRequestOptions(requireContext(), coverArtId, CustomGlideRequest.ResourceType.Radio))
+                // Uri artworkUri = coverArtId != null ? AlbumArtContentProvider.contentUri(coverArtId) : null;
+                // Glide.with(requireContext())
+                //        .load(artworkUri)
+                //        .apply(CustomGlideRequest.createRequestOptions(requireContext(), coverArtId, CustomGlideRequest.ResourceType.Radio))
+                //        .into(bind.playerHeaderLayout.playerHeaderMediaCoverImage);
+                
+                CustomGlideRequest.Builder
+                        .from(requireContext(), coverArtId, CustomGlideRequest.ResourceType.Radio)
+                        .build()
                         .into(bind.playerHeaderLayout.playerHeaderMediaCoverImage);
             }
         }
@@ -264,12 +318,12 @@ public class PlayerBottomSheetFragment extends Fragment {
     }
 
     private void setContentDuration(long duration) {
-        bind.playerHeaderLayout.playerHeaderSeekBar.setMax((int) (duration / 1000));
+        bind.playerHeaderLayout.playerHeaderProgressBar.setMax((int) (duration / 1000));
     }
 
     private void setProgress(MediaBrowser mediaBrowser) {
         if (bind != null)
-            bind.playerHeaderLayout.playerHeaderSeekBar.setProgress((int) (mediaBrowser.getCurrentPosition() / 1000), true);
+            bind.playerHeaderLayout.playerHeaderProgressBar.setProgress((int) (mediaBrowser.getCurrentPosition() / 1000), true);
     }
 
     private void setPlayingState(boolean isPlaying) {
@@ -277,11 +331,17 @@ public class PlayerBottomSheetFragment extends Fragment {
         runProgressBarHandler(isPlaying);
     }
 
-    private void setHeaderMediaController() {
-        bind.playerHeaderLayout.playerHeaderButton.setOnClickListener(view -> bind.getRoot().findViewById(R.id.exo_play_pause).performClick());
-        bind.playerHeaderLayout.playerHeaderNextMediaButton.setOnClickListener(view -> bind.getRoot().findViewById(R.id.exo_next).performClick());
-        bind.playerHeaderLayout.playerHeaderRewindMediaButton.setOnClickListener(view -> bind.getRoot().findViewById(R.id.exo_rew).performClick());
-        bind.playerHeaderLayout.playerHeaderFastForwardMediaButton.setOnClickListener(view -> bind.getRoot().findViewById(R.id.exo_ffwd).performClick());
+    private void setHeaderMediaController(MediaBrowser mediaBrowser) {
+        bind.playerHeaderLayout.playerHeaderButton.setOnClickListener(view -> {
+            if (mediaBrowser.isPlaying()) {
+                mediaBrowser.pause();
+            } else {
+                mediaBrowser.play();
+            }
+        });
+        bind.playerHeaderLayout.playerHeaderNextMediaButton.setOnClickListener(view -> mediaBrowser.seekToNext());
+        bind.playerHeaderLayout.playerHeaderRewindMediaButton.setOnClickListener(view -> mediaBrowser.seekBack());
+        bind.playerHeaderLayout.playerHeaderFastForwardMediaButton.setOnClickListener(view -> mediaBrowser.seekForward());
     }
 
     private void setHeaderNextButtonState(boolean isEnabled) {
@@ -325,6 +385,20 @@ public class PlayerBottomSheetFragment extends Fragment {
     public void setPlayerControllerVerticalPagerDraggableState(Boolean isDraggable) {
         ViewPager2 playerControllerVerticalPager = bind.playerBodyLayout.playerBodyBottomSheetViewPager;
         playerControllerVerticalPager.setUserInputEnabled(isDraggable);
+    }
+
+    public void setBodyVisibility(boolean visible) {
+        if (bind != null) {
+            bind.playerBodyLayout.getRoot().setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    public void setMiniPlayerWidth(int width) {
+        if (bind != null) {
+            ViewGroup.LayoutParams params = bind.playerHeaderLayout.getRoot().getLayoutParams();
+            params.width = width;
+            bind.playerHeaderLayout.getRoot().setLayoutParams(params);
+        }
     }
 
     private void defineProgressBarHandler(MediaBrowser mediaBrowser) {

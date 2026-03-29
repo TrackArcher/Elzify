@@ -3,9 +3,12 @@ package com.elzify.music;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
 
 import com.elzify.music.github.Github;
 import com.elzify.music.helper.ThemeHelper;
@@ -14,41 +17,53 @@ import com.elzify.music.subsonic.SubsonicPreferences;
 import com.elzify.music.util.ClientCertManager;
 import com.elzify.music.util.Preferences;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
 public class App extends Application {
     private static App instance;
     private static Context context;
     private static Subsonic subsonic;
     private static Github github;
     private static SharedPreferences preferences;
+    private static SharedPreferences encryptedPreferences;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String themePref = sharedPreferences.getString(Preferences.THEME, ThemeHelper.DEFAULT_MODE);
-        ThemeHelper.applyTheme(themePref);
-
-        instance = new App();
+        instance = this;
         context = getApplicationContext();
+
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        try {
+            MasterKey masterKey = new MasterKey.Builder(context)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build();
+
+            encryptedPreferences = EncryptedSharedPreferences.create(
+                    context,
+                    "encrypted_preferences",
+                    masterKey,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+        } catch (GeneralSecurityException | IOException e) {
+            Log.e("App", "Could not initialize EncryptedSharedPreferences", e);
+            encryptedPreferences = preferences;
+        }
+
+        String themePref = preferences.getString(Preferences.THEME, ThemeHelper.DEFAULT_MODE);
+        ThemeHelper.applyTheme(themePref);
 
         ClientCertManager.setupSslSocketFactory(context);
     }
 
     public static App getInstance() {
-        if (instance == null) {
-            instance = new App();
-        }
-
         return instance;
     }
 
     public static Context getContext() {
-        if (context == null) {
-            context = getInstance();
-        }
-
         return context;
     }
 
@@ -114,6 +129,13 @@ public class App extends Application {
         }
 
         return preferences;
+    }
+
+    public SharedPreferences getEncryptedPreferences() {
+        if (encryptedPreferences == null) {
+            return getPreferences();
+        }
+        return encryptedPreferences;
     }
 
     public static void refreshSubsonicClient() {

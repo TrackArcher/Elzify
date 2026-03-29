@@ -341,16 +341,16 @@
     <string name="settings_androidauto_shuffle_genre_songs">Mélanger les chansons par genre</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Lire des chansons aléatoires lors de la sélection d\'un genre</string>
     <string name="settings_audio_transcode_download_format">Format de transcodage</string>
-    <string name="settings_audio_transcode_download_priority_summary">Si activé, Tempus ne forcera pas le téléchargement de la piste avec les paramètres de transcodage ci-dessous.</string>
+    <string name="settings_audio_transcode_download_priority_summary">Si activé, Rollynn ne forcera pas le téléchargement de la piste avec les paramètres de transcodage ci-dessous.</string>
     <string name="settings_audio_transcode_download_priority_title">Prioriser les paramètres du serveurs, utilisés pour le streaming, dans les téléchargements</string>
-    <string name="settings_audio_transcode_download_summary">Si activé, Tempus téléchargera les pistes transcodées.</string>
+    <string name="settings_audio_transcode_download_summary">Si activé, Rollynn téléchargera les pistes transcodées.</string>
     <string name="settings_audio_transcode_download_title">Télécharger les pistes transcodées</string>
     <string name="settings_audio_transcode_estimate_content_length_summary">Si activé, une estimation de la durée de la piste sera demandée au serveur.</string>
     <string name="settings_audio_transcode_estimate_content_length_title">Estimer la durée du contenu</string>
     <string name="settings_audio_transcode_format_download">Format de transcodage pour les téléchargements</string>
     <string name="settings_audio_transcode_format_mobile">Format de transcodage (mobile)</string>
     <string name="settings_audio_transcode_format_wifi">Format de transcodage (Wi-Fi)</string>
-    <string name="settings_audio_transcode_priority_summary">Si activé, Tempus ne forcera pas le streaming des pistes avec les paramètres ci-dessous.</string>
+    <string name="settings_audio_transcode_priority_summary">Si activé, Rollynn ne forcera pas le streaming des pistes avec les paramètres ci-dessous.</string>
     <string name="settings_audio_transcode_priority_title">Prioriser les paramètres de transcodage du serveur</string>
     <string name="settings_audio_transcode_priority_toast">La priorité au transcodage de la piste est donnée au serveur</string>
     <string name="settings_buffering_strategy">Stratégie de mise en mémoire tampon</string>
@@ -373,12 +373,11 @@
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
     <string name="settings_github_summary">Suivre le développement</string>
     <string name="settings_github_title">Github</string>
-    <string name="settings_support_discussion_link">https://github.com/eddyizm/tempus/discussions</string>
+
     <string name="settings_github_update">Mises à jour</string>
     <string name="settings_github_update_title">Vérifier les mises à jour sur Github</string>
     <string name="settings_github_update_summary">Si vous utilisez l\'app publiée sur Github, elle vérifiera par défaut les sorties de nouvelles versions. Cliquer ici pour désactiver les vérifications automatiques</string>
-    <string name="settings_support_summary">Rejoindre les discussions et le support de la communauté</string>
-    <string name="settings_support_title">Support utilisateur</string>
+
     <string name="settings_scan_result">Analyse : comptage de %1$d pistes</string>
     <string name="settings_image_size">Définir la résolution des images</string>
     <string name="settings_language">Langue</string>
@@ -458,7 +457,7 @@
     <string name="share_subtitle_item">Date d\'expiration : %1$s</string>
     <string name="share_no_expiration">Jamais</string>
     <string name="share_unsupported_error">Le partage n\'est pas supporté ou pas activé</string>
-    <string name="asset_link_clipboard_label">Lien ressource Tempus</string>
+    <string name="asset_link_clipboard_label">Lien ressource Rollynn</string>
     <string name="asset_link_label_song">UID titre</string>
     <string name="asset_link_label_album">UID album</string>
     <string name="asset_link_label_artist">UID artiste</string>
@@ -539,12 +538,10 @@
     <string name="track_info_transcoded_content_type">Transcodé type de contenu</string>
     <string name="track_info_transcoded_suffix">Transcodé suffixe</string>
     <string name="track_info_year">Année</string>
-    <string name="undraw_page">unDraw</string>
-    <string name="undraw_thanks">Un grand merci à unDraw, nous n\'aurions pas pu rendre cette application aussi belle sans leurs illustrations.</string>
-    <string name="undraw_url">https://undraw.co/</string>
-    <string name="widget_label">Widget Tempus</string>
+
+    <string name="widget_label">Widget Rollynn</string>
     <string name="widget_not_playing">Pas de lecture</string>
-    <string name="widget_placeholder_subtitle">Ouvrir Tempus</string>
+    <string name="widget_placeholder_subtitle">Ouvrir Rollynn</string>
     <string name="widget_time_elapsed_placeholder">0:00</string>
     <string name="widget_time_duration_placeholder">0:00</string>
     <string name="widget_content_desc_album_art">Couverture de l\'album</string>

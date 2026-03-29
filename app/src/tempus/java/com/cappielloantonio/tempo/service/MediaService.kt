@@ -1,10 +1,10 @@
-package com.cappielloantonio.tempo.service
+package com.elzify.music.service
 
 import androidx.core.content.ContextCompat
 import androidx.media3.cast.CastPlayer
 import androidx.media3.cast.SessionAvailabilityListener
 import androidx.media3.common.util.UnstableApi
-import com.cappielloantonio.tempo.repository.AutomotiveRepository
+import com.elzify.music.repository.AutomotiveRepository
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability

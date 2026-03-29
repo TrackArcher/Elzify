@@ -16,6 +16,7 @@ import com.elzify.music.database.dao.LyricsDao;
 import com.elzify.music.database.dao.PlaylistDao;
 import com.elzify.music.database.dao.QueueDao;
 import com.elzify.music.database.dao.RecentSearchDao;
+import com.elzify.music.database.dao.ScrobbleDao;
 import com.elzify.music.database.dao.ServerDao;
 import com.elzify.music.database.dao.SessionMediaItemDao;
 import com.elzify.music.model.Chronology;
@@ -24,19 +25,16 @@ import com.elzify.music.model.Favorite;
 import com.elzify.music.model.LyricsCache;
 import com.elzify.music.model.Queue;
 import com.elzify.music.model.RecentSearch;
+import com.elzify.music.model.Scrobble;
 import com.elzify.music.model.Server;
 import com.elzify.music.model.SessionMediaItem;
 import com.elzify.music.subsonic.models.Playlist;
 
 @UnstableApi
 @Database(
-        version = 14,
-        entities = {Queue.class, Server.class, RecentSearch.class, Download.class, Chronology.class, Favorite.class, SessionMediaItem.class, Playlist.class, LyricsCache.class},
-        autoMigrations = {
-                @AutoMigration(from = 10, to = 11),
-                @AutoMigration(from = 11, to = 12),
-                @AutoMigration(from = 13, to = 14),
-        }
+        version = 16,
+        entities = {Queue.class, Server.class, RecentSearch.class, Download.class, Chronology.class, Favorite.class, SessionMediaItem.class, Playlist.class, LyricsCache.class, Scrobble.class},
+        autoMigrations = {@AutoMigration(from = 10, to = 11), @AutoMigration(from = 11, to = 12)}
 )
 @TypeConverters({DateConverters.class})
 public abstract class AppDatabase extends RoomDatabase {
@@ -70,4 +68,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract PlaylistDao playlistDao();
 
     public abstract LyricsDao lyricsDao();
+
+    public abstract ScrobbleDao scrobbleDao();
 }

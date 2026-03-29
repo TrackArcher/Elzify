@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.media3.session.MediaBrowser;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,6 +32,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -115,23 +117,20 @@ public class PlayerSongQueueAdapter extends RecyclerView.Adapter<PlayerSongQueue
             holder.item.downloadIndicatorIcon.setVisibility(View.GONE);
         }
 
-        if (Preferences.showItemRating()) {
-            if (song.getStarred() == null && song.getUserRating() == null) {
-                holder.item.ratingIndicatorImageView.setVisibility(View.GONE);
-            }
-
+        if (song.getStarred() == null && (song.getUserRating() == null || song.getUserRating() == 0)) {
+            holder.item.ratingIndicatorImageView.setVisibility(View.GONE);
+        } else {
+            holder.item.ratingIndicatorImageView.setVisibility(View.VISIBLE);
             holder.item.preferredIcon.setVisibility(song.getStarred() != null ? View.VISIBLE : View.GONE);
-            holder.item.ratingBarLayout.setVisibility(song.getUserRating() != null ? View.VISIBLE : View.GONE);
+            holder.item.ratingBarLayout.setVisibility(song.getUserRating() != null && song.getUserRating() > 0 ? View.VISIBLE : View.GONE);
 
-            if (song.getUserRating() != null) {
+            if (song.getUserRating() != null && song.getUserRating() > 0) {
                 holder.item.oneStarIcon.setImageDrawable(AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 1 ? R.drawable.ic_star : R.drawable.ic_star_outlined));
                 holder.item.twoStarIcon.setImageDrawable(AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 2 ? R.drawable.ic_star : R.drawable.ic_star_outlined));
                 holder.item.threeStarIcon.setImageDrawable(AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 3 ? R.drawable.ic_star : R.drawable.ic_star_outlined));
                 holder.item.fourStarIcon.setImageDrawable(AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 4 ? R.drawable.ic_star : R.drawable.ic_star_outlined));
                 holder.item.fiveStarIcon.setImageDrawable(AppCompatResources.getDrawable(holder.itemView.getContext(), song.getUserRating() >= 5 ? R.drawable.ic_star : R.drawable.ic_star_outlined));
             }
-        } else {
-            holder.item.ratingIndicatorImageView.setVisibility(View.GONE);
         }
         holder.itemView.setOnClickListener(v -> {
             mediaBrowserListenableFuture.addListener(() -> {
@@ -199,6 +198,32 @@ public class PlayerSongQueueAdapter extends RecyclerView.Adapter<PlayerSongQueue
 
     public void setMediaBrowserListenableFuture(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture) {
         this.mediaBrowserListenableFuture = mediaBrowserListenableFuture;
+    }
+
+    public void observeMetadataEvents(LifecycleOwner owner) {
+        MediaManager.getFavoriteEvent().observe(owner, event -> {
+            if (event == null) return;
+            String songId = (String) event[0];
+            Date starred = (Date) event[1];
+            for (int i = 0; i < songs.size(); i++) {
+                if (songs.get(i).getId().equals(songId)) {
+                    songs.get(i).setStarred(starred);
+                    notifyItemChanged(i);
+                }
+            }
+        });
+
+        MediaManager.getRatingEvent().observe(owner, event -> {
+            if (event == null) return;
+            String songId = (String) event[0];
+            int rating = (Integer) event[1];
+            for (int i = 0; i < songs.size(); i++) {
+                if (songs.get(i).getId().equals(songId)) {
+                    songs.get(i).setUserRating(rating);
+                    notifyItemChanged(i);
+                }
+            }
+        });
     }
 
     public void setPlaybackState(String mediaId, boolean playing) {

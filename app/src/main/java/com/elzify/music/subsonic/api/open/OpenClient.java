@@ -23,4 +23,9 @@ public class OpenClient {
         Log.d(TAG, "getLyricsBySongId()");
         return openService.getLyricsBySongId(subsonic.getParams(), id);
     }
+
+    public Call<ApiResponse> getRecentlyPlayed(int count) {
+        Log.d(TAG, "getRecentlyPlayed()");
+        return openService.getRecentlyPlayed(subsonic.getParams(), count);
+    }
 }

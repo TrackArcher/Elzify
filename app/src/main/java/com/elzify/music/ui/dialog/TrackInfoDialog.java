@@ -11,6 +11,7 @@ import androidx.media3.common.MediaMetadata;
 import com.elzify.music.R;
 import com.elzify.music.databinding.DialogTrackInfoBinding;
 import com.elzify.music.glide.CustomGlideRequest;
+import com.elzify.music.service.MediaManager;
 import com.elzify.music.util.AssetLinkUtil;
 import com.elzify.music.util.Constants;
 import com.elzify.music.util.MusicUtil;
@@ -171,6 +172,9 @@ public class TrackInfoDialog extends DialogFragment {
             bind.bitDepthValueSector.setText(mediaMetadata.extras.getInt("bitDepth", 0) != 0 ? mediaMetadata.extras.getInt("bitDepth", 0) + " bits" : getString(R.string.label_placeholder));
             bind.pathValueSector.setText(mediaMetadata.extras.getString("path", getString(R.string.label_placeholder)));
             bind.discNumberValueSector.setText(mediaMetadata.extras.getInt("discNumber", 0) != 0 ? String.valueOf(mediaMetadata.extras.getInt("discNumber", 0)) : getString(R.string.label_placeholder));
+            String songId = mediaMetadata.extras.getString("id");
+            long playCount = mediaMetadata.extras.getLong("playCount", 0) + MediaManager.getPlayCountIncrement(songId);
+            bind.playCountValueSector.setText(playCount != 0 ? String.valueOf(playCount) : getString(R.string.label_placeholder));
 
             bindAssetLink(bind.titleValueSector, songLink);
             bindAssetLink(bind.albumValueSector, albumLink);

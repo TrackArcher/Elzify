@@ -103,7 +103,8 @@ public class DownloadFragment extends Fragment implements ClickCallback {
         materialToolbar = bind.getRoot().findViewById(R.id.toolbar);
 
         activity.setSupportActionBar(materialToolbar);
-        Objects.requireNonNull(materialToolbar.getOverflowIcon()).setTint(requireContext().getResources().getColor(R.color.titleTextColor, null));
+        materialToolbar.post(() -> materialToolbar.getMenu().clear());
+        materialToolbar.setOverflowIcon(null);
     }
 
     private void initDownloadedView() {

@@ -6,12 +6,15 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.graphics.Color;
 import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.offline.DownloadService;
 import androidx.media3.session.MediaBrowser;
@@ -22,6 +25,7 @@ import com.elzify.music.service.MediaService;
 import com.elzify.music.ui.dialog.BatteryOptimizationDialog;
 import com.elzify.music.util.Flavors;
 import com.elzify.music.util.Preferences;
+import com.elzify.music.util.UIUtil;
 import com.google.android.material.elevation.SurfaceColors;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -44,8 +48,14 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        setNavigationBarColor();
+        applySystemBarColors();
         initializeBrowser();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        applySystemBarColors();
     }
 
     @Override
@@ -80,6 +90,10 @@ public class BaseActivity extends AppCompatActivity {
         return !powerManager.isIgnoringBatteryOptimizations(packageName);
     }
 
+    private void checkBatteryOptimizationDialog() {
+        // This was likely intended to be private or part of showBatteryOptimizationDialog
+    }
+
     private void showBatteryOptimizationDialog() {
         BatteryOptimizationDialog dialog = new BatteryOptimizationDialog();
         dialog.show(getSupportFragmentManager(), null);
@@ -105,8 +119,30 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    private void setNavigationBarColor() {
-        getWindow().setNavigationBarColor(SurfaceColors.getColorForElevation(this, 8));
-        getWindow().setStatusBarColor(SurfaceColors.getColorForElevation(this, 0));
+    protected void applySystemBarColors() {
+        applySystemBarColors(UIUtil.getSystemBarColor(this));
+    }
+
+    protected void applySystemBarColors(int rawColor) {
+        int systemBarColor = Color.rgb(
+                Color.red(rawColor),
+                Color.green(rawColor),
+                Color.blue(rawColor)
+        );
+
+        getWindow().setStatusBarColor(systemBarColor);
+        getWindow().setNavigationBarColor(systemBarColor);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getWindow().setStatusBarContrastEnforced(false);
+            getWindow().setNavigationBarContrastEnforced(false);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            getWindow().setNavigationBarDividerColor(systemBarColor);
+        }
+
+        WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
+        boolean useDarkIcons = ColorUtils.calculateLuminance(systemBarColor) > 0.5;
+        insetsController.setAppearanceLightStatusBars(useDarkIcons);
+        insetsController.setAppearanceLightNavigationBars(useDarkIcons);
     }
 }

@@ -31,6 +31,7 @@ import com.elzify.music.subsonic.models.Child;
 import com.elzify.music.ui.activity.MainActivity;
 import com.elzify.music.ui.dialog.PlaylistChooserDialog;
 import com.elzify.music.ui.dialog.RatingDialog;
+import com.elzify.music.ui.dialog.TrackInfoDialog;
 import com.elzify.music.util.AssetLinkUtil;
 import com.elzify.music.util.Constants;
 import com.elzify.music.util.DownloadUtil;
@@ -313,6 +314,13 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
         }));
 
         share.setVisibility(Preferences.isSharingEnabled() ? View.VISIBLE : View.GONE);
+
+        TextView trackInfo = view.findViewById(R.id.track_info_text_view);
+        trackInfo.setOnClickListener(v -> {
+            TrackInfoDialog dialog = new TrackInfoDialog(MappingUtil.mapMediaItem(song).mediaMetadata);
+            dialog.show(requireActivity().getSupportFragmentManager(), null);
+            dismissBottomSheet();
+        });
     }
 
     @Override

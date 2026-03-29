@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_playlist_pin"
+        android:title="@string/playlist_pin" />
+    <item
+        android:id="@+id/menu_playlist_edit"
+        android:title="@string/menu_edit" />
+    <item
+        android:id="@+id/menu_playlist_delete"
+        android:title="@string/menu_delete" />
+</menu>

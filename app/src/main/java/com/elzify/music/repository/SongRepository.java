@@ -6,16 +6,24 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.elzify.music.App;
+import com.elzify.music.database.AppDatabase;
+import com.elzify.music.database.dao.ScrobbleDao;
+import com.elzify.music.model.Scrobble;
 import com.elzify.music.subsonic.base.ApiResponse;
 import com.elzify.music.subsonic.models.Child;
 import com.elzify.music.subsonic.models.SubsonicResponse;
 import com.elzify.music.util.Constants.SeedType;
+import com.elzify.music.util.Preferences;
+
+import com.elzify.music.subsonic.api.navidrome.NavidromeClient;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,13 +32,15 @@ import retrofit2.Response;
 public class SongRepository {
 
     private static final String TAG = "SongRepository";
+    private final ScrobbleDao scrobbleDao = AppDatabase.getInstance().scrobbleDao();
+    private final AtomicBoolean pendingScrobbleSyncInProgress = new AtomicBoolean(false);
 
     public interface MediaCallbackInternal {
         void onSongsAvailable(List<Child> songs);
     }
 
     public MutableLiveData<List<Child>> getStarredSongs(boolean random, int size) {
-        MutableLiveData<List<Child>> starredSongs = new MutableLiveData<>(Collections.emptyList());
+        MutableLiveData<List<Child>> starredSongs = new MutableLiveData<>(null);
 
         App.getSubsonicClientInstance(false)
                 .getAlbumSongListClient()
@@ -294,6 +304,36 @@ public class SongRepository {
         return randomSongsSample;
     }
 
+    public MutableLiveData<List<Child>> getRecentlyPlayedSongs(int count) {
+        MutableLiveData<List<Child>> recentlyPlayedSongs = new MutableLiveData<>();
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                List<Child> songs = NavidromeClient.getInstance().getRecentlyPlayedSongs(count);
+                Log.d(TAG, "getRecentlyPlayedSongs: returning " + songs.size() + " songs");
+                recentlyPlayedSongs.postValue(songs);
+            } catch (Exception e) {
+                Log.e(TAG, "getRecentlyPlayedSongs: exception", e);
+                recentlyPlayedSongs.postValue(null);
+            }
+        });
+        return recentlyPlayedSongs;
+    }
+
+    public MutableLiveData<List<Child>> getTopPlayedSongs(int count) {
+        MutableLiveData<List<Child>> topPlayedSongs = new MutableLiveData<>();
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                List<Child> songs = NavidromeClient.getInstance().getTopPlayedSongs(count);
+                Log.d(TAG, "getTopPlayedSongs: returning " + songs.size() + " songs");
+                topPlayedSongs.postValue(songs);
+            } catch (Exception e) {
+                Log.e(TAG, "getTopPlayedSongs: exception", e);
+                topPlayedSongs.postValue(null);
+            }
+        });
+        return topPlayedSongs;
+    }
+
     public MutableLiveData<List<Child>> getRandomSampleWithGenre(int number, Integer fromYear, Integer toYear, String genre) {
         MutableLiveData<List<Child>> randomSongsSample = new MutableLiveData<>();
 
@@ -314,10 +354,69 @@ public class SongRepository {
     }
 
     public void scrobble(String id, boolean submission) {
-        App.getSubsonicClientInstance(false).getMediaAnnotationClient().scrobble(id, submission).enqueue(new Callback<ApiResponse>() {
-            @Override public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {}
-            @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {}
+        scrobble(id, submission, null);
+    }
+
+    public void scrobble(String id, boolean submission, Long time) {
+        String server = Preferences.getServerId();
+        long scrobbleTime = time != null ? time : System.currentTimeMillis();
+
+        App.getSubsonicClientInstance(false).getMediaAnnotationClient().scrobble(id, submission, time).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                if (response.isSuccessful()) {
+                    submitPendingScrobbles();
+                } else {
+                    saveScrobbleLocally(id, submission, scrobbleTime, server);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                saveScrobbleLocally(id, submission, scrobbleTime, server);
+            }
         });
+    }
+
+    private void saveScrobbleLocally(String id, boolean submission, long time, String server) {
+        if (server == null) return;
+        new Thread(() -> {
+            scrobbleDao.insert(new Scrobble(0, id, time, submission, server));
+        }).start();
+    }
+
+    public void submitPendingScrobbles() {
+        String server = Preferences.getServerId();
+        if (server == null) return;
+        if (!pendingScrobbleSyncInProgress.compareAndSet(false, true)) return;
+
+        new Thread(() -> {
+            try {
+                List<Scrobble> pending = scrobbleDao.getPendingScrobbles(server);
+                if (pending.isEmpty()) return;
+
+                for (Scrobble scrobble : pending) {
+                    try {
+                        Response<ApiResponse> response = App.getSubsonicClientInstance(false)
+                                .getMediaAnnotationClient()
+                                .scrobble(scrobble.getId(), scrobble.getSubmission(), scrobble.getTimestamp())
+                                .execute();
+
+                        if (response.isSuccessful()) {
+                            scrobbleDao.delete(scrobble);
+                        } else {
+                            Log.w(TAG, "Pending scrobble sync failed with HTTP " + response.code());
+                            break;
+                        }
+                    } catch (Exception e) {
+                        Log.w(TAG, "Pending scrobble sync failed", e);
+                        break;
+                    }
+                }
+            } finally {
+                pendingScrobbleSyncInProgress.set(false);
+            }
+        }).start();
     }
 
     public void setRating(String id, int rating) {

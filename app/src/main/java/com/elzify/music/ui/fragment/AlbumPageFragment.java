@@ -336,8 +336,13 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
     private void initSongsView() {
         albumPageViewModel.getAlbum().observe(getViewLifecycleOwner(), album -> {
             if (bind != null && album != null) {
-                bind.songRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-                bind.songRecyclerView.setHasFixedSize(true);
+                bind.songRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()) {
+                    @Override
+                    public boolean canScrollVertically() {
+                        return false;
+                    }
+                });
+                bind.songRecyclerView.setHasFixedSize(false);
 
                 songHorizontalAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, false, false, album);
                 bind.songRecyclerView.setAdapter(songHorizontalAdapter);

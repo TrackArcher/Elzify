@@ -2,14 +2,9 @@ package com.elzify.music.ui.fragment;
 
 import android.content.ComponentName;
 import android.os.Bundle;
-import android.os.Handler;
-import android.transition.Fade;
-import android.transition.Transition;
-import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -20,34 +15,18 @@ import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionToken;
 
-import android.util.Log;
-
-import com.elzify.music.R;
 import com.elzify.music.databinding.InnerFragmentPlayerCoverBinding;
 import com.elzify.music.glide.CustomGlideRequest;
-import com.elzify.music.model.Download;
-import com.elzify.music.service.MediaManager;
 import com.elzify.music.service.MediaService;
-import com.elzify.music.ui.dialog.PlaylistChooserDialog;
-import com.elzify.music.util.Constants;
-import com.elzify.music.util.DownloadUtil;
-import com.elzify.music.util.MappingUtil;
-import com.elzify.music.util.Preferences;
-import com.elzify.music.util.ExternalAudioWriter;
 import com.elzify.music.viewmodel.PlayerBottomSheetViewModel;
-import com.elzify.music.subsonic.models.Child;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
 @UnstableApi
 public class PlayerCoverFragment extends Fragment {
-    private static final String TAG = "PlayerCoverFragment";
     private PlayerBottomSheetViewModel playerBottomSheetViewModel;
     private InnerFragmentPlayerCoverBinding bind;
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
-
-    private final Handler handler = new Handler();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,9 +34,6 @@ public class PlayerCoverFragment extends Fragment {
         View view = bind.getRoot();
 
         playerBottomSheetViewModel = new ViewModelProvider(requireActivity()).get(PlayerBottomSheetViewModel.class);
-
-        initOverlay();
-        initInnerButton();
 
         return view;
     }
@@ -67,7 +43,6 @@ public class PlayerCoverFragment extends Fragment {
         super.onStart();
         initializeBrowser();
         bindMediaController();
-        toggleOverlayVisibility(false);
     }
 
     @Override
@@ -82,90 +57,6 @@ public class PlayerCoverFragment extends Fragment {
         bind = null;
     }
 
-    private void initTapButtonHideTransition() {
-        bind.nowPlayingTapButton.setVisibility(View.VISIBLE);
-
-        handler.removeCallbacksAndMessages(null);
-
-        final Runnable runnable = () -> {
-            if (bind != null) bind.nowPlayingTapButton.setVisibility(View.GONE);
-        };
-
-        handler.postDelayed(runnable, 10000);
-    }
-
-    private void initOverlay() {
-        bind.nowPlayingSongCoverImageView.setOnClickListener(view -> toggleOverlayVisibility(true));
-        bind.nowPlayingSongCoverButtonGroup.setOnClickListener(view -> toggleOverlayVisibility(false));
-        bind.nowPlayingTapButton.setOnClickListener(view -> toggleOverlayVisibility(true));
-    }
-
-    private void toggleOverlayVisibility(boolean isVisible) {
-        Transition transition = new Fade();
-        transition.setDuration(200);
-        transition.addTarget(bind.nowPlayingSongCoverButtonGroup);
-
-        TransitionManager.beginDelayedTransition(bind.getRoot(), transition);
-        bind.nowPlayingSongCoverButtonGroup.setVisibility(isVisible ? View.VISIBLE : View.GONE);
-        bind.nowPlayingTapButton.setVisibility(isVisible ? View.GONE : View.VISIBLE);
-
-        bind.innerButtonBottomRight.setVisibility(Preferences.isSyncronizationEnabled() ? View.VISIBLE : View.GONE);
-        bind.innerButtonBottomRightAlternative.setVisibility(Preferences.isSyncronizationEnabled() ? View.GONE : View.VISIBLE);
-
-        if (!isVisible) initTapButtonHideTransition();
-    }
-
-    private void initInnerButton() {
-        playerBottomSheetViewModel.getLiveMedia().observe(getViewLifecycleOwner(), song -> {
-            if (song != null && bind != null) {
-                bind.innerButtonTopLeft.setOnClickListener(view -> {
-                    if (Preferences.getDownloadDirectoryUri() == null) {
-                        DownloadUtil.getDownloadTracker(requireContext()).download(
-                                MappingUtil.mapDownload(song),
-                                new Download(song)
-                        );
-                    } else {
-                        ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
-                    }
-                });
-
-                bind.innerButtonTopRight.setOnClickListener(view -> {
-                            ArrayList<Child> tracks = new ArrayList<>();
-                            tracks.add(song);
-                            Bundle bundle = new Bundle();
-                            bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, tracks);
-
-                            PlaylistChooserDialog dialog = new PlaylistChooserDialog();
-                            dialog.setArguments(bundle);
-                            dialog.show(requireActivity().getSupportFragmentManager(), null);
-                        }
-                );
-
-                bind.innerButtonBottomLeft.setOnClickListener(view ->
-                        playerBottomSheetViewModel.getMediaInstantMix(getViewLifecycleOwner(), song)
-                                .observe(getViewLifecycleOwner(), media ->
-                                        MediaManager.enqueue(mediaBrowserListenableFuture, media, true)
-                                )
-                );
-
-                bind.innerButtonBottomRight.setOnClickListener(view -> {
-                    if (playerBottomSheetViewModel.savePlayQueue()) {
-                        Snackbar.make(requireView(), R.string.player_queue_save_queue_success, Snackbar.LENGTH_LONG).show();
-                    }
-                });
-
-                bind.innerButtonBottomRightAlternative.setOnClickListener(view -> {
-                    if (getActivity() != null) {
-                        PlayerBottomSheetFragment playerBottomSheetFragment = (PlayerBottomSheetFragment) requireActivity().getSupportFragmentManager().findFragmentByTag("PlayerBottomSheet");
-                        if (playerBottomSheetFragment != null) {
-                            playerBottomSheetFragment.goToLyricsPage();
-                        }
-                    }
-                });
-            }
-        });
-    }
-
     private void initializeBrowser() {
         mediaBrowserListenableFuture = new MediaBrowser.Builder(requireContext(), new SessionToken(requireContext(), new ComponentName(requireContext(), MediaService.class))).buildAsync();
     }
@@ -178,11 +69,9 @@ public class PlayerCoverFragment extends Fragment {
         mediaBrowserListenableFuture.addListener(() -> {
             try {
                 MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
-                if (mediaBrowser != null) {
-                    setMediaBrowserListener(mediaBrowser);
-                }
+                setMediaBrowserListener(mediaBrowser);
             } catch (Exception exception) {
-                Log.e(TAG, "Failed to bind media controller", exception);
+                exception.printStackTrace();
             }
         }, MoreExecutors.directExecutor());
     }
@@ -194,40 +83,13 @@ public class PlayerCoverFragment extends Fragment {
             @Override
             public void onMediaMetadataChanged(@NonNull MediaMetadata mediaMetadata) {
                 setCover(mediaMetadata);
-                toggleOverlayVisibility(false);
             }
         });
     }
 
     private void setCover(MediaMetadata mediaMetadata) {
-        Bundle extras = mediaMetadata.extras;
-        if (extras == null) {
-            CustomGlideRequest.Builder
-                    .from(requireContext(), null, CustomGlideRequest.ResourceType.Song)
-                    .build()
-                    .into(bind.nowPlayingSongCoverImageView);
-            return;
-        }
-        String type = extras.getString("type");
-
-        if (Constants.MEDIA_TYPE_RADIO.equals(type)) {
-            String homepageUrl = extras.getString("homepageUrl");
-
-            if (homepageUrl != null) {
-                homepageUrl = homepageUrl.trim();
-            }
-            if (homepageUrl != null && !homepageUrl.isEmpty()
-                    && (homepageUrl.startsWith("http://") || homepageUrl.startsWith("https://"))) {
-                CustomGlideRequest.Builder
-                        .from(requireContext(), homepageUrl, CustomGlideRequest.ResourceType.Radio)
-                        .build()
-                        .into(bind.nowPlayingSongCoverImageView);
-                return;
-            }
-        }
-
         CustomGlideRequest.Builder
-                .from(requireContext(), extras.getString("coverArtId"), CustomGlideRequest.ResourceType.Song)
+                .from(requireContext(), mediaMetadata.extras != null ? mediaMetadata.extras.getString("coverArtId") : null, CustomGlideRequest.ResourceType.Song)
                 .build()
                 .into(bind.nowPlayingSongCoverImageView);
     }

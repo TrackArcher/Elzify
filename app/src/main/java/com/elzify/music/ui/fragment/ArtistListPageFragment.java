@@ -77,6 +77,12 @@ public class ArtistListPageFragment extends Fragment implements ClickCallback {
         } else if (requireArguments().getString(Constants.ARTIST_DOWNLOADED) != null) {
             artistListPageViewModel.title = Constants.ARTIST_DOWNLOADED;
             bind.pageTitleLabel.setText(R.string.artist_list_page_downloaded);
+        } else if (requireArguments().getString(Constants.ARTIST_RECENTLY_PLAYED) != null) {
+            artistListPageViewModel.title = Constants.ARTIST_RECENTLY_PLAYED;
+            bind.pageTitleLabel.setText(R.string.artist_list_page_recently_played);
+        } else if (requireArguments().getString(Constants.ARTIST_TOP_PLAYED) != null) {
+            artistListPageViewModel.title = Constants.ARTIST_TOP_PLAYED;
+            bind.pageTitleLabel.setText(R.string.artist_list_page_top_played);
         }
     }
 
@@ -179,6 +185,8 @@ public class ArtistListPageFragment extends Fragment implements ClickCallback {
         switch (artistListPageViewModel.title) {
             case Constants.ARTIST_STARRED:
             case Constants.ARTIST_DOWNLOADED:
+            case Constants.ARTIST_RECENTLY_PLAYED:
+            case Constants.ARTIST_TOP_PLAYED:
                 bind.pageSubtitleLabel.setText(getString(R.string.generic_list_page_count, artists.size()));
                 break;
         }
@@ -189,6 +197,10 @@ public class ArtistListPageFragment extends Fragment implements ClickCallback {
             case Constants.ARTIST_STARRED:
             case Constants.ARTIST_DOWNLOADED:
                 bind.artistListSortImageView.setVisibility(View.VISIBLE);
+                break;
+            case Constants.ARTIST_RECENTLY_PLAYED:
+            case Constants.ARTIST_TOP_PLAYED:
+                bind.artistListSortImageView.setVisibility(View.GONE);
                 break;
         }
     }

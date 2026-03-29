@@ -87,8 +87,8 @@
 
         <ImageView
             android:id="@+id/preferred_icon"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
             android:background="@drawable/ic_favorite"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"

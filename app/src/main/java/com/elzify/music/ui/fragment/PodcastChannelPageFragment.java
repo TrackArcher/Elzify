@@ -177,7 +177,7 @@ public class PodcastChannelPageFragment extends Fragment implements ClickCallbac
         podcastChannelPageViewModel.requestPodcastEpisodeDownload(episode);
 
         Snackbar.make(requireView(), R.string.podcast_episode_download_request_snackbar, Snackbar.LENGTH_SHORT)
-                .setAnchorView(activity.bind.bottomNavigation)
+                .setAnchorView(activity.bind.navigationDock.dockCard)
                 .show();
     }
 }

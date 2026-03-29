@@ -8,7 +8,6 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
-import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -52,17 +51,18 @@ public class AlbumArtContentProvider extends ContentProvider {
     @Nullable
     @Override
     public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException {
+        if (uriMatcher.match(uri) != 1) {
+            throw new FileNotFoundException("Unknown URI: " + uri);
+        }
+
         Context context = getContext();
         String albumId = uri.getLastPathSegment();
-        Uri artworkUri;
 
-        if (albumId != null && albumId.startsWith("ir_")) {
-            String encodedUrl = albumId.substring("ir_".length());
-            String decodedUrl = new String(Base64.decode(encodedUrl, Base64.URL_SAFE | Base64.NO_WRAP));
-            artworkUri = Uri.parse(decodedUrl);
-        } else {
-            artworkUri = Uri.parse(CustomGlideRequest.createUrl(albumId, Preferences.getImageSize()));
+        if (albumId == null || albumId.isEmpty() || albumId.contains("..") || albumId.contains("/")) {
+            throw new FileNotFoundException("Invalid album ID");
         }
+
+        Uri artworkUri = Uri.parse(CustomGlideRequest.createUrl(albumId, Preferences.getImageSize()));
 
         try {
             // use pipe to communicate between background thread and caller of openFile()

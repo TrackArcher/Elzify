@@ -64,17 +64,12 @@ public class HomeFragment extends Fragment {
     }
 
     private void initAppBar() {
-        appBarLayout = bind.getRoot().findViewById(R.id.toolbar_fragment);
         materialToolbar = bind.getRoot().findViewById(R.id.toolbar);
 
         activity.setSupportActionBar(materialToolbar);
-        Objects.requireNonNull(materialToolbar.getOverflowIcon()).setTint(requireContext().getResources().getColor(R.color.titleTextColor, null));
+        // Objects.requireNonNull(materialToolbar.getOverflowIcon()).setTint(requireContext().getResources().getColor(R.color.titleTextColor, null));
 
-        tabLayout = new TabLayout(requireContext());
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-        tabLayout.setTabMode(TabLayout.MODE_FIXED);
-
-        appBarLayout.addView(tabLayout);
+        tabLayout = bind.homeTabLayout;
     }
 
     private void initHomePager() {

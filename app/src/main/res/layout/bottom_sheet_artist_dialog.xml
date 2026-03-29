@@ -14,14 +14,16 @@
         android:clipChildren="false">
 
         <!-- Header -->
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/artist_cover_image_view"
             android:layout_width="54dp"
             android:layout_height="54dp"
             android:layout_margin="2dp"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/CircleShapeAppearance" />
 
         <ToggleButton
             android:id="@+id/button_favorite"

@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.media3.common.util.UnstableApi;
 
 import com.elzify.music.model.Download;
@@ -24,6 +25,7 @@ import com.elzify.music.util.MappingUtil;
 import com.elzify.music.util.NetworkUtil;
 import com.elzify.music.util.Preferences;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +37,11 @@ public class ArtistPageViewModel extends AndroidViewModel {
 
     private ArtistID3 artist;
 
+    private final MutableLiveData<List<AlbumID3>> singles = new MutableLiveData<>();
+    private final MutableLiveData<List<AlbumID3>> eps = new MutableLiveData<>();
+    private final MutableLiveData<List<AlbumID3>> mainAlbums = new MutableLiveData<>();
+    private final MutableLiveData<List<AlbumID3>> appearsOn = new MutableLiveData<>();
+
     public ArtistPageViewModel(@NonNull Application application) {
         super(application);
 
@@ -42,6 +49,62 @@ public class ArtistPageViewModel extends AndroidViewModel {
         artistRepository = new ArtistRepository();
         favoriteRepository = new FavoriteRepository();
     }
+
+    public void fetchCategorizedAlbums(androidx.lifecycle.LifecycleOwner owner) {
+        artistRepository.getArtist(artist.getId()).observe(owner, artistWithAlbums -> {
+            if (artistWithAlbums != null && artistWithAlbums instanceof com.elzify.music.subsonic.models.ArtistWithAlbumsID3) {
+                com.elzify.music.subsonic.models.ArtistWithAlbumsID3 fullArtist = (com.elzify.music.subsonic.models.ArtistWithAlbumsID3) artistWithAlbums;
+                
+                List<AlbumID3> allAlbums = fullArtist.getAlbums();
+                if (allAlbums != null) {
+                    allAlbums.sort(Comparator.comparing(AlbumID3::getYear).reversed());
+                    
+                    mainAlbums.setValue(allAlbums.stream()
+                        .filter(a -> isType(a, "album"))
+                        .collect(Collectors.toList()));
+                    
+                    singles.setValue(allAlbums.stream()
+                        .filter(a -> isType(a, "single"))
+                        .collect(Collectors.toList()));
+                    
+                    eps.setValue(allAlbums.stream()
+                        .filter(a -> isType(a, "ep"))
+                        .collect(Collectors.toList()));
+                }
+
+                List<AlbumID3> appearsOnList = fullArtist.getAppearsOn();
+                if (appearsOnList != null) {
+                    appearsOnList.sort(Comparator.comparing(AlbumID3::getYear).reversed());
+                    appearsOn.setValue(appearsOnList);
+                } else {
+                    appearsOn.setValue(new java.util.ArrayList<>());
+                }
+            }
+        });
+    }
+
+    private boolean isType(AlbumID3 album, String targetType) {
+        if (album.getReleaseTypes() != null && !album.getReleaseTypes().isEmpty()) {
+            return album.getReleaseTypes().contains(targetType);
+        }
+        // Fallback to song count if releaseTypes is not available
+        int songCount = album.getSongCount() != null ? album.getSongCount() : 0;
+        switch (targetType) {
+            case "single":
+                return songCount >= 1 && songCount <= 2;
+            case "ep":
+                return songCount >= 3 && songCount <= 7;
+            case "album":
+                return songCount >= 8;
+            default:
+                return false;
+        }
+    }
+
+    public LiveData<List<AlbumID3>> getSingles() { return singles; }
+    public LiveData<List<AlbumID3>> getEPs() { return eps; }
+    public LiveData<List<AlbumID3>> getMainAlbums() { return mainAlbums; }
+    public LiveData<List<AlbumID3>> getAppearsOn() { return appearsOn; }
 
     public LiveData<List<AlbumID3>> getAlbumList() {
         return albumRepository.getArtistAlbums(artist.getId());

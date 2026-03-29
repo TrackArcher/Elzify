@@ -73,8 +73,30 @@ open class BaseMediaService : MediaLibraryService() {
                 widgetUpdateScheduled = false
                 return
             }
+
+            checkScrobbleThreshold(player)
             updateWidget(player)
             widgetUpdateHandler.postDelayed(this, WIDGET_UPDATE_INTERVAL_MS)
+        }
+    }
+
+    private fun checkScrobbleThreshold(player: Player) {
+        if (currentTrackScrobbled) return
+        if (player.mediaMetadata.extras?.getString("type") != Constants.MEDIA_TYPE_MUSIC) return
+
+        val duration = player.duration
+        val position = player.currentPosition
+
+        if (duration > 0 && position > 0) {
+            val threshold = Preferences.getScrobbleThreshold()
+            if (position * 100 / duration >= threshold) {
+                currentTrackScrobbled = true
+                MediaManager.scrobble(player.currentMediaItem, true, System.currentTimeMillis())
+                MediaManager.saveChronology(player.currentMediaItem)
+                player.currentMediaItem?.mediaMetadata?.extras?.getString("id")?.let {
+                    MediaManager.postScrobbleEvent(it)
+                }
+            }
         }
     }
 
@@ -86,6 +108,7 @@ open class BaseMediaService : MediaLibraryService() {
     }
 
     private val binder = LocalBinder()
+    private var currentTrackScrobbled = false
 
     open fun playerInitHook() {
         initializeExoPlayer()
@@ -142,10 +165,14 @@ open class BaseMediaService : MediaLibraryService() {
         player.addListener(object : Player.Listener {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 Log.d(TAG, "onMediaItemTransition" + player.currentMediaItemIndex)
+                currentTrackScrobbled = false
                 if (mediaItem == null) return
 
                 if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_SEEK || reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
                     MediaManager.setLastPlayedTimestamp(mediaItem)
+                    if (mediaItem.mediaMetadata.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC) {
+                        MediaManager.saveChronology(mediaItem)
+                    }
                 }
                 
                 // Restart header checks for radio streams when media item changes
@@ -201,8 +228,8 @@ open class BaseMediaService : MediaLibraryService() {
             override fun onMetadata(metadata: Metadata) {
                 // Handle streaming metadata (ICY, ID3) for radio / streaming content
                 val currentItem = player.currentMediaItem ?: return
-                val extras = currentItem.mediaMetadata.extras
-                if (extras?.getString("type") != Constants.MEDIA_TYPE_RADIO) return
+                val extras = currentItem.mediaMetadata.extras ?: return
+                if (extras.getString("type") != Constants.MEDIA_TYPE_RADIO) return
 
                 var artist: String? = null
                 var title: String? = null
@@ -253,14 +280,14 @@ open class BaseMediaService : MediaLibraryService() {
                 if (currentIndex == C.INDEX_UNSET) return
 
                 val metadataBuilder = currentItem.mediaMetadata.buildUpon()
-                val newExtras = Bundle(extras ?: Bundle())
+                val newExtras = Bundle(extras)
 
                 // Store individual values in extras for UI
                 artist?.let { newExtras.putString("radioArtist", it) }
                 title?.let { newExtras.putString("radioTitle", it) }
 
                 // Get station name (preserve if already set)
-                val stationName = extras?.getString("stationName")
+                val stationName = extras.getString("stationName")
                     ?: currentItem.mediaMetadata.title?.toString()
                     ?: ""
                 if (stationName.isNotBlank()) {
@@ -313,9 +340,11 @@ open class BaseMediaService : MediaLibraryService() {
                 super.onPlaybackStateChanged(playbackState)
                 if (!player.hasNextMediaItem() &&
                     playbackState == Player.STATE_ENDED &&
-                    player.mediaMetadata.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC
+                    player.mediaMetadata.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC &&
+                    !currentTrackScrobbled
                 ) {
-                    MediaManager.scrobble(player.currentMediaItem, true)
+                    currentTrackScrobbled = true
+                    MediaManager.scrobble(player.currentMediaItem, true, System.currentTimeMillis())
                     MediaManager.saveChronology(player.currentMediaItem)
                 }
                 updateWidget(player)
@@ -330,8 +359,9 @@ open class BaseMediaService : MediaLibraryService() {
                 super.onPositionDiscontinuity(oldPosition, newPosition, reason)
 
                 if (reason == Player.DISCONTINUITY_REASON_AUTO_TRANSITION) {
-                    if (oldPosition.mediaItem?.mediaMetadata?.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC) {
-                        MediaManager.scrobble(oldPosition.mediaItem, true)
+                    if (oldPosition.mediaItem?.mediaMetadata?.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC && !currentTrackScrobbled) {
+                        currentTrackScrobbled = true
+                        MediaManager.scrobble(oldPosition.mediaItem, true, System.currentTimeMillis())
                         MediaManager.saveChronology(oldPosition.mediaItem)
                     }
 
@@ -384,10 +414,8 @@ open class BaseMediaService : MediaLibraryService() {
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         val player = mediaLibrarySession.player
-
-        if (!player.playWhenReady || player.mediaItemCount == 0) {
-            stopSelf()
-        }
+        player.pause()
+        stopSelf()
     }
 
     override fun onCreate() {
@@ -556,18 +584,17 @@ open class BaseMediaService : MediaLibraryService() {
     private fun checkRadioHttpHeaders() {
         val player = mediaLibrarySession.player
         val currentItem = player.currentMediaItem ?: return
-        val extras = currentItem.mediaMetadata.extras
-        val mediaType = extras?.getString("type")
-        if (mediaType != Constants.MEDIA_TYPE_RADIO) return
+        val extras = currentItem.mediaMetadata.extras ?: return
+        if (extras.getString("type") != Constants.MEDIA_TYPE_RADIO) return
         
         // Skip if we already have embedded metadata (ICY/ID3) - HTTP headers are only fallback
         val hasEmbeddedMetadata = !currentItem.mediaMetadata.artist.isNullOrBlank() ||
                 !currentItem.mediaMetadata.title.isNullOrBlank() ||
-                (extras != null && !extras.getString("radioArtist").isNullOrBlank()) ||
-                (extras != null && !extras.getString("radioTitle").isNullOrBlank())
+                !extras.getString("radioArtist").isNullOrBlank() ||
+                !extras.getString("radioTitle").isNullOrBlank()
         if (hasEmbeddedMetadata) return
         
-        val streamUrl = extras?.getString("uri") ?: currentItem.requestMetadata.mediaUri?.toString()
+        val streamUrl = extras.getString("uri") ?: currentItem.requestMetadata.mediaUri?.toString()
         if (streamUrl.isNullOrBlank()) return
 
         try {
@@ -577,6 +604,7 @@ open class BaseMediaService : MediaLibraryService() {
             // Only try HEAD request (lightweight) - skip GET fallback as it's unreliable
             connection.requestMethod = "HEAD"
             connection.setRequestProperty("Icy-MetaData", "1")
+            connection.setRequestProperty("User-Agent", "Rollynn/1.0")
             connection.setRequestProperty("User-Agent", "Elzify/1.0")
             connection.connectTimeout = 3000 // Reduced timeout
             connection.readTimeout = 3000
@@ -621,25 +649,25 @@ open class BaseMediaService : MediaLibraryService() {
             val currentIndex = player.currentMediaItemIndex
             if (currentIndex == C.INDEX_UNSET) return@post
             
-            val currentExtras = currentItemNow.mediaMetadata.extras
-            if (currentExtras?.getString("type") != Constants.MEDIA_TYPE_RADIO) return@post
+            val currentExtras = currentItemNow.mediaMetadata.extras ?: return@post
+            if (currentExtras.getString("type") != Constants.MEDIA_TYPE_RADIO) return@post
             
             // Double-check we still don't have embedded metadata (might have arrived since check)
             val hasEmbeddedMetadata = !currentItemNow.mediaMetadata.artist.isNullOrBlank() ||
                     !currentItemNow.mediaMetadata.title.isNullOrBlank() ||
-                    (currentExtras != null && !currentExtras.getString("radioArtist").isNullOrBlank()) ||
-                    (currentExtras != null && !currentExtras.getString("radioTitle").isNullOrBlank())
+                    !currentExtras.getString("radioArtist").isNullOrBlank() ||
+                    !currentExtras.getString("radioTitle").isNullOrBlank()
             if (hasEmbeddedMetadata) return@post
             
             val metadataBuilder = currentItemNow.mediaMetadata.buildUpon()
-            val newExtras = Bundle(currentExtras ?: Bundle())
+            val newExtras = Bundle(currentExtras)
             
             // Store individual values in extras for UI
             artist?.let { newExtras.putString("radioArtist", it) }
             title?.let { newExtras.putString("radioTitle", it) }
             
             // Get station name (preserve if already set)
-            val stationName = currentExtras?.getString("stationName")
+            val stationName = currentExtras.getString("stationName")
                 ?: currentItemNow.mediaMetadata.title?.toString()
                 ?: ""
             if (stationName.isNotBlank()) {
@@ -831,19 +859,42 @@ open class BaseMediaService : MediaLibraryService() {
 
     private inner class CustomNetworkCallback : ConnectivityManager.NetworkCallback() {
         var wasWifi = false
+        var wasConnected = false
 
         init {
             val manager = getSystemService(ConnectivityManager::class.java)
             val network = manager.activeNetwork
             val capabilities = manager.getNetworkCapabilities(network)
-            if (capabilities != null)
+            if (capabilities != null) {
                 wasWifi = capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+            }
+            updateConnectivityState(capabilities)
+        }
+
+        private fun isOnline(capabilities: NetworkCapabilities?): Boolean {
+            return capabilities != null
+                    && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+        }
+
+        private fun updateConnectivityState(capabilities: NetworkCapabilities?) {
+            val online = isOnline(capabilities)
+            if (online && !wasConnected) {
+                MediaManager.submitPendingScrobbles()
+            }
+            wasConnected = online
+        }
+
+        override fun onAvailable(network: Network) {
+            val manager = getSystemService(ConnectivityManager::class.java)
+            updateConnectivityState(manager.getNetworkCapabilities(network))
         }
 
         override fun onCapabilitiesChanged(
             network: Network,
             networkCapabilities: NetworkCapabilities
         ) {
+            updateConnectivityState(networkCapabilities)
             val isWifi = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
             if (isWifi != wasWifi) {
                 wasWifi = isWifi
@@ -851,6 +902,12 @@ open class BaseMediaService : MediaLibraryService() {
                     updateMediaItems(mediaLibrarySession.player)
                 }
             }
+        }
+
+        override fun onLost(network: Network) {
+            val manager = getSystemService(ConnectivityManager::class.java)
+            val activeCapabilities = manager.getNetworkCapabilities(manager.activeNetwork)
+            updateConnectivityState(activeCapabilities)
         }
     }
 
@@ -863,4 +920,3 @@ open class BaseMediaService : MediaLibraryService() {
 
 private const val WIDGET_UPDATE_INTERVAL_MS = 1000L
 private const val RADIO_HEADER_CHECK_INTERVAL_SECONDS = 30L // Reduced frequency - only fallback when ICY fails
-

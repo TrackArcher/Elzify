@@ -9,6 +9,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.elzify.music.R;
 import com.elzify.music.repository.PlaylistRepository;
 import com.elzify.music.subsonic.models.Child;
 import com.elzify.music.subsonic.models.Playlist;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlaylistChooserViewModel extends AndroidViewModel {
+    private static final String TAG = "PlaylistChooserVM";
     private final PlaylistRepository playlistRepository;
     private final MutableLiveData<List<Playlist>> playlists = new MutableLiveData<>(null);
     private final MutableLiveData<Boolean> playlistIsPublic = new MutableLiveData<>(false);
@@ -45,19 +47,99 @@ public class PlaylistChooserViewModel extends AndroidViewModel {
     }
 
     public void addSongsToPlaylist(LifecycleOwner owner, Dialog dialog, String playlistId) {
-        List<String> songIds = Lists.transform(toAdd, Child::getId);
-        if (Preferences.allowPlaylistDuplicates()) {
-            playlistRepository.addSongToPlaylist(playlistId, new ArrayList<>(songIds), getIsPlaylistPublic());
+        List<String> playlistIds = new ArrayList<>();
+        playlistIds.add(playlistId);
+        addSongsToPlaylists(owner, dialog, playlistIds);
+    }
+
+    public void addSongsToPlaylists(LifecycleOwner owner, Dialog dialog, List<String> playlistIds) {
+        android.util.Log.d(TAG, "addSongsToPlaylists: playlists=" + playlistIds + ", songs=" + toAdd.size());
+        if (playlistIds == null || playlistIds.isEmpty()) {
+            if (dialog != null) dialog.dismiss();
+            return;
+        }
+
+        final int totalRequests = playlistIds.size();
+        final int[] completedRequests = {0};
+        final List<String> addedToNames = new ArrayList<>();
+        final List<String> skippedFromNames = new ArrayList<>();
+        final List<String> failedForNames = new ArrayList<>();
+
+        List<String> songIdsToAdd = new ArrayList<>(Lists.transform(toAdd, Child::getId));
+
+        for (String playlistId : playlistIds) {
+            String playlistName = getPlaylistNameById(playlistId);
+            if (Preferences.allowPlaylistDuplicates()) {
+                playlistRepository.addSongToPlaylist(playlistId, new ArrayList<>(songIdsToAdd), getIsPlaylistPublic(), new com.elzify.music.repository.PlaylistRepository.AddToPlaylistCallback() {
+                    @Override public void onSuccess() { 
+                        addedToNames.add(playlistName);
+                        checkCompletion(completedRequests, totalRequests, dialog, addedToNames, skippedFromNames, failedForNames); 
+                    }
+                    @Override public void onFailure() { 
+                        failedForNames.add(playlistName);
+                        checkCompletion(completedRequests, totalRequests, dialog, addedToNames, skippedFromNames, failedForNames); 
+                    }
+                    @Override public void onAllSkipped() { 
+                        skippedFromNames.add(playlistName);
+                        checkCompletion(completedRequests, totalRequests, dialog, addedToNames, skippedFromNames, failedForNames); 
+                    }
+                });
+            } else {
+                playlistRepository.getPlaylistSongs(playlistId).observe(owner, playlistSongs -> {
+                    List<String> specificSongIdsToAdd = new ArrayList<>(songIdsToAdd);
+                    if (playlistSongs != null) {
+                        List<String> playlistSongIds = Lists.transform(playlistSongs, Child::getId);
+                        specificSongIdsToAdd.removeAll(playlistSongIds);
+                    }
+                    playlistRepository.addSongToPlaylist(playlistId, new ArrayList<>(specificSongIdsToAdd), getIsPlaylistPublic(), new com.elzify.music.repository.PlaylistRepository.AddToPlaylistCallback() {
+                        @Override public void onSuccess() { 
+                            addedToNames.add(playlistName);
+                            checkCompletion(completedRequests, totalRequests, dialog, addedToNames, skippedFromNames, failedForNames); 
+                        }
+                        @Override public void onFailure() { 
+                            failedForNames.add(playlistName);
+                            checkCompletion(completedRequests, totalRequests, dialog, addedToNames, skippedFromNames, failedForNames); 
+                        }
+                        @Override public void onAllSkipped() { 
+                            skippedFromNames.add(playlistName);
+                            checkCompletion(completedRequests, totalRequests, dialog, addedToNames, skippedFromNames, failedForNames); 
+                        }
+                    });
+                });
+            }
+        }
+    }
+
+    private String getPlaylistNameById(String id) {
+        if (playlists.getValue() != null) {
+            for (Playlist p : playlists.getValue()) {
+                if (p.getId().equals(id)) return p.getName();
+            }
+        }
+        return id;
+    }
+
+    private void checkCompletion(int[] completedRequests, int totalRequests, Dialog dialog, List<String> addedTo, List<String> skippedFrom, List<String> failedFor) {
+        completedRequests[0]++;
+        if (completedRequests[0] >= totalRequests) {
+            StringBuilder message = new StringBuilder();
+            if (!addedTo.isEmpty()) {
+                message.append(getApplication().getString(R.string.playlist_chooser_dialog_toast_added_to, String.join(", ", addedTo)));
+            }
+            if (!skippedFrom.isEmpty()) {
+                if (message.length() > 0) message.append("\n");
+                message.append(getApplication().getString(R.string.playlist_chooser_dialog_toast_skipped_from, String.join(", ", skippedFrom)));
+            }
+            if (!failedFor.isEmpty()) {
+                if (message.length() > 0) message.append("\n");
+                message.append(getApplication().getString(R.string.playlist_chooser_dialog_toast_failed_for, String.join(", ", failedFor)));
+            }
+            
+            if (message.length() > 0) {
+                android.widget.Toast.makeText(getApplication(), message.toString(), android.widget.Toast.LENGTH_LONG).show();
+            }
+            playlistRepository.updatePinnedPlaylists();
             dialog.dismiss();
-        } else {
-            playlistRepository.getPlaylistSongs(playlistId).observe(owner, playlistSongs -> {
-                if (playlistSongs != null) {
-                    List<String> playlistSongIds = Lists.transform(playlistSongs, Child::getId);
-                    songIds.removeAll(playlistSongIds);
-                }
-                playlistRepository.addSongToPlaylist(playlistId, new ArrayList<>(songIds), getIsPlaylistPublic());
-                dialog.dismiss();
-            });
         }
     }
 

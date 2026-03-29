@@ -4,6 +4,8 @@
     android:id="@+id/now_playing_media_controller_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clickable="false"
+    android:focusable="false"
     app:controller_layout_id="@layout/inner_fragment_player_controller_layout"
     app:repeat_toggle_modes="all|one"
     app:show_shuffle_button="true"
