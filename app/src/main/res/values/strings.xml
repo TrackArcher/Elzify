@@ -28,7 +28,7 @@
     <string name="album_page_release_dates_label">Released on %1$s, originally %2$s</string>
     <string name="album_page_shuffle_button">Shuffle</string>
     <string name="album_page_tracks_count_and_duration">%1$d songs  •  %2$d minutes</string>
-    <string name="app_name">Rollynn</string>
+    <string name="app_name" translatable="false">Elzify</string>
     <string name="artist_adapter_radio_station_starting">Searching…</string>
     <string name="artist_bottom_sheet_instant_mix">Instant mix</string>
     <string name="artist_bottom_sheet_shuffle">Shuffle</string>
@@ -338,13 +338,13 @@
     <string name="server_unreachable_dialog_positive_button">Continue anyway</string>
     <string name="server_unreachable_dialog_summary">The requested server is unavailable. If you choose to continue this dialog will not appear for the next hour.</string>
     <string name="server_unreachable_dialog_title">Server unreachable</string>
-    <string name="settings_about_summary">Rollynn is an open source and lightweight music client for Subsonic, designed and built natively for Android.</string>
+    <string name="settings_about_summary">Elzify is an open source and lightweight music client for Subsonic, designed and built natively for Android.</string>
     <string name="settings_about_title">About</string>
     <string name="settings_always_on_display">Always on display</string>
     <string name="settings_allow_playlist_duplicates">Allow adding duplicates to playlist</string>
     <string name="settings_allow_playlist_duplicates_summary">If enabled, duplicates won\'t be checked while adding to a playlist.</string>
     <string name="settings_audio_transcode_download_format">Transcode format</string>
-    <string name="settings_audio_transcode_download_priority_summary">If enabled, Rollynn will not force download the track with the transcode settings below.</string>
+    <string name="settings_audio_transcode_download_priority_summary">If enabled, Elzify will not force download the track with the transcode settings below.</string>
     <string name="settings_audio_transcode_download_priority_title">Prioritize server settings used for streaming in downloads</string>
     <string name="settings_audio_transcode_download_summary">If enabled, Rollynn will download transcoded tracks.</string>
     <string name="settings_audio_transcode_download_title">Download transcoded tracks</string>

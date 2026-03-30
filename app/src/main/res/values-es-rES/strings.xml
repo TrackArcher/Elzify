@@ -304,7 +304,7 @@
     <string name="settings_always_on_display">Pantalla siempre activa</string>
     <string name="settings_allow_playlist_duplicates_summary">Si se habilita, no se comprobará si hay pistas repetidas cuando se añadan a la lista.</string>
     <string name="settings_audio_transcode_download_format">Formato de transcodificación</string>
-    <string name="settings_audio_transcode_download_priority_summary">Si se habilita, Rollynn no descargará la pista con las opciones de transcodificación que aparecen a continuación.</string>
+    <string name="settings_audio_transcode_download_priority_summary">Si se habilita, Elzify no descargará la pista con las opciones de transcodificación que aparecen a continuación.</string>
     <string name="settings_audio_transcode_download_priority_title">Dar prioridad a las opciones del servidor usadas para el streaming en las descargas</string>
     <string name="settings_audio_transcode_download_summary">Si se habilita, Rollynn descargará las pistas transcodificadas.</string>
     <string name="settings_audio_transcode_download_title">Descargas pistas transcodificadas</string>

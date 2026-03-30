@@ -18,9 +18,12 @@ import androidx.media3.session.SessionToken;
 import com.elzify.music.databinding.InnerFragmentPlayerCoverBinding;
 import com.elzify.music.glide.CustomGlideRequest;
 import com.elzify.music.service.MediaService;
+import com.elzify.music.util.Constants;
 import com.elzify.music.viewmodel.PlayerBottomSheetViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
+
+import java.util.Objects;
 
 @UnstableApi
 public class PlayerCoverFragment extends Fragment {
@@ -88,9 +91,25 @@ public class PlayerCoverFragment extends Fragment {
     }
 
     private void setCover(MediaMetadata mediaMetadata) {
-        CustomGlideRequest.Builder
-                .from(requireContext(), mediaMetadata.extras != null ? mediaMetadata.extras.getString("coverArtId") : null, CustomGlideRequest.ResourceType.Song)
-                .build()
-                .into(bind.nowPlayingSongCoverImageView);
+        if (mediaMetadata.extras == null) return;
+
+        String type = mediaMetadata.extras.getString("type");
+        String coverArtId = mediaMetadata.extras.getString("coverArtId");
+        String homepageUrl = mediaMetadata.extras.getString("homepageUrl");
+
+        if (Objects.equals(type, Constants.MEDIA_TYPE_RADIO)
+                && homepageUrl != null
+                && !homepageUrl.trim().isEmpty()
+                && (homepageUrl.startsWith("http://") || homepageUrl.startsWith("https://"))) {
+            CustomGlideRequest.Builder
+                    .from(requireContext(), homepageUrl.trim(), CustomGlideRequest.ResourceType.Radio)
+                    .build()
+                    .into(bind.nowPlayingSongCoverImageView);
+        } else {
+            CustomGlideRequest.Builder
+                    .from(requireContext(), coverArtId, CustomGlideRequest.ResourceType.Song)
+                    .build()
+                    .into(bind.nowPlayingSongCoverImageView);
+        }
     }
 }

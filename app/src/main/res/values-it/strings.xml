@@ -315,7 +315,7 @@
     <string name="settings_allow_playlist_duplicates">Allow adding duplicates to playlist</string>
     <string name="settings_allow_playlist_duplicates_summary">If enabled, duplicates won\'t be checked while adding to a playlist.</string>
     <string name="settings_audio_transcode_download_format">Formato transcodifica</string>
-    <string name="settings_audio_transcode_download_priority_summary">Se abilitato, Rollynn non forzerà il download del brano con le impostazioni di transcodifica sottostanti.</string>
+    <string name="settings_audio_transcode_download_priority_summary">Se abilitato, Elzify non forzerà il download del brano con le impostazioni di transcodifica sottostanti.</string>
     <string name="settings_audio_transcode_download_priority_title">Dare priorità alle impostazioni del server per lo streaming nei download</string>
     <string name="settings_audio_transcode_download_summary">Se abilitato, Rollynn scaricherà i brani transcodificati.</string>
     <string name="settings_audio_transcode_download_title">Scarica brani transcodificati</string>

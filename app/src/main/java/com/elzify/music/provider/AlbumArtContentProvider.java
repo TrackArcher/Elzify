@@ -8,6 +8,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -62,7 +64,19 @@ public class AlbumArtContentProvider extends ContentProvider {
             throw new FileNotFoundException("Invalid album ID");
         }
 
-        Uri artworkUri = Uri.parse(CustomGlideRequest.createUrl(albumId, Preferences.getImageSize()));
+        Uri artworkUri;
+        if (albumId.startsWith("ir_")) {
+            try {
+                String encodedUrl = albumId.substring(3);
+                byte[] decodedBytes = Base64.decode(encodedUrl, Base64.URL_SAFE | Base64.NO_WRAP);
+                String decodedUrl = new String(decodedBytes, StandardCharsets.UTF_8);
+                artworkUri = Uri.parse(decodedUrl);
+            } catch (Exception e) {
+                throw new FileNotFoundException("Failed to decode radio URL: " + e.getMessage());
+            }
+        } else {
+            artworkUri = Uri.parse(CustomGlideRequest.createUrl(albumId, Preferences.getImageSize()));
+        }
 
         try {
             // use pipe to communicate between background thread and caller of openFile()
@@ -138,7 +152,10 @@ public class AlbumArtContentProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        return "";
+        if (uriMatcher.match(uri) == 1) {
+            return "image/jpeg";
+        }
+        return null;
     }
 
     @Nullable
