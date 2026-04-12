@@ -34,14 +34,17 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 import java.lang.ref.WeakReference;
 import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 public class MediaManager {
     private static final String TAG = "MediaManager";
@@ -353,7 +356,7 @@ public class MediaManager {
             mediaBrowserListenableFuture.addListener(() -> {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
-                        Log.e(TAG, "enqueue");
+                        Log.d(TAG, "enqueue");
                         MediaBrowser browser = mediaBrowserListenableFuture.get();
                         if (playImmediatelyAfter && browser.getNextMediaItemIndex() != -1) {
                             int insertIndex;
@@ -514,7 +517,7 @@ public class MediaManager {
     }
 
     public static void scrobble(MediaItem mediaItem, boolean submission, Long time) {
-        if (mediaItem != null && Preferences.isScrobblingEnabled()) {
+        if (mediaItem != null && mediaItem.mediaMetadata.extras != null && Preferences.isScrobblingEnabled()) {
             getSongRepository().scrobble(mediaItem.mediaMetadata.extras.getString("id"), submission, time);
         }
     }
@@ -531,6 +534,7 @@ public class MediaManager {
                 || !Preferences.isInstantMixUsable()) {
             return;
         }
+        Log.d(TAG, "Continuous Play");
 
         Preferences.setLastInstantMix();
 
@@ -541,12 +545,31 @@ public class MediaManager {
             @Override
             public void onChanged(List<Child> media) {
                 if (media == null || media.isEmpty()) {
+                    Log.w(TAG, "Continuous Play: no similar track found. Is server correctly configured?");
                     return;
                 }
 
                 if (existingBrowserFuture != null) {
-                    Log.d(TAG, "Continuous play: adding " + media.size() + " tracks");
-                    enqueue(existingBrowserFuture, media, true);
+                    Log.d(TAG, "Continuous Play: found " + media.size() + " similar tracks");
+
+                    final MediaBrowser browser;
+                    try {
+                        browser = existingBrowserFuture.get();
+                    } catch (ExecutionException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    List<Child> filteredMedia;
+                    List<String> currentIds = new ArrayList<>();
+                    for (int i = 0; i < Objects.requireNonNull(browser).getMediaItemCount(); i++) {
+                        currentIds.add(browser.getMediaItemAt(i).mediaId);
+                    }
+                    filteredMedia = media.stream()
+                            .filter(child -> !currentIds.contains(child.getId()))
+                            .collect(Collectors.toList());
+
+                    Log.d(TAG, "Continuous Play: adding " + filteredMedia.size() + " tracks to queue");
+                    enqueue(existingBrowserFuture, filteredMedia, true);
                 }
                 instantMix.removeObserver(this);
             }

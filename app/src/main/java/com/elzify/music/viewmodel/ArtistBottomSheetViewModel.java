@@ -23,7 +23,11 @@ import com.elzify.music.util.MappingUtil;
 import com.elzify.music.util.Preferences;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.List;
 
@@ -34,11 +38,171 @@ public class ArtistBottomSheetViewModel extends AndroidViewModel {
 
     private ArtistID3 artist;
 
+    private final MutableLiveData<List<AlbumID3>> singles = new MutableLiveData<>();
+    private final MutableLiveData<List<AlbumID3>> eps = new MutableLiveData<>();
+    private final MutableLiveData<List<AlbumID3>> mainAlbums = new MutableLiveData<>();
+    private final MutableLiveData<List<AlbumID3>> appearsOn = new MutableLiveData<>();
+    private final MutableLiveData<List<AlbumID3>> compilations = new MutableLiveData<>();
+    private final MutableLiveData<List<AlbumID3>> soundtracks = new MutableLiveData<>();
+    private final MutableLiveData<List<AlbumID3>> lives = new MutableLiveData<>();
+    private final MutableLiveData<List<AlbumID3>> remixes = new MutableLiveData<>();
+
+    private static final Set<String> SECONDARY_TYPES = Set.of(
+            "compilation",
+            "soundtrack",
+            "live",
+            "remix"
+    );
+
     public ArtistBottomSheetViewModel(@NonNull Application application) {
         super(application);
 
         artistRepository = new ArtistRepository();
         favoriteRepository = new FavoriteRepository();
+    }
+
+    public void fetchCategorizedAlbums(androidx.lifecycle.LifecycleOwner owner) {
+        artistRepository.getArtist(artist.getId()).observe(owner, artistWithAlbums -> {
+            if (artistWithAlbums != null && artistWithAlbums instanceof com.cappielloantonio.tempo.subsonic.models.ArtistWithAlbumsID3) {
+                java.util.function.Predicate<AlbumID3> sameArtist = a -> Objects.equals(a.getArtistId(), Objects.requireNonNull(artist.getId()));
+                com.cappielloantonio.tempo.subsonic.models.ArtistWithAlbumsID3 fullArtist = (com.cappielloantonio.tempo.subsonic.models.ArtistWithAlbumsID3) artistWithAlbums;
+                List<AlbumID3> allAlbums = fullArtist.getAlbums();
+                if (allAlbums != null) {
+                    allAlbums.sort(Comparator.comparing(AlbumID3::getYear).reversed());
+
+                    /*
+                    PRIMARY TYPES: album / single / ep
+                     */
+
+                    mainAlbums.setValue(
+                            allAlbums.stream()
+                                    .filter(a -> isType(a, "album")
+                                            && !hasSecondaryReleaseType(a.getReleaseTypes())
+                                            && sameArtist.test(a))
+                                    .collect(Collectors.toList()));
+
+                    singles.setValue(
+                            allAlbums.stream()
+                                    .filter(a -> isType(a, "single") && sameArtist.test(a))
+                                    .collect(Collectors.toList()));
+
+                    eps.setValue(
+                            allAlbums.stream()
+                                    .filter(a -> isType(a, "ep") && sameArtist.test(a))
+                                    .collect(Collectors.toList()));
+
+                    /*
+                    SECONDARY TYPES: compilation / soundtrack / live / remix
+                     */
+
+                    compilations.setValue(
+                            allAlbums.stream()
+                                    .filter(a -> {
+                                        List<String> releaseTypes = a.getReleaseTypes();
+                                        return releaseTypes != null
+                                                && releaseTypes.stream().anyMatch(t -> t.equalsIgnoreCase("compilation"))
+                                                && sameArtist.test(a);
+                                    })
+                                    .collect(Collectors.toList()));
+
+                    soundtracks.setValue(
+                            allAlbums.stream()
+                                    .filter(a -> {
+                                        List<String> releaseTypes = a.getReleaseTypes();
+                                        return releaseTypes != null
+                                                && releaseTypes.stream().anyMatch(t -> t.equalsIgnoreCase("soundtrack"))
+                                                && sameArtist.test(a);
+                                    })
+                                    .collect(Collectors.toList()));
+
+                    lives.setValue(
+                            allAlbums.stream()
+                                    .filter(a -> {
+                                        List<String> releaseTypes = a.getReleaseTypes();
+                                        return releaseTypes != null
+                                                && releaseTypes.stream().anyMatch(t -> t.equalsIgnoreCase("live"))
+                                                && sameArtist.test(a);
+                                    })
+                                    .collect(Collectors.toList()));
+
+                    remixes.setValue(
+                            allAlbums.stream()
+                                    .filter(a -> {
+                                        List<String> releaseTypes = a.getReleaseTypes();
+                                        return releaseTypes != null
+                                                && releaseTypes.stream().anyMatch(t -> t.equalsIgnoreCase("remix"))
+                                                && sameArtist.test(a);
+                                    })
+                                    .collect(Collectors.toList()));
+                }
+                if (allAlbums != null) {
+                    allAlbums.sort(Comparator.comparing(AlbumID3::getYear).reversed());
+
+                    appearsOn.setValue(allAlbums.stream()
+                            .filter(a -> !sameArtist.test(a))
+                            .collect(Collectors.toList())
+                    );
+                }
+            }
+        });
+    }
+
+    private boolean isType(AlbumID3 album, String targetType) {
+        if (album.getReleaseTypes() != null && !album.getReleaseTypes().isEmpty()) {
+            return album.getReleaseTypes().contains(targetType);
+        }
+        // Fallback to song count if releaseTypes is not available
+        int songCount = album.getSongCount() != null ? album.getSongCount() : 0;
+        switch (targetType) {
+            case "single":
+                return songCount >= 1 && songCount <= 2;
+            case "ep":
+                return songCount >= 3 && songCount <= 7;
+            case "album":
+                return songCount >= 8;
+            default:
+                return false;
+        }
+    }
+
+    private static boolean hasSecondaryReleaseType(List<String> releaseTypes) {
+        if (releaseTypes == null || releaseTypes.isEmpty()) {
+            return false;
+        }
+
+        return releaseTypes.stream()
+                .map(String::trim)
+                .map(String::toLowerCase)
+                .anyMatch(SECONDARY_TYPES::contains);
+    }
+
+    public LiveData<List<AlbumID3>> getSingles() { return singles; }
+    public LiveData<List<AlbumID3>> getEPs() { return eps; }
+    public LiveData<List<AlbumID3>> getMainAlbums() { return mainAlbums; }
+    public LiveData<List<AlbumID3>> getCompilations() { return compilations; }
+    public LiveData<List<AlbumID3>> getSoundtracks() { return soundtracks; }
+    public LiveData<List<AlbumID3>> getLives() { return lives; }
+    public LiveData<List<AlbumID3>> getRemixes() { return remixes; }
+    public LiveData<List<AlbumID3>> getAppearsOn() { return appearsOn; }
+
+    public LiveData<List<AlbumID3>> getAlbumList() {
+        return albumRepository.getArtistAlbums(artist.getId());
+    }
+
+    public LiveData<ArtistInfo2> getArtistInfo(String id) {
+        return artistRepository.getArtistFullInfo(id);
+    }
+
+    public LiveData<List<Child>> getArtistTopSongList() {
+        return artistRepository.getTopSongs(artist.getName(), 20);
+    }
+
+    public LiveData<List<Child>> getArtistShuffleList() {
+        return artistRepository.getRandomSong(artist, 50);
+    }
+
+    public LiveData<List<Child>> getArtistInstantMix() {
+        return artistRepository.getInstantMix(artist, 30);
     }
 
     public ArtistID3 getArtist() {
@@ -95,12 +259,12 @@ public class ArtistBottomSheetViewModel extends AndroidViewModel {
         });
 
         artist.setStarred(new Date());
-        
+
         Log.d("ArtistSync", "Checking preference: " + Preferences.isStarredArtistsSyncEnabled());
-        
+
         if (Preferences.isStarredArtistsSyncEnabled()) {
             Log.d("ArtistSync", "Starting artist sync for: " + artist.getName());
-            
+
             artistRepository.getArtistAllSongs(artist.getId(), new ArtistRepository.ArtistSongsCallback() {
                 @OptIn(markerClass = UnstableApi.class)
                 @Override
@@ -122,7 +286,7 @@ public class ArtistBottomSheetViewModel extends AndroidViewModel {
             Log.d("ArtistSync", "Artist sync preference is disabled");
         }
     }
-    
+
     public LiveData<List<Child>> getArtistInstantMix(LifecycleOwner owner, ArtistID3 artist) {
         instantMix.setValue(Collections.emptyList());
 

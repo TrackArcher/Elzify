@@ -80,10 +80,10 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SplashScreen.installSplashScreen(this);
-        
+
         int accentColor = Preferences.getAccentColor();
         if (accentColor != -1) {
-            com.google.android.material.color.DynamicColors.applyToActivityIfAvailable(this, 
+            com.google.android.material.color.DynamicColors.applyToActivityIfAvailable(this,
                 new com.google.android.material.color.DynamicColorsOptions.Builder()
                     .setContentBasedSource(android.graphics.Bitmap.createBitmap(new int[]{accentColor}, 1, 1, android.graphics.Bitmap.Config.ARGB_8888))
                     .build());
@@ -264,7 +264,7 @@ public class MainActivity extends BaseActivity {
             float condensedSlideOffset = Math.max(0.0f, Math.min(0.2f, slideOffset - 0.2f)) / 0.2f;
             playerBottomSheetFragment.getPlayerHeader().setAlpha(1 - condensedSlideOffset);
             playerBottomSheetFragment.getPlayerHeader().setVisibility(condensedSlideOffset > 0.99 ? View.GONE : View.VISIBLE);
-            
+
             // Show body during slide if expanding
             if (slideOffset > 0.01) {
                 playerBottomSheetFragment.setBodyVisibility(true);
@@ -332,7 +332,7 @@ public class MainActivity extends BaseActivity {
             ((LinearLayout) dockContainer).setOrientation(isLandscape ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
         }
         List<String> items = new java.util.ArrayList<>(Preferences.getDockItems());
-        
+
         // Ensure mandatory items are present if they were somehow excluded in saved prefs
         if (!items.contains(Constants.DOCK_ITEM_HOME)) items.add(Constants.DOCK_ITEM_HOME);
         if (!items.contains(Constants.DOCK_ITEM_SEARCH)) items.add(Constants.DOCK_ITEM_SEARCH);
@@ -342,11 +342,11 @@ public class MainActivity extends BaseActivity {
             View dockItemView = getLayoutInflater().inflate(R.layout.item_dock_nav, dockContainer, false);
             ImageView icon = dockItemView.findViewById(R.id.dock_item_icon);
             TextView label = dockItemView.findViewById(R.id.dock_item_label);
-            
+
             int fragmentId = getFragmentId(item);
             icon.setImageResource(getDockIcon(item));
             label.setText(getDockLabel(item));
-            
+
             dockItemView.setOnClickListener(v -> {
                 if (navController.getCurrentDestination() == null || navController.getCurrentDestination().getId() != fragmentId) {
                     navController.navigate(fragmentId);
@@ -404,7 +404,7 @@ public class MainActivity extends BaseActivity {
             View root = child.findViewById(R.id.dock_item_root);
             ImageView icon = child.findViewById(R.id.dock_item_icon);
             TextView label = child.findViewById(R.id.dock_item_label);
-            
+
             if (child.getTag() instanceof Integer && (Integer)child.getTag() == activeId) {
                 root.setBackgroundResource(R.drawable.bg_dock_item_selected);
                 icon.setAlpha(1.0f);

@@ -168,6 +168,28 @@ open class BaseMediaService : MediaLibraryService() {
                 currentTrackScrobbled = false
                 if (mediaItem == null) return
 
+                // --- Add for AA : Constants.AA_START_INDEX if présent ---
+                val extras = mediaItem.mediaMetadata.extras
+                val startIndex = extras?.getInt(Constants.AA_START_INDEX, -1) ?: -1
+                if (startIndex >= 0 ) {
+                    val cleanExtras = Bundle(extras).apply {
+                        remove(Constants.AA_START_INDEX)
+                    }
+                    val newMetadata = mediaItem.mediaMetadata.buildUpon()
+                        .setExtras(cleanExtras)
+                        .build()
+                    val currentIdx = player.currentMediaItemIndex
+                    if (player is ExoPlayer && currentIdx != C.INDEX_UNSET) {
+                        player.replaceMediaItem(
+                            currentIdx,
+                            mediaItem.buildUpon().setMediaMetadata(newMetadata).build()
+                        )
+                    }
+                    if (startIndex in 0 until player.mediaItemCount && startIndex != currentIdx) {
+                        player.seekTo(startIndex, 0L)
+                    }
+                }
+                // --- End add for AA ---
                 if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_SEEK || reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
                     MediaManager.setLastPlayedTimestamp(mediaItem)
                     if (mediaItem.mediaMetadata.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC) {

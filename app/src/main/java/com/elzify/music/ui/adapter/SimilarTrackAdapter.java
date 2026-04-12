@@ -12,6 +12,8 @@ import com.elzify.music.glide.CustomGlideRequest;
 import com.elzify.music.interfaces.ClickCallback;
 import com.elzify.music.subsonic.models.Child;
 import com.elzify.music.util.Constants;
+import com.elzify.music.util.MusicUtil;
+import com.elzify.music.util.TileSizeManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +22,7 @@ public class SimilarTrackAdapter extends RecyclerView.Adapter<SimilarTrackAdapte
     private final ClickCallback click;
 
     private List<Child> songs;
+    private int sizePx = 400;
 
     public SimilarTrackAdapter(ClickCallback click) {
         this.click = click;
@@ -30,11 +33,20 @@ public class SimilarTrackAdapter extends RecyclerView.Adapter<SimilarTrackAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemHomeSimilarTrackBinding view = ItemHomeSimilarTrackBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+
+        TileSizeManager.getInstance().calculateTileSize(parent.getContext());
+        sizePx = TileSizeManager.getInstance().getTileSizePx(parent.getContext());
+
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        ViewGroup.LayoutParams lp = holder.item.trackCoverImageView.getLayoutParams();
+        lp.width = sizePx;
+        lp.height = sizePx;
+        holder.item.trackCoverImageView.setLayoutParams(lp);
+
         Child song = songs.get(position);
 
         holder.item.titleTrackLabel.setText(song.getTitle());
