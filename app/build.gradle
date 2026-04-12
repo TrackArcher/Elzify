@@ -81,10 +81,19 @@ android {
         buildConfig true
     }
 
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
     namespace 'com.elzify.music'
 }
 
 dependencies {
+    // Prebuilt AAR. For 16 KB page-size–aligned native code, rebuild with NDK r28+:
+    //   ./scripts/build-media3-ffmpeg-aar.sh
+    // See https://github.com/androidx/media/blob/release/libraries/decoder_ffmpeg/README.md
     implementation files('../libs/lib-decoder-ffmpeg-release.aar')
 
     // AndroidX

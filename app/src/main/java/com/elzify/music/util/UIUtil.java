@@ -126,20 +126,12 @@ public class UIUtil {
 
     @ColorInt
     public static int getPlayerBackgroundColor(Context context) {
-        int surface = getThemeColor(context, com.google.android.material.R.attr.colorSurface);
-        int accent = Preferences.getAccentColor();
-
-        if (accent == -1) {
-            return getThemeColor(context, com.google.android.material.R.attr.colorSurfaceContainerHigh);
-        }
-
-        float blendRatio = ColorUtils.calculateLuminance(surface) > 0.5 ? 0.24f : 0.32f;
-        return ColorUtils.blendARGB(surface, accent, blendRatio);
+        return getThemeColor(context, android.R.attr.colorBackground);
     }
 
     @ColorInt
     public static int getSystemBarColor(Context context) {
-        return getThemeColor(context, com.google.android.material.R.attr.colorSurface);
+        return getThemeColor(context, android.R.attr.colorBackground);
     }
 
     public static int dpToPx(Context context, int dp) {

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -14,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,9 +32,9 @@ import com.elzify.music.subsonic.models.Line;
 import com.elzify.music.subsonic.models.LyricsList;
 import com.elzify.music.util.MusicUtil;
 import com.elzify.music.util.Preferences;
+import com.elzify.music.util.UIUtil;
 import com.elzify.music.viewmodel.PlayerBottomSheetViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.android.material.button.MaterialButton;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.List;
@@ -54,7 +54,6 @@ public class PlayerLyricsFragment extends Fragment {
     private LyricsList currentLyricsList;
     private Integer lastLineIdx;
     private String currentDescription;
-    private boolean lyricsSourceSwitchAvailable;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,9 +62,15 @@ public class PlayerLyricsFragment extends Fragment {
 
         playerBottomSheetViewModel = new ViewModelProvider(requireActivity()).get(PlayerBottomSheetViewModel.class);
 
-        initOverlay();
+        applyPlayerBackgroundColor();
 
         return view;
+    }
+
+    private void applyPlayerBackgroundColor() {
+        if (bind == null) return;
+        int playerBackgroundColor = UIUtil.getPlayerBackgroundColor(requireContext());
+        bind.getRoot().setBackgroundColor(playerBackgroundColor);
     }
 
     @Override
@@ -73,15 +78,13 @@ public class PlayerLyricsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         initPanelContent();
-        observeDownloadState();
-        observeLyricsSourceState();
     }
 
     @Override
     public void onStart() {
         super.onStart();
         initializeBrowser();
-
+        applyPlayerBackgroundColor();
     }
 
     @Override
@@ -114,38 +117,6 @@ public class PlayerLyricsFragment extends Fragment {
         currentLyricsList = null;
         currentDescription = null;
         lastLineIdx = null;
-        lyricsSourceSwitchAvailable = false;
-    }
-
-    private void initOverlay() {
-        float overlayLift = getResources().getDisplayMetrics().density * 64f;
-        bind.lyricsSourceToggleButton.setTranslationY(-overlayLift);
-        bind.downloadLyricsButton.setTranslationY(-overlayLift);
-
-        bind.downloadLyricsButton.setOnClickListener(view -> {
-            boolean saved = playerBottomSheetViewModel.downloadCurrentLyrics();
-            if (getContext() != null) {
-                Toast.makeText(
-                        requireContext(),
-                        saved ? R.string.player_lyrics_download_success : R.string.player_lyrics_download_failure,
-                        Toast.LENGTH_SHORT
-                ).show();
-            }
-        });
-
-        bind.lyricsSourceToggleButton.setOnClickListener(view -> {
-            Integer sourceBefore = playerBottomSheetViewModel.getLyricsSource().getValue();
-            boolean switched = playerBottomSheetViewModel.switchLyricsSource();
-            if (!switched) {
-                Toast.makeText(requireContext(), R.string.player_lyrics_source_switch_unavailable, Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            int labelRes = sourceBefore != null && sourceBefore == PlayerBottomSheetViewModel.LYRICS_SOURCE_SERVER
-                    ? R.string.player_lyrics_source_lrclib_label
-                    : R.string.player_lyrics_source_server_label;
-            Toast.makeText(requireContext(), getString(R.string.player_lyrics_source_active, getString(labelRes)), Toast.LENGTH_SHORT).show();
-        });
     }
 
     private void initializeBrowser() {
@@ -192,42 +163,6 @@ public class PlayerLyricsFragment extends Fragment {
         });
     }
 
-    private void observeDownloadState() {
-        playerBottomSheetViewModel.getLyricsCachedState().observe(getViewLifecycleOwner(), cached -> {
-            if (bind != null) {
-                MaterialButton downloadButton = (MaterialButton) bind.downloadLyricsButton;
-                if (cached != null && cached) {
-                    downloadButton.setIconResource(R.drawable.ic_done);
-                    downloadButton.setContentDescription(getString(R.string.player_lyrics_downloaded_content_description));
-                } else {
-                    downloadButton.setIconResource(R.drawable.ic_download);
-                    downloadButton.setContentDescription(getString(R.string.player_lyrics_download_content_description));
-                }
-            }
-        });
-    }
-
-    private void observeLyricsSourceState() {
-        playerBottomSheetViewModel.getLyricsSourceSwitchAvailable().observe(getViewLifecycleOwner(), canSwitch -> {
-            lyricsSourceSwitchAvailable = canSwitch != null && canSwitch;
-            updateLyricsSourceButtonVisibility(hasStructuredLyrics(currentLyricsList) || hasText(currentLyrics));
-        });
-
-        playerBottomSheetViewModel.getLyricsSource().observe(getViewLifecycleOwner(), source -> {
-            if (bind == null) {
-                return;
-            }
-
-            if (source != null && source == PlayerBottomSheetViewModel.LYRICS_SOURCE_LRCLIB) {
-                bind.lyricsSourceToggleButton.setText(getString(R.string.player_lyrics_source_lrclib_label));
-                bind.lyricsSourceToggleButton.setContentDescription(getString(R.string.player_lyrics_source_lrclib_content_description));
-            } else {
-                bind.lyricsSourceToggleButton.setText(getString(R.string.player_lyrics_source_server_label));
-                bind.lyricsSourceToggleButton.setContentDescription(getString(R.string.player_lyrics_source_server_content_description));
-            }
-        });
-    }
-
     private void updatePanelContent() {
         if (bind == null) {
             return;
@@ -240,41 +175,21 @@ public class PlayerLyricsFragment extends Fragment {
             bind.nowPlayingSongLyricsTextView.setVisibility(View.VISIBLE);
             bind.emptyDescriptionImageView.setVisibility(View.GONE);
             bind.titleEmptyDescriptionLabel.setVisibility(View.GONE);
-            bind.downloadLyricsButton.setVisibility(View.VISIBLE);
-            bind.downloadLyricsButton.setEnabled(true);
         } else if (hasText(currentLyrics)) {
             bind.nowPlayingSongLyricsTextView.setText(MusicUtil.getReadableLyrics(currentLyrics));
             bind.nowPlayingSongLyricsTextView.setVisibility(View.VISIBLE);
             bind.emptyDescriptionImageView.setVisibility(View.GONE);
             bind.titleEmptyDescriptionLabel.setVisibility(View.GONE);
-            bind.downloadLyricsButton.setVisibility(View.VISIBLE);
-            bind.downloadLyricsButton.setEnabled(true);
         } else if (hasText(currentDescription)) {
             bind.nowPlayingSongLyricsTextView.setText(MusicUtil.getReadableLyrics(currentDescription));
             bind.nowPlayingSongLyricsTextView.setVisibility(View.VISIBLE);
             bind.emptyDescriptionImageView.setVisibility(View.GONE);
             bind.titleEmptyDescriptionLabel.setVisibility(View.GONE);
-            bind.downloadLyricsButton.setVisibility(View.GONE);
-            bind.downloadLyricsButton.setEnabled(false);
         } else {
             bind.nowPlayingSongLyricsTextView.setVisibility(View.GONE);
             bind.emptyDescriptionImageView.setVisibility(View.VISIBLE);
             bind.titleEmptyDescriptionLabel.setVisibility(View.VISIBLE);
-            bind.downloadLyricsButton.setVisibility(View.GONE);
-            bind.downloadLyricsButton.setEnabled(false);
         }
-
-        updateLyricsSourceButtonVisibility(hasStructuredLyrics(currentLyricsList) || hasText(currentLyrics));
-    }
-
-    private void updateLyricsSourceButtonVisibility(boolean hasLyrics) {
-        if (bind == null) {
-            return;
-        }
-
-        bind.lyricsSourceToggleButton.setVisibility(hasLyrics ? View.VISIBLE : View.GONE);
-        bind.lyricsSourceToggleButton.setEnabled(hasLyrics);
-        bind.lyricsSourceToggleButton.setAlpha(lyricsSourceSwitchAvailable ? 0.85f : 0.65f);
     }
 
     private boolean hasText(String value) {
@@ -308,24 +223,25 @@ public class PlayerLyricsFragment extends Fragment {
 
     private void defineProgressHandler() {
         playerBottomSheetViewModel.getLiveLyricsList().observe(getViewLifecycleOwner(), lyricsList -> {
+            releaseHandler();
             if (!hasStructuredLyrics(lyricsList)) {
-                releaseHandler();
                 return;
             }
 
             if (!lyricsList.getStructuredLyrics().get(0).getSynced()) {
-                releaseHandler();
                 return;
             }
 
-            syncLyricsHandler = new Handler();
-            syncLyricsRunnable = () -> {
-                if (syncLyricsHandler != null) {
-                    if (bind != null) {
-                        displaySyncedLyrics();
+            syncLyricsHandler = new Handler(Looper.getMainLooper());
+            syncLyricsRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    if (syncLyricsHandler != null) {
+                        if (bind != null) {
+                            displaySyncedLyrics();
+                        }
+                        syncLyricsHandler.postDelayed(this, 250);
                     }
-
-                    syncLyricsHandler.postDelayed(syncLyricsRunnable, 250);
                 }
             };
 
@@ -334,8 +250,12 @@ public class PlayerLyricsFragment extends Fragment {
     }
 
     private void displaySyncedLyrics() {
+        if (bind == null || mediaBrowser == null) {
+            return;
+        }
+        
         LyricsList lyricsList = playerBottomSheetViewModel.getLiveLyricsList().getValue();
-        int timestamp = (int) (mediaBrowser.getCurrentPosition());
+        long timestamp = mediaBrowser.getCurrentPosition();
 
         if (hasStructuredLyrics(lyricsList)) {
             List<Line> lines = lyricsList.getStructuredLyrics().get(0).getLine();
@@ -352,6 +272,8 @@ public class PlayerLyricsFragment extends Fragment {
                     break;
                 }
             }
+            if (curIdx < 0) curIdx = 0;
+            if (curIdx >= lines.size()) curIdx = lines.size() - 1;
 
             // Only update if the highlighted line has changed
             if (lastLineIdx != null && curIdx == lastLineIdx) {
@@ -375,6 +297,7 @@ public class PlayerLyricsFragment extends Fragment {
 
                 int len = lines.get(i).getValue().length() + 2;
                 final int lineStart = lines.get(i).getStart();
+                final int finalI = i;
                 spannableString.setSpan(new ClickableSpan() {
                     @Override
                     public void onClick(@NonNull View view) {
@@ -392,7 +315,7 @@ public class PlayerLyricsFragment extends Fragment {
                             ds.setColor(requireContext().getResources().getColor(R.color.shadowsLyricsTextColor, null));
                         }
                     }
-                }, offset, offset + len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }, offset, Math.min(offset + len, spannableString.length()), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 offset += len;
             }
 
@@ -407,9 +330,9 @@ public class PlayerLyricsFragment extends Fragment {
     }
 
     private int getScroll(int startIndex) {
+        if (bind == null || bind.nowPlayingSongLyricsTextView.getLayout() == null) return 0;
+        
         Layout layout = bind.nowPlayingSongLyricsTextView.getLayout();
-        if (layout == null) return 0;
-
         int line = layout.getLineForOffset(startIndex);
         int lineTop = layout.getLineTop(line);
         int lineBottom = layout.getLineBottom(line);

@@ -19,6 +19,7 @@ import com.elzify.music.databinding.InnerFragmentPlayerCoverBinding;
 import com.elzify.music.glide.CustomGlideRequest;
 import com.elzify.music.service.MediaService;
 import com.elzify.music.util.Constants;
+import com.elzify.music.util.UIUtil;
 import com.elzify.music.viewmodel.PlayerBottomSheetViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -38,7 +39,15 @@ public class PlayerCoverFragment extends Fragment {
 
         playerBottomSheetViewModel = new ViewModelProvider(requireActivity()).get(PlayerBottomSheetViewModel.class);
 
+        applyPlayerBackgroundColor();
+
         return view;
+    }
+
+    private void applyPlayerBackgroundColor() {
+        if (bind == null) return;
+        int playerBackgroundColor = UIUtil.getPlayerBackgroundColor(requireContext());
+        bind.getRoot().setBackgroundColor(playerBackgroundColor);
     }
 
     @Override
@@ -46,6 +55,7 @@ public class PlayerCoverFragment extends Fragment {
         super.onStart();
         initializeBrowser();
         bindMediaController();
+        applyPlayerBackgroundColor();
     }
 
     @Override

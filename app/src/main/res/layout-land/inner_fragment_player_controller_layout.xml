@@ -126,6 +126,20 @@
             android:text=""/>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/player_metadata_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintEnd_toStartOf="@+id/button_favorite"
+        app:layout_constraintStart_toEndOf="@+id/vertical_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/rating_container"
+        android:visibility="gone"/>
+
     <TextView
         android:id="@+id/player_media_title_label"
         style="@style/HeadlineLarge"
@@ -386,11 +400,50 @@
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:layout_constraintStart_toEndOf="@+id/player_open_equalizer_button"
+            app:layout_constraintStart_toEndOf="@+id/button_overflow_menu"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:srcCompat="@drawable/ic_queue"
+            app:tint="?attr/colorOnSurface" />
+
+        <ImageButton
+            android:id="@+id/button_overflow_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintStart_toEndOf="@+id/player_open_lyrics_button"
+            app:layout_constraintEnd_toStartOf="@+id/player_open_queue_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:srcCompat="@drawable/ic_more_vert"
+            app:tint="?attr/colorOnSurface" />
+
+        <ImageButton
+            android:id="@+id/player_open_lyrics_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintStart_toEndOf="@+id/button_add_to_playlist"
+            app:layout_constraintEnd_toStartOf="@+id/button_overflow_menu"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:srcCompat="@drawable/ic_lyrics"
+            app:tint="?attr/colorOnSurface" />
+
+        <ImageButton
+            android:id="@+id/button_add_to_playlist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintStart_toEndOf="@+id/player_open_equalizer_button"
+            app:layout_constraintEnd_toStartOf="@+id/player_open_lyrics_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:srcCompat="@drawable/ic_playlist_add"
             app:tint="?attr/colorOnSurface" />
 
         <ImageButton
@@ -400,7 +453,7 @@
             android:padding="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/player_open_queue_button"
+            app:layout_constraintEnd_toStartOf="@+id/button_add_to_playlist"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:srcCompat="@drawable/ic_eq"

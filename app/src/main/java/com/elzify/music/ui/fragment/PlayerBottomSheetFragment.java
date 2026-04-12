@@ -104,6 +104,7 @@ public class PlayerBottomSheetFragment extends Fragment {
 
         initializeMediaBrowser();
         bindMediaController();
+        applyPlayerBackgroundColor();
     }
 
     @Override
@@ -119,7 +120,6 @@ public class PlayerBottomSheetFragment extends Fragment {
     }
 
     private void customizeBottomSheetBackground() {
-        bind.playerHeaderLayout.getRoot().setBackgroundColor(SurfaceColors.getColorForElevation(requireContext(), 8));
     }
 
     private void customizeBottomSheetAction() {
@@ -135,7 +135,6 @@ public class PlayerBottomSheetFragment extends Fragment {
         if (bind == null) return;
 
         int playerBackgroundColor = UIUtil.getPlayerBackgroundColor(requireContext());
-        bind.getRoot().setBackgroundColor(Color.TRANSPARENT);
         bind.playerBodyLayout.playerBodyBottomSheetViewPager.setBackgroundColor(playerBackgroundColor);
     }
 

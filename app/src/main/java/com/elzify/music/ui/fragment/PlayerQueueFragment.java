@@ -37,6 +37,7 @@ import com.elzify.music.util.ExternalAudioReader;
 import com.elzify.music.util.ExternalAudioWriter;
 import com.elzify.music.util.MappingUtil;
 import com.elzify.music.util.Preferences;
+import com.elzify.music.util.UIUtil;
 import com.elzify.music.viewmodel.PlaybackViewModel;
 import com.elzify.music.viewmodel.PlayerBottomSheetViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -101,8 +102,15 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         }
 
         initQueueRecyclerView();
+        applyPlayerBackgroundColor();
 
         return view;
+    }
+
+    private void applyPlayerBackgroundColor() {
+        if (bind == null) return;
+        int playerBackgroundColor = UIUtil.getPlayerBackgroundColor(requireContext());
+        bind.getRoot().setBackgroundColor(playerBackgroundColor);
     }
 
     @Override
@@ -111,6 +119,7 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         initializeBrowser();
         MediaManager.registerPlaybackObserver(mediaBrowserListenableFuture, playbackViewModel);
         observePlayback();
+        applyPlayerBackgroundColor();
     }
 
     @Override

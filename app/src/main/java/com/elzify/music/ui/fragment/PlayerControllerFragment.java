@@ -139,8 +139,15 @@ public class PlayerControllerFragment extends Fragment {
         initMediaListenable();
         initEqualizerButton();
         initOverflowMenu();
+        applyPlayerBackgroundColor();
 
         return view;
+    }
+
+    private void applyPlayerBackgroundColor() {
+        if (bind == null) return;
+        int playerBackgroundColor = UIUtil.getPlayerBackgroundColor(requireContext());
+        bind.getRoot().setBackgroundColor(playerBackgroundColor);
     }
 
     @Override
@@ -150,6 +157,7 @@ public class PlayerControllerFragment extends Fragment {
                 .registerOnSharedPreferenceChangeListener(preferenceChangeListener);
         initializeBrowser();
         bindMediaController();
+        applyPlayerBackgroundColor();
     }
 
     @Override
