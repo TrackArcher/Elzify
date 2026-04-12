@@ -51,7 +51,7 @@ import com.elzify.music.ui.dialog.StarredAlbumSyncDialog;
 import com.elzify.music.ui.dialog.StarredArtistSyncDialog;
 import com.elzify.music.ui.dialog.StarredSyncDialog;
 import com.elzify.music.ui.dialog.StreamingCacheStorageDialog;
-import com.cappielloantonio.tempo.util.ClickablePreferenceCategory;
+import com.elzify.music.util.ClickablePreferenceCategory;
 import com.elzify.music.util.DownloadUtil;
 import com.elzify.music.util.ExternalAudioReader;
 import com.elzify.music.util.Preferences;

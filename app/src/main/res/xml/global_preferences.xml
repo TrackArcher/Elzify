@@ -5,7 +5,7 @@
         android:key="screen_appearance"
         android:title="@string/settings_tab_appearance">
 
-        <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_ui">
+        <com.elzify.music.util.ClickablePreferenceCategory app:title="@string/settings_title_ui">
             <ListPreference
                 android:layout_height="match_parent"
                 app:defaultValue="default"
@@ -74,7 +74,7 @@
                 android:title="Now Playing Metadata"
                 android:summary="Reorganize and enable/disable metadata fields"
                 app:icon="@drawable/ic_info_stream" />
-        </PreferenceCategory>
+        </com.elzify.music.util.ClickablePreferenceCategory>
 
     </PreferenceScreen>
 
@@ -131,9 +131,9 @@
                 android:summary="@string/search_sort_summary"
                 android:key="sort_search_chronologically"
                 app:icon="@drawable/ic_history" />
-        </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+        </PreferenceCategory>
 
-        <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_playlist">
+        <com.elzify.music.util.ClickablePreferenceCategory app:title="@string/settings_title_playlist">
             <SwitchPreference
                 android:title="@string/settings_allow_playlist_duplicates"
                 android:defaultValue="false"
@@ -149,7 +149,7 @@
                 app:title="@string/settings_playlist_sort"
                 app:useSimpleSummaryProvider="true"
                 app:icon="@drawable/ic_sort_list" />
-        </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+        </com.elzify.music.util.ClickablePreferenceCategory>
 
     </PreferenceScreen>
 
@@ -157,7 +157,7 @@
         android:key="screen_playback"
         android:title="@string/settings_tab_playback">
 
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_data">
+    <com.elzify.music.util.ClickablePreferenceCategory app:title="@string/settings_title_data">
         <ListPreference
             app:defaultValue="256"
             app:dialogTitle="@string/settings_streaming_cache_size"
@@ -187,9 +187,11 @@
                 android:summary="@string/settings_continuous_play_summary"
                 android:key="continuous_play"
                 app:icon="@drawable/ic_repeat" />
-        </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+        </PreferenceCategory>
 
-        <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_transcoding">
+    </com.elzify.music.util.ClickablePreferenceCategory>
+
+        <com.elzify.music.util.ClickablePreferenceCategory app:title="@string/settings_title_transcoding">
             <Preference
                 app:selectable="false"
                 app:summary="@string/settings_summary_transcoding" />
@@ -240,7 +242,6 @@
                 app:title="@string/settings_max_bitrate_mobile"
                 app:useSimpleSummaryProvider="true"
                 app:icon="@drawable/ic_mix_from_here" />
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
             <SwitchPreference
                 android:title="@string/settings_audio_transcode_estimate_content_length_title"
@@ -248,8 +249,9 @@
                 android:summary="@string/settings_audio_transcode_estimate_content_length_summary"
                 android:key="estimate_content_length"
                 app:icon="@drawable/ic_info_stream" />
-        </PreferenceCategory>
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_transcoding_download">
+        </com.elzify.music.util.ClickablePreferenceCategory>
+
+    <com.elzify.music.util.ClickablePreferenceCategory app:title="@string/settings_title_transcoding_download">
         <Preference
             app:selectable="false"
             app:summary="@string/settings_summary_transcoding_download" />
@@ -283,9 +285,9 @@
             app:key="max_bitrate_download"
             app:title="@string/settings_max_bitrate_download"
             app:useSimpleSummaryProvider="true" />
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+    </com.elzify.music.util.ClickablePreferenceCategory>
 
-        <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_replay_gain">
+        <com.elzify.music.util.ClickablePreferenceCategory app:title="@string/settings_title_replay_gain">
             <ListPreference
                 app:defaultValue="disabled"
                 app:dialogTitle="@string/settings_replay_gain"
@@ -295,7 +297,7 @@
                 app:title="@string/settings_replay_gain"
                 app:useSimpleSummaryProvider="true"
                 app:icon="@drawable/ic_replay" />
-        </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+        </com.elzify.music.util.ClickablePreferenceCategory>
 
         <PreferenceCategory app:title="Behavior">
             <SwitchPreference
@@ -304,20 +306,22 @@
                 android:summary="@string/settings_show_mini_shuffle_button_summary"
                 android:key="mini_shuffle_button_visibility"
                 app:icon="@drawable/ic_shuffle" />
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_rating">
-        <SeekBarPreference
-            android:key="min_star_rating"
-            app:defaultValue="0"
-            app:min="0"
-            android:max="4"
-            app:seekBarIncrement="1"
-            app:showSeekBarValue="true"
-            app:summary="@string/settings_summary_skip_min_star_rating"
-            app:title="@string/settings_title_skip_min_star_rating" />
+            <com.elzify.music.util.ClickablePreferenceCategory app:title="@string/settings_title_rating">
+                <SeekBarPreference
+                    android:key="min_star_rating"
+                    app:defaultValue="0"
+                    app:min="0"
+                    android:max="4"
+                    app:seekBarIncrement="1"
+                    app:showSeekBarValue="true"
+                    app:summary="@string/settings_summary_skip_min_star_rating"
+                    app:title="@string/settings_title_skip_min_star_rating" />
 
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+            </com.elzify.music.util.ClickablePreferenceCategory>
 
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_scrobble">
+        </PreferenceCategory>
+
+        <com.elzify.music.util.ClickablePreferenceCategory app:title="@string/settings_title_scrobble">
         <Preference
             app:selectable="false"
             app:summary="@string/settings_summary_scrobble" />
@@ -360,22 +364,24 @@
                 android:max="100"
                 app:seekBarIncrement="5"
                 app:icon="@drawable/ic_done" />
-        </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+        </com.elzify.music.util.ClickablePreferenceCategory>
 
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_share">
-        <Preference
-            app:selectable="false"
-            app:summary="@string/settings_summary_share" />
+        <com.elzify.music.util.ClickablePreferenceCategory app:title="@string/settings_title_share">
+            <Preference
+                app:selectable="false"
+                app:summary="@string/settings_summary_share" />
+
+            <SwitchPreference
+                android:title="@string/settings_share_title"
+                android:defaultValue="false"
+                android:key="share" />
+
+        </com.elzify.music.util.ClickablePreferenceCategory>
+
     </PreferenceScreen>
 
-        <SwitchPreference
-            android:title="@string/settings_share_title"
-            android:defaultValue="false"
-            android:key="share" />
 
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
-
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_syncing">
+    <com.elzify.music.util.ClickablePreferenceCategory app:title="@string/settings_title_syncing">
         <Preference
             app:selectable="false"
             app:summary="@string/settings_summary_syncing" />
@@ -418,9 +424,9 @@
                 android:singleLine="true"
                 android:defaultValue="2"
                 app:icon="@drawable/ic_refresh" />
-        </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+        </PreferenceCategory>
 
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory
+    <com.elzify.music.util.ClickablePreferenceCategory
         android:key="settings_github_update_category_key"
         app:title="@string/settings_github_update">
         <Preference
@@ -430,7 +436,7 @@
             android:title="@string/settings_github_update_title"
             android:defaultValue="true"
             android:key="github_update_check" />
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+    </com.elzify.music.util.ClickablePreferenceCategory>
         <PreferenceCategory app:title="Cache &amp; Storage">
             <ListPreference
                 app:defaultValue="256"
@@ -470,9 +476,10 @@
                 android:key="download_storage"
                 app:title="@string/settings_download_storage_title"
                 app:icon="@drawable/ic_file_download" />
+        </PreferenceCategory>
 
 	<!-- Android Auto configuration -->
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_androidauto">
+    <com.elzify.music.util.ClickablePreferenceCategory app:title="@string/settings_androidauto">
          <Preference
             app:selectable="false"
             app:summary="@string/home_rearrangement_dialog_subtitle" />
@@ -488,7 +495,7 @@
                 app:title="@string/settings_delete_download_storage_title"
                 app:summary="@string/settings_delete_download_storage_summary"
                 app:icon="@drawable/ic_close" />
-        </PreferenceCategory>
+    </com.elzify.music.util.ClickablePreferenceCategory>
 
         <PreferenceCategory app:title="Offline Sync">
             <SwitchPreference
@@ -566,22 +573,24 @@
                         app:icon="@drawable/ic_link" />
                 </PreferenceCategory>
             </PreferenceScreen>
-        <SwitchPreference
-            android:title="@string/settings_androidauto_shuffle_genre_songs"
-            android:defaultValue="false"
-            android:key="androidauto_shuffle_genre_songs" />
 
-	</com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_about_title">
-        <Preference
-            app:selectable="false"
-            app:summary="@string/settings_about_summary" />
+            <SwitchPreference
+                android:title="@string/settings_androidauto_shuffle_genre_songs"
+                android:defaultValue="false"
+                android:key="androidauto_shuffle_genre_songs" />
+
+        </PreferenceCategory>
+
+        <com.elzify.music.util.ClickablePreferenceCategory app:title="@string/settings_about_title">
+            <Preference
+                app:selectable="false"
+                app:summary="@string/settings_about_summary" />
 
             <Preference
                 android:key="logout"
                 android:title="@string/settings_logout_title"
                 app:icon="@drawable/ic_close" />
-        </PreferenceCategory>
+        </com.elzify.music.util.ClickablePreferenceCategory>
 
         <PreferenceCategory app:title="Info">
             <Preference
@@ -609,5 +618,5 @@
                 android:action="android.intent.action.VIEW"
                 android:data="@string/undraw_url" />
         </Preference>
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+    </com.elzify.music.util.ClickablePreferenceCategory>
 </PreferenceScreen>

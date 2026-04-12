@@ -13,9 +13,12 @@ import androidx.media3.common.util.UnstableApi;
 
 import com.elzify.music.model.Download;
 import com.elzify.music.interfaces.StarCallback;
+import com.elzify.music.repository.AlbumRepository;
 import com.elzify.music.repository.ArtistRepository;
 import com.elzify.music.repository.FavoriteRepository;
+import com.elzify.music.subsonic.models.AlbumID3;
 import com.elzify.music.subsonic.models.ArtistID3;
+import com.elzify.music.subsonic.models.ArtistInfo2;
 import com.elzify.music.subsonic.models.Child;
 import com.elzify.music.util.NetworkUtil;
 import com.elzify.music.util.DownloadUtil;
@@ -29,9 +32,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.List;
 
 public class ArtistBottomSheetViewModel extends AndroidViewModel {
+    private final AlbumRepository albumRepository;
     private final ArtistRepository artistRepository;
     private final FavoriteRepository favoriteRepository;
     private final MutableLiveData<List<Child>> instantMix = new MutableLiveData<>(null);
@@ -57,15 +60,16 @@ public class ArtistBottomSheetViewModel extends AndroidViewModel {
     public ArtistBottomSheetViewModel(@NonNull Application application) {
         super(application);
 
+        albumRepository = new AlbumRepository();
         artistRepository = new ArtistRepository();
         favoriteRepository = new FavoriteRepository();
     }
 
     public void fetchCategorizedAlbums(androidx.lifecycle.LifecycleOwner owner) {
         artistRepository.getArtist(artist.getId()).observe(owner, artistWithAlbums -> {
-            if (artistWithAlbums != null && artistWithAlbums instanceof com.cappielloantonio.tempo.subsonic.models.ArtistWithAlbumsID3) {
+            if (artistWithAlbums != null && artistWithAlbums instanceof com.elzify.music.subsonic.models.ArtistWithAlbumsID3) {
                 java.util.function.Predicate<AlbumID3> sameArtist = a -> Objects.equals(a.getArtistId(), Objects.requireNonNull(artist.getId()));
-                com.cappielloantonio.tempo.subsonic.models.ArtistWithAlbumsID3 fullArtist = (com.cappielloantonio.tempo.subsonic.models.ArtistWithAlbumsID3) artistWithAlbums;
+                com.elzify.music.subsonic.models.ArtistWithAlbumsID3 fullArtist = (com.elzify.music.subsonic.models.ArtistWithAlbumsID3) artistWithAlbums;
                 List<AlbumID3> allAlbums = fullArtist.getAlbums();
                 if (allAlbums != null) {
                     allAlbums.sort(Comparator.comparing(AlbumID3::getYear).reversed());

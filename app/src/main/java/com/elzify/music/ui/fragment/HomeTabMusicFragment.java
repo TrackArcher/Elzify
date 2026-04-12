@@ -1134,7 +1134,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         bind.newReleasesRecyclerView.setHasFixedSize(true);
         bind.newReleasesRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        newReleasesAlbumAdapter = new AlbumCarouselAdapter(this, true);
+        newReleasesAlbumAdapter = new AlbumCarouselAdapter(this, true, requireContext());
         bind.newReleasesRecyclerView.setAdapter(newReleasesAlbumAdapter);
         homeViewModel.getRecentlyReleasedAlbums(getViewLifecycleOwner()).observe(getViewLifecycleOwner(), albums -> {
             if (albums == null) {

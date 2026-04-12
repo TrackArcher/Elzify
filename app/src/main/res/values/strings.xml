@@ -54,9 +54,6 @@
     <string name="artist_page_title_live_section">Lives</string>
     <string name="artist_page_title_remix_section">Remixes</string>
     <string name="artist_page_title_appears_on_section">Appears On</string>
-    <string name="artist_page_title_ep_section">EPs</string>
-    <string name="artist_page_title_single_section">Singles</string>
-    <string name="artist_page_title_appears_on_section">Appears On</string>
     <string name="artist_page_title_biography_more_button">More</string>
     <string name="artist_page_title_biography_section">Biography</string>
     <string name="artist_page_title_most_streamed_song_section">Top Songs</string>
@@ -361,6 +358,8 @@
     <string name="settings_audio_transcode_priority_summary">If enabled, Rollynn will not force stream the track with the transcode settings below.</string>
     <string name="settings_audio_transcode_priority_title">Prioritize server transcode settings</string>
     <string name="settings_audio_transcode_priority_toast">Priority on transcoding of track given to server</string>
+    <string name="settings_audio_transcode_estimate_content_length_title">Estimate track duration</string>
+    <string name="settings_audio_transcode_estimate_content_length_summary">When the file is transcoded on the fly, the client usually does not show the track length. It is possible to request the servers that support the functionality to estimate the duration of the track being played, but the response times may take longer.</string>
     <string name="settings_buffering_strategy">Buffering strategy</string>
     <string name="settings_buffering_strategy_summary">For the change to take effect you must manually restart the app.</string>
     <string name="settings_choose_download_folder">Choose a folder for downloaded music files</string>
@@ -655,10 +654,6 @@
     <string name="undraw_page">unDraw</string>
     <string name="undraw_thanks">Thanks to unDraw</string>
     <string name="undraw_url">https://undraw.co/</string>
-    <string name="settings_enable_drawer_on_landscape">Enable drawer on landscape</string>
-    <string name="settings_enable_drawer_on_landscape_summary">Enable drawer on landscape summary</string>
-    <string name="settings_hide_bottom_navbar_on_portrait">Hide bottom navbar on portrait</string>
-    <string name="settings_hide_bottom_navbar_on_portrait_summary">Hide bottom navbar on portrait summary</string>
     <string name="settings_support_discussion_link">https://github.com/eddyizm/tempus/discussions</string>
     <string name="settings_support_summary">Support summary</string>
     <string name="settings_tile_size">Tile size</string>

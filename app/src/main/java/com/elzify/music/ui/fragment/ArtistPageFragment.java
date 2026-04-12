@@ -36,7 +36,9 @@ import com.elzify.music.service.MediaService;
 import com.elzify.music.subsonic.models.ArtistID3;
 import com.elzify.music.subsonic.models.Child;
 import com.elzify.music.ui.activity.MainActivity;
+import com.elzify.music.ui.adapter.AlbumCarouselAdapter;
 import com.elzify.music.ui.adapter.AlbumCatalogueAdapter;
+import com.elzify.music.ui.adapter.ArtistCarouselAdapter;
 import com.elzify.music.ui.adapter.ArtistCatalogueAdapter;
 import com.elzify.music.ui.adapter.SongHorizontalAdapter;
 import com.elzify.music.util.Constants;
@@ -304,7 +306,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         bind.mainAlbumsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         bind.mainAlbumsRecyclerView.setHasFixedSize(true);
         bind.mainAlbumsRecyclerView.setNestedScrollingEnabled(false);
-        mainAlbumAdapter = new AlbumCarouselAdapter(this, false);
+        mainAlbumAdapter = new AlbumCarouselAdapter(this, false, requireContext());
         bind.mainAlbumsRecyclerView.setAdapter(mainAlbumAdapter);
         artistPageViewModel.getMainAlbums().observe(getViewLifecycleOwner(), albums -> {
             if (bind != null) {
@@ -321,7 +323,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         bind.epsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         bind.epsRecyclerView.setHasFixedSize(true);
         bind.epsRecyclerView.setNestedScrollingEnabled(false);
-        epAdapter = new AlbumCarouselAdapter(this, false);
+        epAdapter = new AlbumCarouselAdapter(this, false, requireContext());
         bind.epsRecyclerView.setAdapter(epAdapter);
         artistPageViewModel.getEPs().observe(getViewLifecycleOwner(), albums -> {
             if (bind != null) {
@@ -338,7 +340,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         bind.singlesRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         bind.singlesRecyclerView.setHasFixedSize(true);
         bind.singlesRecyclerView.setNestedScrollingEnabled(false);
-        singleAdapter = new AlbumCarouselAdapter(this, false);
+        singleAdapter = new AlbumCarouselAdapter(this, false, requireContext());
         bind.singlesRecyclerView.setAdapter(singleAdapter);
         artistPageViewModel.getSingles().observe(getViewLifecycleOwner(), albums -> {
             if (bind != null) {
@@ -359,7 +361,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         bind.compilationsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         bind.compilationsRecyclerView.setHasFixedSize(true);
         bind.compilationsRecyclerView.setNestedScrollingEnabled(false);
-        compilationAdapter = new AlbumCarouselAdapter(this, false);
+        compilationAdapter = new AlbumCarouselAdapter(this, false, requireContext());
         bind.compilationsRecyclerView.setAdapter(compilationAdapter);
         artistPageViewModel.getCompilations().observe(getViewLifecycleOwner(), albums -> {
             if (bind != null) {
@@ -376,7 +378,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         bind.soundtracksRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         bind.soundtracksRecyclerView.setHasFixedSize(true);
         bind.soundtracksRecyclerView.setNestedScrollingEnabled(false);
-        soundtrackAdapter = new AlbumCarouselAdapter(this, false);
+        soundtrackAdapter = new AlbumCarouselAdapter(this, false, requireContext());
         bind.soundtracksRecyclerView.setAdapter(soundtrackAdapter);
         artistPageViewModel.getSoundtracks().observe(getViewLifecycleOwner(), albums -> {
             if (bind != null) {
@@ -393,7 +395,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         bind.livesRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         bind.livesRecyclerView.setHasFixedSize(true);
         bind.livesRecyclerView.setNestedScrollingEnabled(false);
-        liveAdapter = new AlbumCarouselAdapter(this, false);
+        liveAdapter = new AlbumCarouselAdapter(this, false, requireContext());
         bind.livesRecyclerView.setAdapter(liveAdapter);
         artistPageViewModel.getLives().observe(getViewLifecycleOwner(), albums -> {
             if (bind != null) {
@@ -410,7 +412,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         bind.remixesRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         bind.remixesRecyclerView.setHasFixedSize(true);
         bind.remixesRecyclerView.setNestedScrollingEnabled(false);
-        remixAdapter = new AlbumCarouselAdapter(this, false);
+        remixAdapter = new AlbumCarouselAdapter(this, false, requireContext());
         bind.remixesRecyclerView.setAdapter(remixAdapter);
         artistPageViewModel.getRemixes().observe(getViewLifecycleOwner(), albums -> {
             if (bind != null) {
@@ -427,7 +429,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         bind.appearsOnRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         bind.appearsOnRecyclerView.setHasFixedSize(true);
         bind.appearsOnRecyclerView.setNestedScrollingEnabled(false);
-        appearsOnAdapter = new AlbumCarouselAdapter(this, true); // Show artist name for Appears On
+        appearsOnAdapter = new AlbumCarouselAdapter(this, true, requireContext()); // Show artist name for Appears On
         bind.appearsOnRecyclerView.setAdapter(appearsOnAdapter);
         artistPageViewModel.getAppearsOn().observe(getViewLifecycleOwner(), albums -> {
             if (bind != null) {
@@ -441,7 +443,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         });
     }
 
-    private void navigateToAlbumList(String title, List<com.cappielloantonio.tempo.subsonic.models.AlbumID3> albums) {
+    private void navigateToAlbumList(String title, List<com.elzify.music.subsonic.models.AlbumID3> albums) {
         Bundle bundle = new Bundle();
         bundle.putString(Constants.ALBUM_LIST_TITLE, title);
         bundle.putParcelableArrayList(Constants.ALBUMS_OBJECT, new ArrayList<>(albums));

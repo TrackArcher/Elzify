@@ -28,9 +28,18 @@ import com.elzify.music.util.Preferences;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ArtistPageViewModel extends AndroidViewModel {
+    private static final Set<String> SECONDARY_RELEASE_TYPES = Set.of(
+            "compilation",
+            "soundtrack",
+            "live",
+            "remix"
+    );
+
     private final AlbumRepository albumRepository;
     private final ArtistRepository artistRepository;
     private final FavoriteRepository favoriteRepository;
@@ -40,6 +49,10 @@ public class ArtistPageViewModel extends AndroidViewModel {
     private final MutableLiveData<List<AlbumID3>> singles = new MutableLiveData<>();
     private final MutableLiveData<List<AlbumID3>> eps = new MutableLiveData<>();
     private final MutableLiveData<List<AlbumID3>> mainAlbums = new MutableLiveData<>();
+    private final MutableLiveData<List<AlbumID3>> compilations = new MutableLiveData<>();
+    private final MutableLiveData<List<AlbumID3>> soundtracks = new MutableLiveData<>();
+    private final MutableLiveData<List<AlbumID3>> lives = new MutableLiveData<>();
+    private final MutableLiveData<List<AlbumID3>> remixes = new MutableLiveData<>();
     private final MutableLiveData<List<AlbumID3>> appearsOn = new MutableLiveData<>();
 
     public ArtistPageViewModel(@NonNull Application application) {
@@ -54,22 +67,62 @@ public class ArtistPageViewModel extends AndroidViewModel {
         artistRepository.getArtist(artist.getId()).observe(owner, artistWithAlbums -> {
             if (artistWithAlbums != null && artistWithAlbums instanceof com.elzify.music.subsonic.models.ArtistWithAlbumsID3) {
                 com.elzify.music.subsonic.models.ArtistWithAlbumsID3 fullArtist = (com.elzify.music.subsonic.models.ArtistWithAlbumsID3) artistWithAlbums;
-                
+                java.util.function.Predicate<AlbumID3> sameArtist = a ->
+                        Objects.equals(a.getArtistId(), Objects.requireNonNull(artist.getId()));
+
                 List<AlbumID3> allAlbums = fullArtist.getAlbums();
                 if (allAlbums != null) {
                     allAlbums.sort(Comparator.comparing(AlbumID3::getYear).reversed());
-                    
+
                     mainAlbums.setValue(allAlbums.stream()
-                        .filter(a -> isType(a, "album"))
-                        .collect(Collectors.toList()));
-                    
+                            .filter(a -> isType(a, "album")
+                                    && !hasSecondaryReleaseType(a.getReleaseTypes())
+                                    && sameArtist.test(a))
+                            .collect(Collectors.toList()));
+
                     singles.setValue(allAlbums.stream()
-                        .filter(a -> isType(a, "single"))
-                        .collect(Collectors.toList()));
-                    
+                            .filter(a -> isType(a, "single") && sameArtist.test(a))
+                            .collect(Collectors.toList()));
+
                     eps.setValue(allAlbums.stream()
-                        .filter(a -> isType(a, "ep"))
-                        .collect(Collectors.toList()));
+                            .filter(a -> isType(a, "ep") && sameArtist.test(a))
+                            .collect(Collectors.toList()));
+
+                    compilations.setValue(allAlbums.stream()
+                            .filter(a -> {
+                                List<String> releaseTypes = a.getReleaseTypes();
+                                return releaseTypes != null
+                                        && releaseTypes.stream().anyMatch(t -> t.equalsIgnoreCase("compilation"))
+                                        && sameArtist.test(a);
+                            })
+                            .collect(Collectors.toList()));
+
+                    soundtracks.setValue(allAlbums.stream()
+                            .filter(a -> {
+                                List<String> releaseTypes = a.getReleaseTypes();
+                                return releaseTypes != null
+                                        && releaseTypes.stream().anyMatch(t -> t.equalsIgnoreCase("soundtrack"))
+                                        && sameArtist.test(a);
+                            })
+                            .collect(Collectors.toList()));
+
+                    lives.setValue(allAlbums.stream()
+                            .filter(a -> {
+                                List<String> releaseTypes = a.getReleaseTypes();
+                                return releaseTypes != null
+                                        && releaseTypes.stream().anyMatch(t -> t.equalsIgnoreCase("live"))
+                                        && sameArtist.test(a);
+                            })
+                            .collect(Collectors.toList()));
+
+                    remixes.setValue(allAlbums.stream()
+                            .filter(a -> {
+                                List<String> releaseTypes = a.getReleaseTypes();
+                                return releaseTypes != null
+                                        && releaseTypes.stream().anyMatch(t -> t.equalsIgnoreCase("remix"))
+                                        && sameArtist.test(a);
+                            })
+                            .collect(Collectors.toList()));
                 }
 
                 List<AlbumID3> appearsOnList = fullArtist.getAppearsOn();
@@ -101,9 +154,23 @@ public class ArtistPageViewModel extends AndroidViewModel {
         }
     }
 
+    private static boolean hasSecondaryReleaseType(List<String> releaseTypes) {
+        if (releaseTypes == null || releaseTypes.isEmpty()) {
+            return false;
+        }
+        return releaseTypes.stream()
+                .map(String::trim)
+                .map(String::toLowerCase)
+                .anyMatch(SECONDARY_RELEASE_TYPES::contains);
+    }
+
     public LiveData<List<AlbumID3>> getSingles() { return singles; }
     public LiveData<List<AlbumID3>> getEPs() { return eps; }
     public LiveData<List<AlbumID3>> getMainAlbums() { return mainAlbums; }
+    public LiveData<List<AlbumID3>> getCompilations() { return compilations; }
+    public LiveData<List<AlbumID3>> getSoundtracks() { return soundtracks; }
+    public LiveData<List<AlbumID3>> getLives() { return lives; }
+    public LiveData<List<AlbumID3>> getRemixes() { return remixes; }
     public LiveData<List<AlbumID3>> getAppearsOn() { return appearsOn; }
 
     public LiveData<List<AlbumID3>> getAlbumList() {
@@ -166,7 +233,7 @@ public class ArtistPageViewModel extends AndroidViewModel {
         artist.setStarred(null);
     }
 
-        private void setFavoriteOffline() {
+    private void setFavoriteOffline() {
         favoriteRepository.starLater(null, null, artist.getId(), true);
         artist.setStarred(new Date());
     }

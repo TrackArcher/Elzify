@@ -101,7 +101,10 @@ class EqualizerFragment : Fragment() {
             receiverRegistered = false
         }
 
-        activity.setBottomSheetVisibility(true);
+        activity.setNavigationDrawerLock(false)
+        activity.setSystemBarsVisibility(true)
+        activity.setBottomNavigationBarVisibility(true)
+        activity.setBottomSheetVisibility(true)
     }
 
     override fun onCreateView(

@@ -1,3 +1,6 @@
+package com.elzify.music.ui.adapter;
+
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +21,6 @@ import java.util.List;
 
 public class AlbumCarouselAdapter extends RecyclerView.Adapter<AlbumCarouselAdapter.ViewHolder> {
     private final ClickCallback click;
-    private final boolean isOffline;
 
     private List<AlbumID3> albums;
     private boolean showArtist;
@@ -101,13 +103,6 @@ public class AlbumCarouselAdapter extends RecyclerView.Adapter<AlbumCarouselAdap
 
             item.albumNameLabel.setSelected(true);
             item.artistNameLabel.setSelected(true);
-        private boolean onLongClick() {
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(Constants.ALBUM_OBJECT, albums.get(getBindingAdapterPosition()));
-
-            click.onAlbumLongClick(bundle);
-
-            return true;
         }
     }
 }

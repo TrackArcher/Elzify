@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.ui.adapter;
+package com.elzify.music.ui.adapter;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,12 +7,12 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.cappielloantonio.tempo.databinding.ItemArtistCarouselBinding;
-import com.cappielloantonio.tempo.glide.CustomGlideRequest;
-import com.cappielloantonio.tempo.interfaces.ClickCallback;
-import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
-import com.cappielloantonio.tempo.util.Constants;
-import com.cappielloantonio.tempo.util.TileSizeManager;
+import com.elzify.music.databinding.ItemArtistCarouselBinding;
+import com.elzify.music.glide.CustomGlideRequest;
+import com.elzify.music.interfaces.ClickCallback;
+import com.elzify.music.subsonic.models.ArtistID3;
+import com.elzify.music.util.Constants;
+import com.elzify.music.util.TileSizeManager;
 
 import java.util.Collections;
 import java.util.List;

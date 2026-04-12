@@ -14,12 +14,17 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.splashscreen.SplashScreen;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.MediaItem;
@@ -423,6 +428,48 @@ public class MainActivity extends BaseActivity {
 
     public void setBottomNavigationBarVisibility(boolean visibility) {
         bind.navigationDock.dockCard.setVisibility(visibility ? View.VISIBLE : View.GONE);
+    }
+
+    /** Exposed for fragments (e.g. equalizer) that need layout-dependent UI. */
+    public boolean isLandscape() {
+        return isLandscape;
+    }
+
+    /**
+     * Locks the navigation drawer closed when {@code R.id.drawer_layout} is a {@link DrawerLayout};
+     * otherwise no-op (portrait layout uses a {@link androidx.coordinatorlayout.widget.CoordinatorLayout}).
+     */
+    public void setNavigationDrawerLock(boolean locked) {
+        View drawer = findViewById(R.id.drawer_layout);
+        if (!(drawer instanceof DrawerLayout)) {
+            return;
+        }
+        DrawerLayout drawerLayout = (DrawerLayout) drawer;
+        int mode = locked
+                ? DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+                : DrawerLayout.LOCK_MODE_UNLOCKED;
+        drawerLayout.setDrawerLockMode(mode);
+    }
+
+    /** Shows or hides status and navigation bars (immersive vs default). */
+    public void setSystemBarsVisibility(boolean visible) {
+        Window window = getWindow();
+        View decorView = window.getDecorView();
+        WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(window, decorView);
+
+        if (visible) {
+            WindowCompat.setDecorFitsSystemWindows(window, true);
+            insetsController.show(WindowInsetsCompat.Type.navigationBars());
+            insetsController.show(WindowInsetsCompat.Type.statusBars());
+            insetsController.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_DEFAULT);
+            applySystemBarColors();
+        } else {
+            WindowCompat.setDecorFitsSystemWindows(window, false);
+            insetsController.hide(WindowInsetsCompat.Type.navigationBars());
+            insetsController.hide(WindowInsetsCompat.Type.statusBars());
+            insetsController.setSystemBarsBehavior(
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        }
     }
 
     public void toggleBottomNavigationBarVisibilityOnOrientationChange() {
