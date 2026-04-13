@@ -625,6 +625,7 @@
     <string name="aa_album_most_played">Most played albums</string>
     <string name="aa_album_recently_added">Recently added albums</string>
     <string name="aa_artists">Artists</string>
+    <string name="aa_genres">Genres</string>
     <string name="aa_home">Home</string>
     <string name="aa_made_for_you">Made for you</string>
     <string name="aa_more">More</string>
