@@ -308,6 +308,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
         actionMiniPlayerHeart();
         actionConfigureDock();
         actionConfigureMetadata();
+        actionSubsonicsterCardConfig();
+        actionSubsonicsterScanQr();
 
         ListPreference themePreference = findPreference(Preferences.THEME);
         if (themePreference != null) {
@@ -337,6 +339,28 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
             pref.setOnPreferenceClickListener(preference -> {
                 NavController navController = NavHostFragment.findNavController(this);
                 navController.navigate(R.id.metadataConfigurationFragment);
+                return true;
+            });
+        }
+    }
+
+    private void actionSubsonicsterCardConfig() {
+        Preference pref = findPreference("subsonicster_card_config");
+        if (pref != null) {
+            pref.setOnPreferenceClickListener(preference -> {
+                NavController navController = NavHostFragment.findNavController(this);
+                navController.navigate(R.id.subsonicsterCardConfigFragment);
+                return true;
+            });
+        }
+    }
+
+    private void actionSubsonicsterScanQr() {
+        Preference pref = findPreference("subsonicster_scan_qr");
+        if (pref != null) {
+            pref.setOnPreferenceClickListener(preference -> {
+                NavController navController = NavHostFragment.findNavController(this);
+                navController.navigate(R.id.subsonicsterScanQrFragment);
                 return true;
             });
         }

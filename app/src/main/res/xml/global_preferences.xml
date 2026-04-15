@@ -389,6 +389,20 @@
         android:key="screen_general"
         android:title="@string/settings_tab_general">
 
+        <PreferenceCategory app:title="@string/settings_subsonicster_section_title">
+            <Preference
+                android:key="subsonicster_card_config"
+                android:title="@string/settings_subsonicster_card_config"
+                android:summary="@string/settings_subsonicster_card_config_summary"
+                app:icon="@drawable/ic_settings" />
+
+            <Preference
+                android:key="subsonicster_scan_qr"
+                android:title="@string/settings_subsonicster_scan_qr"
+                android:summary="@string/settings_subsonicster_scan_qr_summary"
+                app:icon="@drawable/ic_search" />
+        </PreferenceCategory>
+
         <PreferenceCategory app:title="Network">
             <SwitchPreference
                 android:title="@string/settings_wifi_only_title"

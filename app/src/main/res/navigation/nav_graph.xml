@@ -334,6 +334,16 @@
         android:name="com.elzify.music.ui.fragment.MetadataConfigurationFragment"
         android:label="MetadataConfigurationFragment"
         tools:layout="@layout/fragment_metadata_configuration" />
+    <fragment
+        android:id="@+id/subsonicsterCardConfigFragment"
+        android:name="com.elzify.music.ui.fragment.SubsonicsterCardConfigFragment"
+        android:label="SubsonicsterCardConfigFragment"
+        tools:layout="@layout/fragment_subsonicster_card_config" />
+    <fragment
+        android:id="@+id/subsonicsterScanQrFragment"
+        android:name="com.elzify.music.ui.fragment.SubsonicsterScanQrFragment"
+        android:label="SubsonicsterScanQrFragment"
+        tools:layout="@layout/fragment_subsonicster_scan_qr" />
     <dialog
         android:id="@+id/songBottomSheetDialog"
         android:name="com.elzify.music.ui.fragment.bottomsheetdialog.SongBottomSheetDialog"

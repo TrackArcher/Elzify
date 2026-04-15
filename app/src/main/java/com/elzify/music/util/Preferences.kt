@@ -452,7 +452,7 @@ object Preferences {
 
     @JvmStatic
     fun setPodcastSectionHidden() {
-        App.getInstance().preferences.edit().putBoolean(PODCAST_SECTION_VISIBILITY, true).apply()
+        App.getInstance().preferences.edit().putBoolean(PODCAST_SECTION_VISIBILITY, false).apply()
     }
 
     @JvmStatic

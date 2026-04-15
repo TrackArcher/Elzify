@@ -77,6 +77,9 @@ public class HomeFragment extends Fragment {
 
         pager.addFragment(new HomeTabMusicFragment(), getString(R.string.home_section_music), R.drawable.ic_home);
 
+        if (Preferences.isPodcastSectionVisible())
+            pager.addFragment(new HomeTabPodcastFragment(), getString(R.string.home_section_podcast), R.drawable.ic_placeholder_podcast);
+
         if (Preferences.isRadioSectionVisible())
             pager.addFragment(new HomeTabRadioFragment(), getString(R.string.home_section_radio), R.drawable.ic_play_for_work);
 

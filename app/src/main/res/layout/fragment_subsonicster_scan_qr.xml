@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorSurface"
+            app:title="@string/settings_subsonicster_scan_qr" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <com.journeyapps.barcodescanner.DecoratedBarcodeView
+            android:id="@+id/subsonicster_qr_scanner_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.elzify.music.ui.view.ScannerOverlayView
+            android:id="@+id/subsonicster_scanner_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/subsonicster_qr_center_icon"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="center"
+            android:alpha="0.35"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_qr_center" />
+
+        <LinearLayout
+            android:id="@+id/subsonicster_controls_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/subsonicster_play_pause_button"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:padding="0dp"
+                android:contentDescription="@string/subsonicster_play"
+                app:cornerRadius="50dp"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconSize="42dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/subsonicster_scan_next_button"
+                    android:layout_width="220dp"
+                    android:layout_height="48dp"
+                    android:text="@string/subsonicster_scan_next"
+                    android:textAllCaps="false"
+                    app:cornerRadius="24dp" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/subsonicster_scan_permission_button"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginTop="12dp"
+                android:text="@string/subsonicster_grant_camera_permission"
+                android:textAllCaps="false"
+                android:visibility="gone"
+                app:cornerRadius="24dp" />
+        </LinearLayout>
+    </FrameLayout>
+
+</LinearLayout>

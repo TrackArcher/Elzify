@@ -3,6 +3,7 @@ package com.elzify.music.service;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +17,7 @@ import androidx.media3.common.Timeline;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 
+import com.elzify.music.App;
 import com.elzify.music.interfaces.MediaIndexCallback;
 import com.elzify.music.model.Chronology;
 import com.elzify.music.repository.ChronologyRepository;
