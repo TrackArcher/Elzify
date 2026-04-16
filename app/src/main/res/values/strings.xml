@@ -381,7 +381,7 @@
     <string name="settings_set_download_folder">Set download folder</string>
     <string name="settings_system_equalizer_summary">Adjust audio settings</string>
     <string name="settings_system_equalizer_title">System equalizer</string>
-    <string name="settings_github_link">https://github.com/beeetfarmer/tempus-ng</string>
+    <string name="settings_github_link" translatable="false">https://github.com/TrackArcher/Elzify</string>
     <string name="settings_github_summary">Follow the development</string>
     <string name="settings_github_title">Github</string>
 
@@ -568,9 +568,9 @@
     <string name="track_info_transcoded_content_type">Transcoded content type</string>
     <string name="track_info_transcoded_suffix">Transcoded suffix</string>
     <string name="track_info_year">Year</string>
-    <string name="widget_label">Rollynn Widget</string>
+    <string name="widget_label" translatable="false">Elzify Widget</string>
     <string name="widget_not_playing">Not playing</string>
-    <string name="widget_placeholder_subtitle">Open Rollynn</string>
+    <string name="widget_placeholder_subtitle" translatable="false">Open Elzify</string>
     <string name="widget_time_elapsed_placeholder">0:00</string>
     <string name="widget_time_duration_placeholder">0:00</string>
     <string name="widget_content_desc_album_art">Album artwork</string>
@@ -620,14 +620,11 @@
     <string name="settings_tab_library">Library</string>
     <string name="settings_tab_playback">Playback</string>
     <string name="settings_tab_general">General</string>
-    <string name="settings_subsonicster_section_title">Subsonicster</string>
+    <string name="settings_subsonicster_section_title">Trackattack/Hitster</string>
     <string name="settings_subsonicster_card_config">Card Config</string>
     <string name="settings_subsonicster_card_config_summary">Manage CSV card set mappings</string>
-    <string name="settings_subsonicster_scan_qr">Scan QR Code</string>
-    <string name="settings_subsonicster_scan_qr_summary">Open scanner for Hitster QR codes</string>
-    <string name="subsonicster_csv_url_hint">https://... / filename.csv</string>
-    <string name="subsonicster_download_csv">Download CSV</string>
-    <string name="subsonicster_import_all_csvs">Add all CSV-Files from songseeker-hitster-playlists repository</string>
+    <string name="settings_subsonicster_scan_qr">Play the game!</string>
+    <string name="settings_subsonicster_scan_qr_summary">Before playing make sure to set the CSV files</string>
     <string name="subsonicster_add_local_csv">Add local CSV file</string>
     <string name="subsonicster_configured_csv_files">Configured CSV files (long press to delete)</string>
     <string name="subsonicster_ready">Ready.</string>

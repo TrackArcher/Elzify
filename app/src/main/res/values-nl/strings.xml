@@ -483,7 +483,7 @@
     <string name="widget_not_playing">Gepauzeerd</string>
     <string name="widget_placeholder_subtitle">Open Tempus</string>
     <string name="widget_time_duration_placeholder">0:00</string>
-    <string name="widget_content_desc_album_art">Albumhoes</string>
+    <string name="widget_content_desc_album_art">Album foto</string>
     <string name="widget_content_desc_play_pause">Afspelen of pauzeren</string>
     <string name="widget_content_desc_next">Volgende track</string>
     <string name="widget_content_desc_repeat">Herhaalmodus wijzigen</string>
