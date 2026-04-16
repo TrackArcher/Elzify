@@ -6,11 +6,11 @@ Elzify is a modern Android Subsonic-compatible music client focused on fast brow
 
 - **Subsonic-compatible streaming** with support for popular backends like Navidrome, LMS, Gonic, Airsonic, and other OpenSubsonic-compatible servers.
 - **Radio logo support**, including improved radio visuals in Android Auto.
-- **Songseeker cards support (https://github.com/andygruber/songseeker-card-generator)** for playlist-based game sessions. You can find this in settings --> general 
+- **Songseeker cards support (https://github.com/andygruber/songseeker-card-generator)** You can find this in settings --> general 
 - **Rich library navigation** for artists, albums, genres, playlists, podcasts, internet radio, and music folders.
 - **Queue and playback tools** including gapless playback, continuous play, instant mix, queue save/load behavior, and playback speed controls.
 - **Offline-friendly flow** with download management, optional preferred downloaded files, and lyrics download support.
-- **Android Auto support** (full-featured in builds that include Google dependencies).
+- **Android Auto support** (full-featured in builds that include Google dependencies). Google dependencies features are not tested yet.
 - **Scrobbling and metadata ecosystem** support (when server/backend supports it), including integrations like Last.fm and ListenBrainz.
 - **Advanced connectivity options** including transcoding controls and mTLS client certificate support.
 
@@ -19,7 +19,7 @@ Elzify is a modern Android Subsonic-compatible music client focused on fast brow
 - **Music-first interface** with Home, Library, Downloads, and player-focused workflows.
 - **Flexible playlists**: create, edit, filter, sort, and control playlist visibility.
 - **Podcast and internet radio management** for servers exposing those endpoints.
-- **Lyrics support** with source switching (subsonic server / LRCLIB) when available.
+- **Synced lyrics support** with source switching (subsonic server / LRCLIB) when available.
 - **Widgets and quality-of-life controls** for quick playback access.
 
 
